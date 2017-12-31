@@ -52,7 +52,7 @@ llvmPackages.stdenv.mkDerivation rec {
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-Device-Libs";
-        rev = "roc-${tag}";
+        rev = "${tag}";
         sha256 = "0wf2y9i47ykmp13r567i7cp6a00c2if78sgxrznvn4xvrzdk6hsj";
         name = "ROCm-Device-Libs-${tag}-src";
       })
