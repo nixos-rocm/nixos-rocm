@@ -1,4 +1,4 @@
-{ stdenv, hostPlatform, path, fetchFromGitHub, perl, buildLinux, ... } @ args:
+{ stdenv, buildPackages, hostPlatform, path, fetchFromGitHub, perl, buildLinux, ... } @ args:
 
 let
   ver = "4.13.0";
