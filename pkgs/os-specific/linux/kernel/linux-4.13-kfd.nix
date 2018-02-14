@@ -1,11 +1,11 @@
-{ stdenv, buildPackages, hostPlatform, path, fetchFromGitHub, perl, buildLinux, ... } @ args:
+{ stdenv, buildPackages, hostPlatform, fetchFromGitHub, perl, buildLinux, ... } @ args:
 
 let
   ver = "4.13.0";
   revision = "kfd-roc-1.7.0";
 in
 
-import "${path}/pkgs/os-specific/linux/kernel/generic.nix" (args // rec {
+buildLinux (args // rec {
   version = "${ver}-${revision}";
   modDirVersion = "${ver}";
   extraMeta.branch = "4.13";
