@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
     sourceRoot="$sourceRoot/src"
   '';
 
+  patches = [ ./gcc-7-Wformat-overflow.patch ];
+
   enableParallelBuilding = true;
   buildInputs = [ cmake elfutils ];
   cmakeFlags = [ "-DCMAKE_PREFIX_PATH=${roct}" ];

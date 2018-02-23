@@ -1,0 +1,11 @@
+--- src.old/core/runtime/hsa.cpp	2018-02-23 09:00:32.558938815 -0800
++++ src/core/runtime/hsa.cpp	2018-02-23 09:12:52.160859712 -0800
+@@ -377,7 +377,7 @@
+   }
+ 
+   char buff[3];
+-  sprintf(buff, "%02u", minor);
++  sprintf(buff, "%02u", minor % 100 /* appease -Wformat-overflow */);
+   name += std::to_string(major) + "_" + buff + "_pfn_t";
+ 
+   for (size_t i = 0; i < num_tables; i++) {

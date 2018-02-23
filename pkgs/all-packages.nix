@@ -37,7 +37,7 @@ with pkgs;
 
   # Userspace ROC stack
   roct = callPackage ./development/libraries/roct.nix {};
-  rocr = callPackage ./development/libraries/rocr.nix {};
+  rocr = callPackage ./development/libraries/rocr {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {};
 
   # OpenCL stack
