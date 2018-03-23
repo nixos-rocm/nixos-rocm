@@ -10,7 +10,7 @@
 }:
 
 llvmPackages.stdenv.mkDerivation rec {
-  version = "1.7.0";
+  version = "1.7.1";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -18,49 +18,51 @@ llvmPackages.stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = "${tag}";
-        sha256 = "01qzh6sfl5k45phaa64n0jimx4d64nsfraql49nkdqkvd2l6js6q";
+        sha256 = "00drxc6ql2l346b7v80hajky4b77xdmc175ab06wkx4127cc2gih";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Driver";
         rev = "${tag}";
-        sha256 = "1pvwsznlxzrkxjsfn4bk2l021dprhb5r3wg8yfs05nryj2svzzzy";
+        sha256 = "02lj2qqxdgfcrki3jn6j8vw1vp9vcd3ds8yxrl8j2amsk474r1dd";
         name = "ROCm-OpenCL-Driver-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "clang";
         rev = "${tag}";
-        sha256 = "0yz6krsij9cb92906hd8icsy1qs4bvb0822k9i95ry1728vpnffj";
+        sha256 = "0wnbndds11jmkix39zfn07jnzkd7lj82pkb9pl3ncvdp64rnzxnr";
         name = "clang-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "llvm";
         rev = "${tag}";
-        sha256 = "19g4idzrx4cwkl6yw0yynvg6vsh5m4cj0a6aqiqss4rd1calig4n";
+        sha256 = "1ljkl1r3fbm7x937g69ps7a31a21vsf8pf5jxs8gzqm0xmhh2hrm";
         name = "llvm-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "lld";
         rev = "${tag}";
-        sha256 = "0b8nv8j32q5r0arx08i8l2k8hkz6jn38qn2wn5k4mlfzfwpls4dv";
+        sha256 = "0wd2qhn2qhbmwhw4qnqb914y29rm249jm1k1ssrx11ps7dn34jmk";
         name = "lld-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-Device-Libs";
         rev = "${tag}";
-        sha256 = "0wf2y9i47ykmp13r567i7cp6a00c2if78sgxrznvn4xvrzdk6hsj";
+        sha256 = "1mqqazb4x4lisgahkix2dgmns4x13wixr30li046vj05inybs06j";
         name = "ROCm-Device-Libs-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "KhronosGroup";
         repo = "OpenCL-ICD-Loader";
-        rev = "26a3898";
-        sha256 = "148n8wzf6kp7vjhk6qz5mg4wmrysy8g5z4qmcn8imjgqiinhl05n";
+        # rev = "26a3898";
+        # sha256 = "148n8wzf6kp7vjhk6qz5mg4wmrysy8g5z4qmcn8imjgqiinhl05n";
+        rev = "b1155e4b4526f1d52cebebd60ab985dbbc923157";
+        sha256 = "1ym9n0xy9a7lqk845nnyn475kgcnm2c6lz9wlvrb7w94cgpfz707";
         name = "OpenCL-ICD-Loader-26a3898-src";
       })
     ];
