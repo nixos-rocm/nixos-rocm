@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, rocr }:
+{ stdenv, fetchFromGitHub, cmake, rocr, python }:
 
 stdenv.mkDerivation rec {
   version = "1.7.0";
@@ -14,8 +14,13 @@ stdenv.mkDerivation rec {
   buildInputs = [ cmake ];
   cmakeFlags = [ "-DROCM_DIR=${rocr}" ];
 
+  patchPhase = ''
+    sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i rocm_agent_enumerator
+  '';
+
   installPhase = ''
     mkdir -p $out/bin
     cp rocminfo $out/bin
+    cp rocm_agent_enumerator $out/bin
   '';
 }
