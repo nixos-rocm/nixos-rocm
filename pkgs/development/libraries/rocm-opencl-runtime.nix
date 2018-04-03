@@ -1,9 +1,9 @@
 { stdenv
 , llvmPackages
 , fetchFromGitHub
+, libGL
 , cmake
 , rocr
-, ocl-icd
 , mesa_noglu
 , python2
 , libX11
@@ -84,15 +84,18 @@ llvmPackages.stdenv.mkDerivation rec {
     sed -e 's/enable_testing()//' \
         -e 's@add_subdirectory(src/unittest)@@' \
         -i compiler/driver/CMakeLists.txt
+    sed 's,"/etc/OpenCL/vendors/","${libGL.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
   '';
 
   enableParallelBuilding = true;
-  buildInputs = [ cmake rocr ocl-icd mesa_noglu python2 libX11 ];
+  buildInputs = [ cmake rocr mesa_noglu python2 libX11 ];
 
   #cmakeBuildType = "Debug";
   dontStrip = true;
 
   preFixup = ''
-    patchelf --set-rpath "${stdenv.lib.makeLibraryPath buildInputs}" $out/bin/clinfo
+    patchelf --set-rpath "$out/lib" $out/bin/clinfo
+    ln -s $out/lib/libOpenCL.so.1.2 $out/lib/libOpenCL.so.1
+    ln -s $out/lib/libOpenCL.so.1 $out/lib/libOpenCL.so
   '';
 }
