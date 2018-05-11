@@ -1,7 +1,7 @@
 { stdenv
 , llvmPackages
 , fetchFromGitHub
-, libGL
+, libGL_driver
 , cmake
 , rocr
 , mesa_noglu
@@ -84,7 +84,8 @@ llvmPackages.stdenv.mkDerivation rec {
     sed -e 's/enable_testing()//' \
         -e 's@add_subdirectory(src/unittest)@@' \
         -i compiler/driver/CMakeLists.txt
-    sed 's,"/etc/OpenCL/vendors/","${libGL.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
+    sed 's,"/etc/OpenCL/vendors/","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
+    sed 's,amdgcn--amdhsa-amdgizcl,amdgcn-amd-amdhsa-amdgizcl,' -i library/amdgcn/CMakeLists.txt
   '';
 
   enableParallelBuilding = true;

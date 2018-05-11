@@ -1,18 +1,21 @@
-{ stdenv, fetchFromGitHub, cmake, rocr, python }:
+{ stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake }:
 
 stdenv.mkDerivation rec {
-  version = "1.7.0";
+  version = "1.7.2";
   name = "rocminfo";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "rocminfo";
-    rev = "fd277f3";
-    sha256 = "0q7yl109gm6vn3s0zzldzfazyfkm57i41inxgil0wd7l6v73bs5s";
+    rev = "c0af93e54b918918e95195292947603ef2eaecc7";
+    sha256 = "0gjsgfk07ddw8scwbq143szl2cbd8zyyhqnznpgfci5la87y6mvv";
   };
 
   enableParallelBuilding = true;
-  buildInputs = [ cmake ];
-  cmakeFlags = [ "-DROCM_DIR=${rocr}" ];
+  buildInputs = [ cmake rocm-cmake ];
+  cmakeFlags = [
+    "-DROCR_INC_DIR=${rocr}/include"
+    "-DROCR_LIB_DIR=${rocr}/lib"
+  ];
 
   patchPhase = ''
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i rocm_agent_enumerator

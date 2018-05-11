@@ -1,23 +1,23 @@
 { stdenv, fetchFromGitHub, cmake, elfutils, roct }:
 
 stdenv.mkDerivation rec {
-  version = "1.7.0";
+  version = "1.7.2";
   name = "rocr-${version}";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCR-Runtime";
-    # rev = "roc-${version}";
-    # sha256 = "0k71qdcrskavrk6rdd9hl2rr3p43l5lr401c1yhmhckic19bpaav";
 
-    rev = "37157bbb3edbec37f4842f6f2f70d250fa5ddd36";
-    sha256 = "0gd5w94hlqr4qq16y91siaikzyn1zgmyly44rvfmm4ns2rs8ddc3";
+    rev = "e6f4bd6f341f40289e3e5de0c902c1a0ba0f7018";
+    sha256 = "0k71qdcrskavrk6rdd9hl2rr3p43l5lr401c1yhmhckic19bpaav";
   };
 
   postUnpack = ''
     sourceRoot="$sourceRoot/src"
   '';
 
-  # patches = [ ./gcc-7-Wformat-overflow.patch ];
+  prePatch = ''
+    sed 's/sprintf(buff, "%02u", minor);/sprintf(buff, "%02u", minor%100);/' -i core/runtime/hsa.cpp
+  '';
 
   enableParallelBuilding = true;
   buildInputs = [ cmake elfutils ];
