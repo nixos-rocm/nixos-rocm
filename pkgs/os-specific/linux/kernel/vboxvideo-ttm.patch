@@ -1,0 +1,76 @@
+diff -ruN a/drivers/staging/vboxvideo/vbox_ttm.c b/drivers/staging/vboxvideo/vbox_ttm.c
+--- a/drivers/staging/vboxvideo/vbox_ttm.c	2018-05-11 13:18:32.745266997 -0400
++++ b/drivers/staging/vboxvideo/vbox_ttm.c	2018-05-11 13:19:37.960576162 -0400
+@@ -183,13 +183,6 @@
+ {
+ }
+ 
+-static int vbox_bo_move(struct ttm_buffer_object *bo,
+-			bool evict, bool interruptible,
+-			bool no_wait_gpu, struct ttm_mem_reg *new_mem)
+-{
+-	return ttm_bo_move_memcpy(bo, interruptible, no_wait_gpu, new_mem);
+-}
+-
+ static void vbox_ttm_backend_destroy(struct ttm_tt *tt)
+ {
+ 	ttm_tt_fini(tt);
+@@ -237,7 +230,6 @@
+ 	.init_mem_type = vbox_bo_init_mem_type,
+ 	.eviction_valuable = ttm_bo_eviction_valuable,
+ 	.evict_flags = vbox_bo_evict_flags,
+-	.move = vbox_bo_move,
+ 	.verify_access = vbox_bo_verify_access,
+ 	.io_mem_reserve = &vbox_ttm_io_mem_reserve,
+ 	.io_mem_free = &vbox_ttm_io_mem_free,
+@@ -373,6 +365,7 @@
+ 
+ int vbox_bo_pin(struct vbox_bo *bo, u32 pl_flag, u64 *gpu_addr)
+ {
++	struct ttm_operation_ctx ctx = { false, false };
+ 	int i, ret;
+ 
+ 	if (bo->pin_count) {
+@@ -388,7 +381,7 @@
+ 	for (i = 0; i < bo->placement.num_placement; i++)
+ 		bo->placements[i].flags |= TTM_PL_FLAG_NO_EVICT;
+ 
+-	ret = ttm_bo_validate(&bo->bo, &bo->placement, false, false);
++	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -402,6 +395,7 @@
+ 
+ int vbox_bo_unpin(struct vbox_bo *bo)
+ {
++	struct ttm_operation_ctx ctx = { false, false };
+ 	int i, ret;
+ 
+ 	if (!bo->pin_count) {
+@@ -415,7 +409,7 @@
+ 	for (i = 0; i < bo->placement.num_placement; i++)
+ 		bo->placements[i].flags &= ~TTM_PL_FLAG_NO_EVICT;
+ 
+-	ret = ttm_bo_validate(&bo->bo, &bo->placement, false, false);
++	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -429,6 +423,7 @@
+  */
+ int vbox_bo_push_sysram(struct vbox_bo *bo)
+ {
++	struct ttm_operation_ctx ctx = { false, false };
+ 	int i, ret;
+ 
+ 	if (!bo->pin_count) {
+@@ -447,7 +442,7 @@
+ 	for (i = 0; i < bo->placement.num_placement; i++)
+ 		bo->placements[i].flags |= TTM_PL_FLAG_NO_EVICT;
+ 
+-	ret = ttm_bo_validate(&bo->bo, &bo->placement, false, false);
++	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
+ 	if (ret) {
+ 		DRM_ERROR("pushing to VRAM failed\n");
+ 		return ret;

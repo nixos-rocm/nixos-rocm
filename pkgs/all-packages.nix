@@ -15,6 +15,12 @@ with pkgs;
         # when adding a new linux version
         kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
+        {
+          # See https://cgit.freedesktop.org/%7Eagd5f/linux/commit/?h=amd-staging-drm-next&id=3f3a7c8259312084291859d3b623db4317365a07
+          patch = ./os-specific/linux/kernel/vboxvideo-ttm.patch;
+          name = "vboxvideo-ttm";
+        }
+
       ]
       ++ lib.optionals ((platform.kernelArch or null) == "mips")
       [ kernelPatches.mips_fpureg_emu
