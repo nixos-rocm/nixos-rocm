@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
     owner = "RadeonOpenCompute";
     repo = "rocminfo";
     rev = "8d579bf68e9471422276a1383becf5fe10c95eda";
-    sha256 = "0gjsgfk07ddw8scwbq143szl2cbd8zyyhqnzn123ci5la87y6mvv";
+    sha256 = "1awrg9crf4cd3zmmrs78l171xg33mby4lxch8ih3085wvbzrrb9p";
   };
 
   enableParallelBuilding = true;
