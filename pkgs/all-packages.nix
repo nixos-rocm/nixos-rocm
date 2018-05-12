@@ -45,6 +45,7 @@ with pkgs;
   roct = callPackage ./development/libraries/roct.nix {};
   rocr = callPackage ./development/libraries/rocr {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {};
+  rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
 
   # OpenCL stack
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {};
