@@ -9,7 +9,6 @@ to `nixpkgs.overlays` in configuration.nix.
 Add these lines to configuration.nix to enable the ROCm stack:
 ```
   boot.kernelPackages = pkgs.linuxPackages_rocm;
-  hardware.firmware = [ pkgs.rocm_compute_firmware ];
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
 ```
