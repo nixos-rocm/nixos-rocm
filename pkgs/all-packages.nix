@@ -38,9 +38,6 @@ with pkgs;
       });
   });
 
-  # ROCm needs extra firmware
-  # rocm_compute_firmware = callPackage ./os-specific/linux/firmware/rocm-compute.nix {};
-
   # Userspace ROC stack
   roct = callPackage ./development/libraries/roct.nix {};
   rocr = callPackage ./development/libraries/rocr {};

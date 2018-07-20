@@ -10,7 +10,7 @@
 }:
 
 llvmPackages.stdenv.mkDerivation rec {
-  version = "1.8.0";
+  version = "1.8.2";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =

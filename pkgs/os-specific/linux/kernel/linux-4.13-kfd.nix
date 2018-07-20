@@ -2,7 +2,7 @@
 
 let
   ver = "4.13.0";
-  revision = "kfd-roc-1.8.0";
+  revision = "kfd-roc-1.8.2";
 in
 
 buildLinux (args // rec {
@@ -13,7 +13,7 @@ buildLinux (args // rec {
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCK-Kernel-Driver";
-    rev = "roc-1.8.0";
-    sha256 = "07nsci09zqx3dzgm4hzdcdnp78gm7gap09is8q9m1hhlrcpnf49d";
+    rev = "roc-1.8.2";
+    sha256 = "1shdci50fjz5s6ygfj85n5fz2pj6wfipl5qxbf0xy7j4gxil86xd";
   };
 } // (args.argsOverride or {}))
