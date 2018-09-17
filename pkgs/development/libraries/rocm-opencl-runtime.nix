@@ -10,56 +10,58 @@
 }:
 
 llvmPackages.stdenv.mkDerivation rec {
-  version = "1.8.2";
+  version = "1.9.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
     [ (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
-        # rev = "${tag}";
-        rev = "15fb9b06ecfb8fd87df2578657a49b0a56886245";
-        sha256 = "1mz0jy38lrdha95hdpfb9g4fg9mb0hb6vkpii0x2mabvqi8sa73c";
+        rev = "870b8175b2906d229f7a43e01b0038b0c8e5bb30";
+        sha256 = "09sg9l0vp01dw6fn62ci8n3fgn5m02h6clbzqs9whd4ixjyqfs9a";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Driver";
         # rev = "${tag}";
-        rev = "e0fd00a97a541f5455d583fd5274a9d335165b5e";
-        sha256 = "12lvwpdhv6p82mm7cqnxfgcpd3ddlpa0xb3s1r24ziyfc8qrpayi";
+        rev = "a3d4fa91d7d625c28247af9f1e909a7d7b51097a";
+        sha256 = "0vf254n2sr37lhy7n2c1vdsvijikrjbh44q7df6g0g0z6m96ls10";
         name = "ROCm-OpenCL-Driver-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
-        repo = "clang";
-        # rev = "${tag}";
-        rev = "daee96b5f4ce15e9c89158c27328000a1a13667a";
-        sha256 = "1dwrjp5qr64p633gpc0q0k9p2mc0ydjjm13ggxvllnf0gyy88xz7";
+        repo = "hcc-clang-upgrade";
+
+        # The 1.9.x branch does not build
+        # rev = "e2b51bfd063e4ccd426b64290bdc1587f2bf855a";
+        # sha256 = "09q2rms0xy411a7df9p1a2vs1azhk9j324dk13qb76gy79hmzwls";
+
+        # This is newer than 1.9, but does build
+        rev = "3752e4af872ddbcddb2ede7a0c6dae3aef4f07a0";
+        sha256 = "0lcwmd1srg394hgnv7pl7yhs2c174gnma5131rh95mirghwwc3r0";
         name = "clang-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "llvm";
-        # rev = "${tag}";
-        rev = "ccb913df333e220dd05420918d5755040729707b";
-        sha256 = "1ymd5pkx8h55zg5s7x74shn07fbl9x7a3kc6rq1s9caj41bn77gn";
+        rev = "90d556e2f760c0b01c662b0f88e74b55944923b4";
+        sha256 = "0h93rvfi3bpd9bw5vyy3pbnld0m6c3pz03vwc13np44wn9zyqrxk";
         name = "llvm-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "lld";
         # rev = "${tag}";
-        rev = "d18b96ee6ceb4398fc09e8676fe87ad33f5fcd3c";
-        sha256 = "1r1nlk1qhmrf0563x4aqrjjpxhr7dspmar8q411rnril4djwbjz2";
+        rev = "e20dff7f5137e5a89675aa36a77a9a0c86366fd4";
+        sha256 = "1n2f7fga3fri1c3hscvvsaxkxvpmw2h0qyglf8yrybyzh6z91075";
         name = "lld-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-Device-Libs";
-        # rev = "${tag}";
-        rev = "c0acc0acf1c9852dd6a7313dfe060dee90e2b816";
-        sha256 = "1cm493zs86nn9d51mhacrjpkjl3xc7s466m6g3b639nl5qkqvlwq";
+        rev = "19dcce7b550db6892d9bc88adb25b4c8d91ea407";
+        sha256 = "0k3gl1j4wghw0hr427xayq3c65abja84y62y7w7rm4jmxn4lsz4s";
         name = "ROCm-Device-Libs-${tag}-src";
       })
       (fetchFromGitHub {
@@ -89,7 +91,6 @@ llvmPackages.stdenv.mkDerivation rec {
         -e 's@add_subdirectory(src/unittest)@@' \
         -i compiler/driver/CMakeLists.txt
     sed 's,"/etc/OpenCL/vendors/","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
-    sed 's,amdgcn--amdhsa-amdgizcl,amdgcn-amd-amdhsa-amdgizcl,' -i library/amdgcn/CMakeLists.txt
   '';
 
   enableParallelBuilding = true;

@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake }:
 
 stdenv.mkDerivation rec {
-  version = "1.8.2";
+  version = "2018-07-11";
   name = "rocminfo";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";

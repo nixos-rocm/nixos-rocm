@@ -1,14 +1,13 @@
 { stdenv, fetchFromGitHub, cmake, elfutils, roct }:
 
 stdenv.mkDerivation rec {
-  version = "1.8.2";
+  version = "1.9.0";
   name = "rocr-${version}";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCR-Runtime";
-
-    rev = "e8c89f9d1577497345196c0e02d442a5ca7454ae";
-    sha256 = "194w3y22v3cly4c1yjzrybjhiyir2dnp4vdkxccj106y3xj6rw8p";
+    rev = "roc-${version}";
+    sha256 = "05s6j58n11v0hnafrmr24gh1199ykwvmclmny4ypcc1r0hv9jhi5";
   };
 
   postUnpack = ''

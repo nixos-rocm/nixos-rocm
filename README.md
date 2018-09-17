@@ -6,9 +6,11 @@ This overlay should work with the latest nixos-unstable channel. To use these
 packages, clone this repo somewhere and then add `(import /path/to/this/repo)`
 to `nixpkgs.overlays` in configuration.nix.
 
+As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm stack.
+
 Add these lines to configuration.nix to enable the ROCm stack:
 ```
-  boot.kernelPackages = pkgs.linuxPackages_rocm;
+  boot.kernelPackages = pkgs.linuxPackages_4_18;
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
 ```
@@ -34,6 +36,4 @@ tested, and is not guaranteed to work.
 
 ## Hardware support
 
-So far, this has only been tested with a Radeon Vega Frontier Edition.  Other
-cards supported by the upstream ROCm should also work, but have not been
-tested.
+So far, this has only been tested with a Radeon Vega Frontier Edition and an RX 580.  Other cards supported by the upstream ROCm should also work, but have not been tested. Please let us know if we can expand the list of expected-to-work hardware!
