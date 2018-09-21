@@ -153,4 +153,6 @@ with pkgs;
     stdenv = pkgs.overrideCC stdenv self.hcc;
     inherit (self) rocm-cmake rocm-opencl-runtime hcc;
   };
+
+  rocm-smi = callPackage ./tools/rocm-smi { };
 }
