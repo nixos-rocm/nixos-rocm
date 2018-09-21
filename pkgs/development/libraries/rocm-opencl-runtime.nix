@@ -1,15 +1,20 @@
 { stdenv
-, llvmPackages
 , fetchFromGitHub
 , libGL_driver
 , cmake
 , rocr
+, rocm-llvm
+, rocm-lld
+, rocm-device-libs
+, rocm-clang
+, rocm-clang-unwrapped
+, rocm-opencl-driver
 , mesa_noglu
 , python2
 , libX11
 }:
 
-llvmPackages.stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   version = "1.9.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
@@ -17,52 +22,9 @@ llvmPackages.stdenv.mkDerivation rec {
     [ (fetchFromGitHub {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
-        rev = "870b8175b2906d229f7a43e01b0038b0c8e5bb30";
-        sha256 = "09sg9l0vp01dw6fn62ci8n3fgn5m02h6clbzqs9whd4ixjyqfs9a";
+        rev = "e567d64b63674baab4cb20ad63cbffe45cf11551";
+        sha256 = "1vrs1810w8xhh839agqvb153xlg78azfz3wvpdgr3g2ic7hfs7nv";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
-      })
-      (fetchFromGitHub {
-        owner = "RadeonOpenCompute";
-        repo = "ROCm-OpenCL-Driver";
-        # rev = "${tag}";
-        rev = "a3d4fa91d7d625c28247af9f1e909a7d7b51097a";
-        sha256 = "0vf254n2sr37lhy7n2c1vdsvijikrjbh44q7df6g0g0z6m96ls10";
-        name = "ROCm-OpenCL-Driver-${tag}-src";
-      })
-      (fetchFromGitHub {
-        owner = "RadeonOpenCompute";
-        repo = "hcc-clang-upgrade";
-
-        # The 1.9.x branch does not build
-        # rev = "e2b51bfd063e4ccd426b64290bdc1587f2bf855a";
-        # sha256 = "09q2rms0xy411a7df9p1a2vs1azhk9j324dk13qb76gy79hmzwls";
-
-        # This is newer than 1.9, but does build
-        rev = "3752e4af872ddbcddb2ede7a0c6dae3aef4f07a0";
-        sha256 = "0lcwmd1srg394hgnv7pl7yhs2c174gnma5131rh95mirghwwc3r0";
-        name = "clang-${tag}-src";
-      })
-      (fetchFromGitHub {
-        owner = "RadeonOpenCompute";
-        repo = "llvm";
-        rev = "90d556e2f760c0b01c662b0f88e74b55944923b4";
-        sha256 = "0h93rvfi3bpd9bw5vyy3pbnld0m6c3pz03vwc13np44wn9zyqrxk";
-        name = "llvm-${tag}-src";
-      })
-      (fetchFromGitHub {
-        owner = "RadeonOpenCompute";
-        repo = "lld";
-        # rev = "${tag}";
-        rev = "e20dff7f5137e5a89675aa36a77a9a0c86366fd4";
-        sha256 = "1n2f7fga3fri1c3hscvvsaxkxvpmw2h0qyglf8yrybyzh6z91075";
-        name = "lld-${tag}-src";
-      })
-      (fetchFromGitHub {
-        owner = "RadeonOpenCompute";
-        repo = "ROCm-Device-Libs";
-        rev = "19dcce7b550db6892d9bc88adb25b4c8d91ea407";
-        sha256 = "0k3gl1j4wghw0hr427xayq3c65abja84y62y7w7rm4jmxn4lsz4s";
-        name = "ROCm-Device-Libs-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "KhronosGroup";
@@ -75,26 +37,51 @@ llvmPackages.stdenv.mkDerivation rec {
 
   sourceRoot = "ROCm-OpenCL-Runtime-${tag}-src";
 
+  # We end up re-building rocm-device-libs here because the
+  # rocm-opencl-runtime build couples itself so tightly to the
+  # rocm-device-libs build.
   postUnpack = ''
     chmod --recursive +w .
-    mv ROCm-OpenCL-Driver-${tag}-src ROCm-OpenCL-Runtime-${tag}-src/compiler/driver
-    mv llvm-${tag}-src ROCm-OpenCL-Runtime-${tag}-src/compiler/llvm
-    mv clang-${tag}-src ROCm-OpenCL-Runtime-${tag}-src/compiler/llvm/tools/clang
-    mv lld-${tag}-src ROCm-OpenCL-Runtime-${tag}-src/compiler/llvm/tools/lld
     mkdir ROCm-OpenCL-Runtime-${tag}-src/library/
-    mv ROCm-Device-Libs-${tag}-src ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
     mv OpenCL-ICD-Loader-b342ff7-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
+    cp -r ${rocm-device-libs.src} ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
+    chmod --recursive +w ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
   '';
 
+  # - let the rocm-device-libs build find our pre-built clang
+  # - fix the ICD installation path for NixOS
+  # - skip building llvm and rocm-opencl-driver, but
+  #   lets this build find the private header files it needs from
+  #   those builds.
+  # - fix a clang header path
+  # - explicitly link libamdocl64.so to everything it
+  #   needs from lld, llvm, and clang.
   patchPhase = ''
-    sed -e 's/enable_testing()//' \
-        -e 's@add_subdirectory(src/unittest)@@' \
-        -i compiler/driver/CMakeLists.txt
+    sed 's|set (CMAKE_OCL_COMPILER ''${LLVM_TOOLS_BINARY_DIR}/clang)|set (CMAKE_OCL_COMPILER ${rocm-clang}/bin/clang)|' -i library/amdgcn/OCL.cmake
+
     sed 's,"/etc/OpenCL/vendors/","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
+
+    sed -e 's|add_subdirectory(compiler/llvm)|find_package(Clang REQUIRED CONFIG)|' \
+        -e 's|add_subdirectory(compiler/driver)|include_directories(${rocm-opencl-driver.src}/src)|' \
+        -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
+        -i CMakeLists.txt
+
+    sed 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/7.0.0/include/opencl-c.h|g' -i runtime/device/rocm/CMakeLists.txt
+
+    sed 's|\(target_link_libraries(amdocl64 [^)]*\)|\1 lldELF lldCommon LLVMDebugInfoDWARF LLVMAMDGPUCodeGen LLVMAMDGPUAsmParser LLVMAMDGPUDisassembler LLVMX86CodeGen LLVMX86AsmParser clangFrontend clangCodeGen|' -i api/opencl/amdocl/CMakeLists.txt
   '';
+
+  cmakeFlags = [
+    "-DLLVM_DIR=${rocm-llvm.out}/lib/cmake/llvm"
+    "-DClang_DIR=${rocm-clang-unwrapped}/lib/cmake/clang"
+    "-DLLD_INCLUDE_DIR=${rocm-lld}/include"
+    "-DAMDGPU_TARGET_TRIPLE='amdgcn-amd-amdhsa'"
+  ];
 
   enableParallelBuilding = true;
-  buildInputs = [ cmake rocr mesa_noglu python2 libX11 ];
+  buildInputs = [ cmake rocr rocm-llvm rocm-lld rocm-device-libs
+                  rocm-clang rocm-clang-unwrapped rocm-opencl-driver
+                  mesa_noglu python2 libX11 ];
 
   #cmakeBuildType = "Debug";
   dontStrip = true;
