@@ -1,4 +1,4 @@
-# Radeon Open Compute packages for NixOS
+# Radeon Open Compute (1.9.0) packages for NixOS
 
 ## Installation
 
@@ -37,3 +37,7 @@ tested, and is not guaranteed to work.
 ## Hardware support
 
 So far, this has only been tested with a Radeon Vega Frontier Edition and an RX 580.  Other cards supported by the upstream ROCm should also work, but have not been tested. Please let us know if we can expand the list of expected-to-work hardware!
+
+## Highlights of Included Software
+
+Libraries and compilers for: [OpenCL](https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime), [HCC](https://github.com/RadeonOpenCompute/hcc), and [HIP](https://github.com/ROCm-Developer-Tools/HIP).
