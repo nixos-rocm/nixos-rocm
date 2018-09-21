@@ -155,4 +155,8 @@ with pkgs;
   };
 
   rocm-smi = callPackage ./tools/rocm-smi { };
+
+  rocm-bandwidth = callPackage ./tools/rocm-bandwidth {
+    inherit (self) roct rocr;
+  };
 }
