@@ -67,6 +67,7 @@ with pkgs;
   # Userspace ROC stack
   roct = callPackage ./development/libraries/roct.nix {};
   rocr = callPackage ./development/libraries/rocr {};
+  rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {};
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
