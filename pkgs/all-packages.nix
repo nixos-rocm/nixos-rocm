@@ -187,4 +187,8 @@ with pkgs;
     inherit (python2Packages) python;
   };
 
+  rccl = callPackage ./development/libraries/rccl {
+    inherit (self) rocm-cmake hcc hip;
+  };
+
 }
