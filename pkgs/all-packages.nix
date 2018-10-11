@@ -191,4 +191,11 @@ with pkgs;
     inherit (self) rocm-cmake hcc hip;
   };
 
+  rocrand = callPackage ./development/libraries/rocrand {
+    inherit (self) rocm-cmake rocminfo hcc hip rocr;
+  };
+  rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
+    inherit (self) rocr hip rocrand;
+    inherit (python3Packages) buildPythonPackage numpy;
+  };
 }
