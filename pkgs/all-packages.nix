@@ -178,4 +178,13 @@ with pkgs;
     inherit (self) rocr rocminfo hcc hip rocm-cmake;
   };
 
+  rocblas-tensile = callPackage ./development/libraries/rocblas/tensile.nix {
+    inherit (python2Packages) buildPythonPackage pyyaml;
+  };
+
+  rocblas = callPackage ./development/libraries/rocblas {
+    inherit (self) rocm-cmake hcc hip rocminfo rocr rocblas-tensile;
+    inherit (python2Packages) python;
+  };
+
 }
