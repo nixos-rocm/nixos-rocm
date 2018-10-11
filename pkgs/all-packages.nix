@@ -160,4 +160,18 @@ with pkgs;
   rocm-bandwidth = callPackage ./tools/rocm-bandwidth {
     inherit (self) roct rocr;
   };
+
+  # MIOpen
+
+  miopengemm = callPackage ./development/libraries/miopengemm {
+    inherit (self) rocm-cmake rocm-opencl-runtime hcc;
+  };
+  miopen-cl = callPackage ./development/libraries/miopen {
+    inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
+                   clang-ocl miopengemm hip;
+  };
+  miopen-hip = self.miopen-cl.override {
+    useHip = true;
+  };
+
 }
