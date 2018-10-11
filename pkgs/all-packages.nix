@@ -174,4 +174,8 @@ with pkgs;
     useHip = true;
   };
 
+  rocfft = callPackage ./development/libraries/rocfft {
+    inherit (self) rocr rocminfo hcc hip rocm-cmake;
+  };
+
 }
