@@ -36,6 +36,8 @@ stdenv.mkDerivation {
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,' \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
+        -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
+        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.version}";,' \
         -i bin/hipcc
     sed -i 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' -i bin/hipconfig
 
