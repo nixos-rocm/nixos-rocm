@@ -1,20 +1,28 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig, writeText, python
-, rocm-device-libs, rocr, file, rocminfo, rocm-lld
-, hcc-llvm, hcc-clang, hcc-clang-unwrapped, hcc-compiler-rt }:
+{ stdenv, fetchFromGitHub, cmake, pkgconfig, writeText, python, perl
+, rocm-device-libs, rocr, file, rocminfo, hcc-lld
+, hcc-llvm, hcc-clang, hcc-clang-unwrapped, hcc-compiler-rt
+
+# This bug exists in the 1.9.x branch, but is fixed on master
+, patch-kalmar-aligned-alloc ? true
+}:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "1.9.0";
+  version = "1.9.1";
   tag = "roc-${version}";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     # 1.9.x branch
-    rev = "ec91fedbbe48d1c621ea08a493bc11869a10eedd";
+    rev = "7685003168c90d14303d6c494b9b8dccff927459";
     sha256 = "0ym9s1w3vml7xin0lq9z0y28lsdag36dhgwx06y6kdnsfb4nm7xf";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
   buildInputs = [ rocr ];
+  preConfigure = ''
+    export LLVM_DIR=${hcc-llvm}/lib/cmake/llvm
+    export CMAKE_PREFIX_PATH=${hcc-llvm}/lib/cmake/llvm:$CMAKE_PREFIX_PATH
+  '';
   cmakeFlags = [
     "-DROCM_ROOT=${rocr}"
     "-DROCM_DEVICE_LIB_DIR=${rocm-device-libs}/lib"
@@ -34,11 +42,12 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     for f in $(find lib -name '*.in'); do
       sed -e 's_#!/bin/bash_#!${stdenv.shell}_' \
+          -e 's_#!/usr/bin/perl_#!${perl}/bin/perl_' \
           -e 's|^CLANG=$BINDIR/hcc|CLANG=${hcc-clang}/bin/clang++|' \
           -e 's|^LLVM_LINK=.*|LLVM_LINK=${hcc-llvm}/bin/llvm-link|' \
           -e 's|^LINK=.*|LINK=${hcc-llvm}/bin/llvm-link|' \
           -e 's|^LTO=.*|LTO=${hcc-llvm}/bin/llvm-lto|' \
-          -e 's|^LLD=.*|LLD=${rocm-lld}/bin/ld.lld|' \
+          -e 's|^LLD=.*|LLD=${hcc-lld}/bin/ld.lld|' \
           -e 's|^OPT=.*|OPT=${hcc-llvm}/bin/opt|' \
           -e 's|^LLVM_AS=.*|LLVM_AS=${hcc-llvm}/bin/llvm-as|' \
           -e 's|^LLVM_DIS=.*|LLVM_DIS=${hcc-llvm}/bin/llvm-dis|' \
@@ -49,10 +58,13 @@ stdenv.mkDerivation rec {
     sed -e 's|BINDIR=$(dirname $0)|BINDIR=${hcc-llvm}/bin|' \
         -e "s|EMBED=\$BINDIR/clamp-embed|EMBED=$out/bin/clamp-embed|" \
         -i lib/clamp-device.in
-
+  '' + stdenv.lib.optionalString patch-kalmar-aligned-alloc ''
     sed 's/\(posix_memalign(&memptr, alignment, size)\)/(void)\1/' -i include/kalmar_aligned_alloc.h
-
-    sed -e 's|SET(LOCAL_LLVM_INCLUDE compiler/include)|SET(LOCAL_LLVM_INCLUDE   ${hcc-llvm.src}/include)|' \
+  '' + ''
+    sed -e 's|\(set(LLVM_SRC \).*|\1"${hcc-llvm.src}")|' \
+        -e '\|set(LLVM_ROOT .*|d' \
+        -e 's|SET(LOCAL_LLVM_INCLUDE compiler/include)|SET(LOCAL_LLVM_INCLUDE   ${hcc-llvm.src}/include)|' \
+        -e 's|\(find_package(LLVM REQUIRED CONFIG PATHS \)''${CMAKE_BINARY_DIR}/compiler NO_DEFAULT_PATH)|\1${hcc-llvm})|' \
         -e '/add_subdirectory(cmake-tests)/d' \
         -e '/add_subdirectory(''${CLANG_SRC_DIR})/d' \
         -e '/get_directory_property(CLANG_VERSION DIRECTORY clang DEFINITION CLANG_VERSION)/d' \
