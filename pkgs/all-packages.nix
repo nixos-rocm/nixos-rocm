@@ -206,4 +206,8 @@ with pkgs;
     inherit (self) rocr hip rocrand;
     inherit (python3Packages) buildPythonPackage numpy;
   };
+
+  amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
+  amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
+  cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {};
 }
