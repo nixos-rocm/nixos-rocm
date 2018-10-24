@@ -169,23 +169,6 @@ with pkgs;
     inherit (self) roct rocr;
   };
 
-  # MIOpen
-
-  miopengemm = callPackage ./development/libraries/miopengemm {
-    inherit (self) rocm-cmake rocm-opencl-runtime hcc;
-  };
-  miopen-cl = callPackage ./development/libraries/miopen {
-    inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
-                   clang-ocl miopengemm hip;
-  };
-  miopen-hip = self.miopen-cl.override {
-    useHip = true;
-  };
-
-  rocfft = callPackage ./development/libraries/rocfft {
-    inherit (self) rocr rocminfo hcc hip rocm-cmake;
-  };
-
   rocblas-tensile = callPackage ./development/libraries/rocblas/tensile.nix {
     inherit (python2Packages) buildPythonPackage pyyaml;
   };
@@ -193,6 +176,23 @@ with pkgs;
   rocblas = callPackage ./development/libraries/rocblas {
     inherit (self) rocm-cmake hcc hip rocminfo rocr rocblas-tensile;
     inherit (python2Packages) python;
+  };
+
+  # MIOpen
+
+  miopengemm = callPackage ./development/libraries/miopengemm {
+    inherit (self) rocm-cmake rocm-opencl-runtime hcc;
+  };
+  miopen-cl = callPackage ./development/libraries/miopen {
+    inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
+                   clang-ocl miopengemm hip rocblas;
+  };
+  miopen-hip = self.miopen-cl.override {
+    useHip = true;
+  };
+
+  rocfft = callPackage ./development/libraries/rocfft {
+    inherit (self) rocr rocminfo hcc hip rocm-cmake;
   };
 
   rccl = callPackage ./development/libraries/rccl {
