@@ -1,0 +1,23 @@
+diff -ruN orig/lib/CodeGen/TargetInfo.cpp patched/lib/CodeGen/TargetInfo.cpp
+--- orig/lib/CodeGen/TargetInfo.cpp	1969-12-31 19:00:01.000000000 -0500
++++ patched/lib/CodeGen/TargetInfo.cpp	2018-10-23 15:33:47.640818323 -0400
+@@ -7683,11 +7683,15 @@
+ 
+   const auto *FlatWGS = FD->getAttr<AMDGPUFlatWorkGroupSizeAttr>();
+   if (ReqdWGS || FlatWGS) {
+-    llvm::APSInt min = getConstexprInt(FlatWGS->getMin(), FD->getASTContext());
+-    llvm::APSInt max = getConstexprInt(FlatWGS->getMax(), FD->getASTContext());
++    unsigned Min = 0, Max = 0;
++    if (FlatWGS != nullptr) {
++      llvm::APSInt min = getConstexprInt(FlatWGS->getMin(), FD->getASTContext());
++      llvm::APSInt max = getConstexprInt(FlatWGS->getMax(), FD->getASTContext());
+ 
+-    unsigned Min = min.getZExtValue();
+-    unsigned Max = std::max(min, max).getZExtValue();
++      Min = min.getZExtValue();
++      Max = std::max(min, max).getZExtValue();  
++    }
++    
+     if (ReqdWGS && Min == 0 && Max == 0)
+       Min = Max = ReqdWGS->getXDim() * ReqdWGS->getYDim() * ReqdWGS->getZDim();
+ 

@@ -21,9 +21,11 @@ stdenv.mkDerivation rec {
     "-DHCC_VERSION_MINOR=${stdenv.lib.versions.minor version}"
     "-DHCC_VERSION_PATCH=18373"
   ];
+  patches = [ ./flatwgs-not-null.patch ];
 
-  patchPhase = ''
+  preConfigure = ''
     sed 's,\(const char\* tmp = \)std::getenv("ROCM_ROOT");,\1"${rocminfo}";,' -i ./lib/Driver/ToolChains/Hcc.cpp
+    sed 's/FDecl->getName()/FDecl->getNameAsString()/' -i lib/Sema/SemaTemplateInstantiateDecl.cpp
   '';
 
   hardeningDisable = ["all"];
