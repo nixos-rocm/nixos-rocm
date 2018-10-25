@@ -210,4 +210,10 @@ with pkgs;
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
   amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
   cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {};
+
+  tensorflow-rocm = python36Packages.callPackage ./development/libraries/tensorflow/bin.nix {
+    inherit (self) hcc hcc-unwrapped hip miopen-hip miopengemm rocrand
+                   rocfft rocblas rocr rccl cxlactivitylogger;
+  };
+
 }
