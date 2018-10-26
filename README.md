@@ -1,4 +1,4 @@
-# Radeon Open Compute (1.9.0) packages for NixOS
+# Radeon Open Compute (1.9.1) packages for NixOS
 
 ## Installation
 
