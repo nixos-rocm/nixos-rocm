@@ -1,13 +1,13 @@
 { stdenv, fetchFromGitHub, cmake, perl, writeText
 , hcc, roct, rocr, rocminfo }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "hip";
-  version = "1.9.0";
+  version = "1.9.1";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
-    rev = "bbabadd9784503e7a0f885a6883084a95d6df199";
-    sha256 = "0rr91524cg5arbxcxs9mhl4ampl2shvswwbqskq7821rhzqcxp8n";
+    rev = "roc-${version}";
+    sha256 = "1y9zm9lh81gr18yrz9q6i247f5sn74yn6dnrz4k7v61swbg7i8rm";
   };
   nativeBuildInputs = [ cmake ];
   propagatedBuildInputs = [ hcc roct rocminfo ];
@@ -36,6 +36,8 @@ stdenv.mkDerivation {
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,' \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
+        -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
+        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.version}";,' \
         -i bin/hipcc
     sed -i 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' -i bin/hipconfig
 

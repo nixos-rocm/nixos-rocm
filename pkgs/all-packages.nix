@@ -39,11 +39,12 @@ with pkgs;
   });
 
   # ROCm LLVM, LLD, and Clang
-  rocm-llvm = callPackage ./development/compilers/llvm {
+  rocm-llvm = callPackage ./development/compilers/llvm rec {
+    version = "1.9.1";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "3db3ae1ab69a06c339df023412dba76135e3486a";
+      rev = "roc-${version}";
       sha256 = "1xgnca500z7fblnvy34m2zqpy2v2qcfz3pcjl0b6alj4rplk6w7b";
     };
   };
@@ -92,17 +93,21 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm {
     name = "hcc-llvm";
-    version = "2018-08-25";
+    version = "2018-09-25";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "009cb63e6e67f60303e7b11642113db848619871";
-      sha256 = "14cw9d6ywjnx8ik2qgx10fak0v2a3x8r3jn7skpdq814qhnklkvk";
+      rev = "9d804befafb8c7e974bcd5f0b371a0ba0fe644e9";
+      sha256 = "1imqb6g9lh3ph7mm5z0v37vnl1m0qjffsajxdmhxh1mjkd0f3xax";
     };
   };
-  hcc-clang-unwrapped = callPackage ./development/compilers/hcc-clang {
-    inherit (self) rocr hcc-llvm;
+  hcc-lld = callPackage ./development/compilers/hcc-lld {
+    inherit (self) hcc-llvm;
   };
+  hcc-clang-unwrapped = callPackage ./development/compilers/hcc-clang {
+    inherit (self) rocr hcc-llvm hcc-lld;
+  };
+
   hcc-clang = pkgs.wrapCCWith rec {
     cc = self.hcc-clang-unwrapped;
     extraPackages = [ libstdcxxHook ];
@@ -116,6 +121,7 @@ with pkgs;
       touch $out/nix-support/add-hardening.sh
     '';
   };
+
   hcc-compiler-rt = callPackage ./development/compilers/hcc-compiler-rt {
     inherit (self) hcc-llvm;
   };
@@ -123,10 +129,12 @@ with pkgs;
   # Now we build hcc itself using hcc-llvm, hcc-clang, and hcc-compiler-rt
   hcc-unwrapped = callPackage ./development/compilers/hcc {
     inherit (self) rocr rocm-device-libs rocminfo
-                   hcc-llvm hcc-clang-unwrapped hcc-clang hcc-compiler-rt;
+                   hcc-lld hcc-llvm hcc-clang-unwrapped hcc-clang
+                   hcc-compiler-rt;
   };
+
   hcc = pkgs.wrapCCWith rec {
-    isGNU = true;
+    isClang = true;
     cc = self.hcc-clang-unwrapped;
     extraPackages = [ libstdcxxHook self.hcc-unwrapped ];
     extraBuildCommands = ''
@@ -160,4 +168,46 @@ with pkgs;
   rocm-bandwidth = callPackage ./tools/rocm-bandwidth {
     inherit (self) roct rocr;
   };
+
+  rocblas-tensile = callPackage ./development/libraries/rocblas/tensile.nix {
+    inherit (python2Packages) buildPythonPackage pyyaml;
+  };
+
+  rocblas = callPackage ./development/libraries/rocblas {
+    inherit (self) rocm-cmake hcc hip rocminfo rocr rocblas-tensile;
+    inherit (python2Packages) python;
+  };
+
+  # MIOpen
+
+  miopengemm = callPackage ./development/libraries/miopengemm {
+    inherit (self) rocm-cmake rocm-opencl-runtime hcc;
+  };
+  miopen-cl = callPackage ./development/libraries/miopen {
+    inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
+                   clang-ocl miopengemm hip rocblas;
+  };
+  miopen-hip = self.miopen-cl.override {
+    useHip = true;
+  };
+
+  rocfft = callPackage ./development/libraries/rocfft {
+    inherit (self) rocr rocminfo hcc hip rocm-cmake;
+  };
+
+  rccl = callPackage ./development/libraries/rccl {
+    inherit (self) rocm-cmake hcc hip;
+  };
+
+  rocrand = callPackage ./development/libraries/rocrand {
+    inherit (self) rocm-cmake rocminfo hcc hip rocr;
+  };
+  rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
+    inherit (self) rocr hip rocrand;
+    inherit (python3Packages) buildPythonPackage numpy;
+  };
+
+  amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
+  amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
+  cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {};
 }

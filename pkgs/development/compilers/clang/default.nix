@@ -5,7 +5,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang";
-    rev = "3188167ee4cc56e6e7cd699e2afc231f79fefb40";
+    rev = "roc-1.9.1";
     sha256 = "06ph9x757rxy23wfw7lalxp5phqlj53ijbwxf7lasy9kpx2y5xq6";
   };
   nativeBuildInputs = [ cmake python ];
