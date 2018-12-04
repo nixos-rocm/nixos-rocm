@@ -5,7 +5,7 @@
 , enableManpages ? false
 , enableSharedLibraries ? true
 , name ? "rocm-llvm"
-, version ? "2018-09-17"
+, version ? "1.9.2"
 , src}:
 stdenv.mkDerivation rec {
   inherit name version src;

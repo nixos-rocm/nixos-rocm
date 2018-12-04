@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, pciutils, numactl }:
 
 stdenv.mkDerivation rec {
-  version = "1.9.1";
+  version = "1.9.2";
   name = "roct";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";

@@ -1,13 +1,13 @@
 { stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake }:
 
 stdenv.mkDerivation rec {
-  version = "2018-07-11";
+  version = "2018-11-12";
   name = "rocminfo";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "rocminfo";
-    rev = "6ce80261127b15f4f226bb89c4182603420d3e6e";
-    sha256 = "1jlvdqlqg49r4lpw14gmix1790pwkhyvhjnmfw06phvgwvm3q46v";
+    rev = "1bb0ccc731f772bb1a553e37b41d06eb0a684926";
+    sha256 = "0mrk31ysszk04841wak63zlrvmfjhw4hn0yfm3258q7vi080785z";
   };
 
   enableParallelBuilding = true;

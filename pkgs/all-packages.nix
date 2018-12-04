@@ -40,7 +40,7 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "1.9.1";
+    version = "1.9.2";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
@@ -93,12 +93,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm {
     name = "hcc-llvm";
-    version = "2018-09-25";
+    version = "2018-10-23";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "9d804befafb8c7e974bcd5f0b371a0ba0fe644e9";
-      sha256 = "1imqb6g9lh3ph7mm5z0v37vnl1m0qjffsajxdmhxh1mjkd0f3xax";
+      rev = "c57b310200941724972aa5c5c90cbc151d1978f4";
+      sha256 = "0pg3q3kxfrkl3qsb70hk9qpyi6qc9qisn3zwwwwli6fdkr79kfhi";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {

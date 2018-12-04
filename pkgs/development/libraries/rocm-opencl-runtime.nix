@@ -15,7 +15,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "1.9.1";
+  version = "1.9.2";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -23,15 +23,15 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "1vrs1810w8xhh839agqvb153xlg78azfz3wvpdgr3g2ic7hfs7nv";
+        sha256 = "1b79qs8pg9zxsvqhzynh84fwb2wagkmg5s4nnp4pj999s1rkvjlb";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "KhronosGroup";
         repo = "OpenCL-ICD-Loader";
-        rev = "b342ff7b7f70a4b3f2cfc53215af8fa20adc3d86";
-        sha256 = "104l33xxras1cadn6xxkas8dl2ss6wi4dlqjqh103ww83g95108x";
-        name = "OpenCL-ICD-Loader-b342ff7-src";
+        rev = "261c1288aadd9dcc4637aca08332f603e6c13715";
+        sha256 = "1dg8qnsw5v96sz21xs6ayv5ih8zq5ng0l4mjcl1rm4cn75g0gz9k";
+        name = "OpenCL-ICD-Loader-261c128-src";
       })
     ];
 
@@ -43,7 +43,7 @@ stdenv.mkDerivation rec {
   postUnpack = ''
     chmod --recursive +w .
     mkdir ROCm-OpenCL-Runtime-${tag}-src/library/
-    mv OpenCL-ICD-Loader-b342ff7-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
+    mv OpenCL-ICD-Loader-261c128-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
     cp -r ${rocm-device-libs.src} ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
     chmod --recursive +w ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
   '';

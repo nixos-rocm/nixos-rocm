@@ -1,16 +1,16 @@
-# Radeon Open Compute (1.9.1) packages for NixOS
+# Radeon Open Compute (1.9.2) packages for NixOS
 
 ## Installation
 
 This overlay should work with the latest nixos-unstable channel. To use these
 packages, clone this repo somewhere and then add `(import /path/to/this/repo)`
-to `nixpkgs.overlays` in configuration.nix.
+to `nixpkgs.overlays` in `configuration.nix`.
 
 As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm stack.
 
 Add these lines to configuration.nix to enable the ROCm stack:
 ```
-  boot.kernelPackages = pkgs.linuxPackages_4_18;
+  boot.kernelPackages = pkgs.linuxPackages_4_19;
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
 ```

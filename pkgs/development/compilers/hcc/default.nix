@@ -7,14 +7,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "1.9.1";
-  tag = "roc-${version}";
+  version = "1.9.2";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
-    # 1.9.x branch
-    rev = "7685003168c90d14303d6c494b9b8dccff927459";
-    sha256 = "0ym9s1w3vml7xin0lq9z0y28lsdag36dhgwx06y6kdnsfb4nm7xf";
+    rev = "roc-${version}";
+    sha256 = "0acirfisa7pmki8l330ws3f5k72vfc2js5ppi84g96vp0za6sffg";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
@@ -78,6 +76,10 @@ stdenv.mkDerivation rec {
     sed 's|set(CMAKE_CXX_COMPILER "''${PROJECT_BINARY_DIR}/compiler/bin/clang++")|set(CMAKE_CXX_COMPILER ${hcc-clang}/bin/clang++)|' -i scripts/cmake/MCWAMP.cmake
     sed 's|CLANG=$BINDIR/hcc|CLANG=${hcc-clang}/bin/clang++|' -i lib/hc-host-assemble.in
     sed 's|LLVM_DIS=$BINDIR/llvm-dis|${hcc-llvm}/bin/llvm-dis|' -i lib/hc-kernel-assemble.in
+
+    sed -e "s;new RuntimeImpl(\"libmcwamp_\(hsa\|cpu\).so\";new RuntimeImpl(\"$out/lib/libmcwamp_\1.so\";" \
+        -e "s|, \"libmcwamp_hsa.so\",|, \"$out/lib/libmcwamp_hsa.so\",|" \
+        -i lib/mcwamp.cpp
   '';
 
   # Scripts like hc-host-assemble and hc-kernel-assemble are placed in

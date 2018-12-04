@@ -2,7 +2,7 @@
 , rocm-llvm, rocm-lld, rocm-clang, rocr }:
 stdenv.mkDerivation rec {
   name = "rocm-device-libs";
-  version = "1.9.1";
+  version = "1.9.2";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-Device-Libs";
