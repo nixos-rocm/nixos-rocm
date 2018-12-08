@@ -3,13 +3,13 @@
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
-  version = "0.6.0";
+  version = "0.7.2-2018-11-29";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rccl";
     # rev = version;
-    rev = "0b7f928e774b4847ee39ab9131907649c055ad69";
-    sha256 = "0j4bfd42wvxhvviyawy9nn7s8qc7046mnci90i4b7yy86mrxzp15";
+    rev = "76cd53df7552ccf22e17f41788a68a5dbdbe445f";
+    sha256 = "0cd2gfjwpx45vnixgvca19a7fibm6kf21yha8bimq5j2bv625arp";
   };
   patches = [(fetchpatch {
     name = "optional-tests.patch";
