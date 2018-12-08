@@ -154,12 +154,10 @@ with pkgs;
   };
 
   hip = callPackage ./development/compilers/hip {
-    stdenv = pkgs.overrideCC stdenv self.hcc;
     inherit (self) roct rocr rocminfo hcc;
   };
 
   clang-ocl = callPackage ./development/compilers/clang-ocl {
-    stdenv = pkgs.overrideCC stdenv self.hcc;
     inherit (self) rocm-cmake rocm-opencl-runtime hcc;
   };
 

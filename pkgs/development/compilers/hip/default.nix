@@ -20,6 +20,8 @@ stdenv.mkDerivation rec {
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
     "-DHIP_VERSION_PATCH=18353"
+    "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
+    "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
   ];
 
   # - fix bash paths

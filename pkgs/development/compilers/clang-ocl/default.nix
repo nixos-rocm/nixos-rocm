@@ -15,6 +15,8 @@ stdenv.mkDerivation {
   cmakeFlags = [
     "-DOPENCL_ROOT=${rocm-opencl-runtime}"
     "-DCLINFO=${rocm-opencl-runtime}/bin/clinfo"
+    "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
+    "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
   ];
   patchPhase = ''
     sed -e 's,^BITCODE_DIR=.*$,BITCODE_DIR=${rocm-device-libs}/lib,' \
