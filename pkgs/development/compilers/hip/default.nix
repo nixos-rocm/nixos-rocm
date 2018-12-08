@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,' \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
-        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.version}";,' \
+        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
         -i bin/hipcc
     sed -i 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' -i bin/hipconfig
 
