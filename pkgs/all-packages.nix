@@ -208,4 +208,8 @@ with pkgs;
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
   amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
   cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {};
+
+  clpeak = pkgs.callPackage ./tools/clpeak { 
+    opencl = self.rocm-opencl-runtime; 
+  };
 }
