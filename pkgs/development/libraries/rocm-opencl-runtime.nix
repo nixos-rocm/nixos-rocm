@@ -90,5 +90,6 @@ stdenv.mkDerivation rec {
     patchelf --set-rpath "$out/lib" $out/bin/clinfo
     ln -s $out/lib/libOpenCL.so.1.2 $out/lib/libOpenCL.so.1
     ln -s $out/lib/libOpenCL.so.1 $out/lib/libOpenCL.so
+    ln -s $out/include/opencl2.2/CL $out/include/CL
   '';
 }
