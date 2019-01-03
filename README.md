@@ -1,4 +1,4 @@
-# Radeon Open Compute (1.9.2) packages for NixOS
+# Radeon Open Compute (2.0.0) packages for NixOS
 
 ## Installation
 
@@ -40,4 +40,4 @@ So far, this has only been tested with a Radeon Vega Frontier Edition and an RX 
 
 ## Highlights of Included Software
 
-Libraries and compilers for: [OpenCL](https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime), [HCC](https://github.com/RadeonOpenCompute/hcc), and [HIP](https://github.com/ROCm-Developer-Tools/HIP).
+Libraries and compilers for: [OpenCL](https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime), [HCC](https://github.com/RadeonOpenCompute/hcc), [HIP](https://github.com/ROCm-Developer-Tools/HIP), and [TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream).
