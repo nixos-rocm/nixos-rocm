@@ -3,7 +3,7 @@
 stdenv.mkDerivation rec {
   version = "2.0.0";
   name = "rocm-opencl-icd";
-  src = writeText "amdocl64.icd" "${rocm-opencl-runtime}/lib/libamdocl64.so";
+  src = writeText "amdocl64.icd" "${rocm-opencl-runtime}/lib/x86_64/libamdocl64.so";
   unpackPhase = ":";
   installPhase = ''
     mkdir -p $out/etc/OpenCL/vendors
