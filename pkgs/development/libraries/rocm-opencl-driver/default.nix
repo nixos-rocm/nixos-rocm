@@ -18,6 +18,6 @@ stdenv.mkDerivation rec {
     sed -e 's|include(AddLLVM)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
         -e 's|add_subdirectory(src/unittest)||' \
         -i CMakeLists.txt
-    sed 's|\(target_link_libraries(roc-cl opencl_driver\))|find_package(Clang CONFIG REQUIRED)\n\1 lldELF lldCommon clangCodeGen clangFrontend LLVMX86CodeGen LLVMX86AsmParser)|' -i src/roc-cl/CMakeLists.txt
+    sed 's|\(target_link_libraries(roc-cl opencl_driver\))|find_package(Clang CONFIG REQUIRED)\n\1 lldELF lldCommon clangCodeGen clangFrontend)|' -i src/roc-cl/CMakeLists.txt
   '';
 }

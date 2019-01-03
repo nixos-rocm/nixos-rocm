@@ -68,7 +68,7 @@ stdenv.mkDerivation rec {
 
     sed 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h|g' -i runtime/device/rocm/CMakeLists.txt
 
-    sed 's|\(target_link_libraries(amdocl64 [^)]*\)|\1 lldELF lldCommon LLVMDebugInfoDWARF LLVMAMDGPUCodeGen LLVMAMDGPUAsmParser LLVMAMDGPUDisassembler LLVMX86CodeGen LLVMX86AsmParser clangFrontend clangCodeGen|' -i api/opencl/amdocl/CMakeLists.txt
+    sed 's|\(target_link_libraries(amdocl64 [^)]*\)|\1 lldELF lldCommon clangFrontend clangCodeGen LLVMDebugInfoDWARF|' -i api/opencl/amdocl/CMakeLists.txt
   '';
 
   cmakeFlags = [
