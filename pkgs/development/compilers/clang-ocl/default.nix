@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
     sed -e 's,^BITCODE_DIR=.*$,BITCODE_DIR=${rocm-device-libs}/lib,' \
         -e 's,^CLANG=.*$,CLANG=${hcc}/bin/clang,' \
         -e 's,^LLVM_LINK=.*$,LLVM_LINK=${rocm-llvm}/bin/llvm-link,' \
-        -e "s,\''${OPENCL_ROOT}/include/opencl-c.h,${hcc-clang-unwrapped}/lib/clang/7.0.0/include/opencl-c.h," \
+        -e "s,\''${OPENCL_ROOT}/include/opencl-c.h,${hcc-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h," \
         -e 's,#!/bin/bash,#!${stdenv.shell},' \
         -i clang-ocl.in
   '';
