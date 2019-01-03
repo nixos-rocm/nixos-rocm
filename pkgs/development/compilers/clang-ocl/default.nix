@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
         -e 's,^LLVM_LINK=.*$,LLVM_LINK=${rocm-llvm}/bin/llvm-link,' \
         -e "s,\''${OPENCL_ROOT}/include/opencl-c.h,${hcc-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h," \
         -e 's,#!/bin/bash,#!${stdenv.shell},' \
+        -e '/$BITCODE_DIR\/irif.amdgcn.bc \\/d' \
         -i clang-ocl.in
   '';
 }
