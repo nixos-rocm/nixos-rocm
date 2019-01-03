@@ -40,12 +40,12 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "1.9.2";
+    version = "2.0.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-${version}";
-      sha256 = "1xgnca500z7fblnvy34m2zqpy2v2qcfz3pcjl0b6alj4rplk6w7b";
+      sha256 = "1by29sga3gcvynscpyq62f3y649f9yqvpgnzng2w5kmhkpb9v1zs";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld { };
@@ -56,7 +56,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/7.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/8.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
@@ -69,22 +69,22 @@ with pkgs;
   roct = callPackage ./development/libraries/roct.nix {};
   rocr = callPackage ./development/libraries/rocr {};
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
+  rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {};
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
   };
-  rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
 
   # OpenCL stack
   rocm-opencl-driver = callPackage ./development/libraries/rocm-opencl-driver {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
     inherit (self) rocm-llvm rocm-clang-unwrapped;
   };
-  rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {};
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
     inherit (self) rocm-clang rocm-clang-unwrapped;
   };
+  rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {};
 
   # hcc relies on submodules for llvm, clang, and compiler-rt at
   # specific revisions that do not track ROCm releases. We break the
@@ -93,12 +93,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm {
     name = "hcc-llvm";
-    version = "2018-10-23";
+    version = "2018-11-20";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "c57b310200941724972aa5c5c90cbc151d1978f4";
-      sha256 = "0pg3q3kxfrkl3qsb70hk9qpyi6qc9qisn3zwwwwli6fdkr79kfhi";
+      rev = "6ae08f76c9c619f1aa3c7a16c29777aaeadbe1e1";
+      sha256 = "0iciq28hgz64lh896vpd8sg0x0rw2x9nyg8vkh153p6jryx3hqx1";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {
@@ -114,7 +114,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/7.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/8.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       rm $out/nix-support/add-hardening.sh
@@ -154,7 +154,7 @@ with pkgs;
   };
 
   hip = callPackage ./development/compilers/hip {
-    inherit (self) roct rocr rocminfo hcc;
+    inherit (self) roct rocr rocminfo hcc hcc-unwrapped;
   };
 
   clang-ocl = callPackage ./development/compilers/clang-ocl {
@@ -181,10 +181,13 @@ with pkgs;
   miopengemm = callPackage ./development/libraries/miopengemm {
     inherit (self) rocm-cmake rocm-opencl-runtime hcc;
   };
+
+  # Currently broken
   miopen-cl = callPackage ./development/libraries/miopen {
     inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
                    clang-ocl miopengemm hip rocblas;
   };
+
   miopen-hip = self.miopen-cl.override {
     useHip = true;
   };

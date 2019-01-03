@@ -15,7 +15,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "1.9.2";
+  version = "2.0.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "1b79qs8pg9zxsvqhzynh84fwb2wagkmg5s4nnp4pj999s1rkvjlb";
+        sha256 = "1wrj84p899n07w2x2hb4qvzif1c7xxpgzrd8ikg1ys7z66qcb6vc";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
@@ -57,7 +57,7 @@ stdenv.mkDerivation rec {
   # - explicitly link libamdocl64.so to everything it
   #   needs from lld, llvm, and clang.
   patchPhase = ''
-    sed 's|set (CMAKE_OCL_COMPILER ''${LLVM_TOOLS_BINARY_DIR}/clang)|set (CMAKE_OCL_COMPILER ${rocm-clang}/bin/clang)|' -i library/amdgcn/OCL.cmake
+    sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
 
     sed 's,"/etc/OpenCL/vendors/","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
 
@@ -66,7 +66,7 @@ stdenv.mkDerivation rec {
         -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
         -i CMakeLists.txt
 
-    sed 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/7.0.0/include/opencl-c.h|g' -i runtime/device/rocm/CMakeLists.txt
+    sed 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h|g' -i runtime/device/rocm/CMakeLists.txt
 
     sed 's|\(target_link_libraries(amdocl64 [^)]*\)|\1 lldELF lldCommon LLVMDebugInfoDWARF LLVMAMDGPUCodeGen LLVMAMDGPUAsmParser LLVMAMDGPUDisassembler LLVMX86CodeGen LLVMX86AsmParser clangFrontend clangCodeGen|' -i api/opencl/amdocl/CMakeLists.txt
   '';

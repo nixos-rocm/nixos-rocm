@@ -1,3 +1,12 @@
+# This is adapted from the nixpkgs tensorflow wheel-based derivation.
+# Usage note: This derivation includes a `setupHook` that sets
+# `LD_PRELOAD` to avoid a crash due to conflicting libstdc++
+# definitions. To benefit from this hook, add `tensorflow-rocm` to a
+# `nix-shell` as its own entity rather than among a list of packages
+# in a `withPackages` call. For example:
+# `nix-shell -p 'python36.withPackages (ps: [ps.jupyter])' -p tensorflow-rocm`
+# 
+# You can then start `jupyter-notebook` as normal.
 { stdenv
 , lib
 , fetchurl

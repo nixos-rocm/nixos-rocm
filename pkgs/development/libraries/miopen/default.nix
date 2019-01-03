@@ -4,16 +4,20 @@
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
-  version = "1.6.0";
+  version = "1.7.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpen";
     rev = version;
-    sha256 = "0vlxhxx682kpirdmn45fjnv24fv3dgvwq2s3vyvwrl6dky0vjk5d";
+    sha256 = "023bfikpz2xzfpkfl7jp1cjv9yfmpq7xs8zbavaqgs90gi1l7kxh";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
   buildInputs = [ rocr half openssl boost rocblas miopengemm ]
-    ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl]);
+    ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl hip]);
+
+  preConfigure = stdenv.lib.optionalString (!useHip) ''
+    NIX_CFLAGS_COMPILE="-D__HIP_PLATFORM_HCC__ ''${NIX_CFLAGS_COMPILE}"
+  '';
 
   cmakeFlags = [
     "-DCMAKE_PREFIX_PATH=${hcc};${hip};${clang-ocl}"

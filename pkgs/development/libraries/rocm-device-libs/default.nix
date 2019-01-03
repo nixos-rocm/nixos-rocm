@@ -2,12 +2,12 @@
 , rocm-llvm, rocm-lld, rocm-clang, rocr }:
 stdenv.mkDerivation rec {
   name = "rocm-device-libs";
-  version = "1.9.2";
+  version = "2.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-Device-Libs";
     rev = "roc-${version}";
-    sha256 = "127cqvgzha54pr081fkhcfcwnfb6mwwmm4i8cmvf4jdmd24wci0a";
+    sha256 = "1wfdx0ikwlsiqkpkvm9rggbjjb064df3hzg2dwr5wd64gy61dy8p";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ rocm-llvm rocm-lld rocm-clang rocr ];
@@ -17,6 +17,6 @@ stdenv.mkDerivation rec {
     "-DLLVM_DIR=${rocm-llvm}/lib/cmake/llvm"
   ];
   patchPhase = ''
-  sed 's|set (CMAKE_OCL_COMPILER ''${LLVM_TOOLS_BINARY_DIR}/clang)|set (CMAKE_OCL_COMPILER ${rocm-clang}/bin/clang)|' -i OCL.cmake
+  sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i OCL.cmake
   '';
 }

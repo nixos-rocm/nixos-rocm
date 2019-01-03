@@ -1,18 +1,15 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, writeText, python, perl
 , rocm-device-libs, rocr, file, rocminfo, hcc-lld
 , hcc-llvm, hcc-clang, hcc-clang-unwrapped, hcc-compiler-rt
-
-# This bug exists in the 1.9.x branch, but is fixed on master
-, patch-kalmar-aligned-alloc ? true
 }:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "1.9.2";
+  version = "2.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     rev = "roc-${version}";
-    sha256 = "0acirfisa7pmki8l330ws3f5k72vfc2js5ppi84g96vp0za6sffg";
+    sha256 = "0m5h7yqxp3nqg9dxk6v5nl3dyz029hb1rmjx2jri4rk4g3fw3r6p";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
@@ -56,9 +53,6 @@ stdenv.mkDerivation rec {
     sed -e 's|BINDIR=$(dirname $0)|BINDIR=${hcc-llvm}/bin|' \
         -e "s|EMBED=\$BINDIR/clamp-embed|EMBED=$out/bin/clamp-embed|" \
         -i lib/clamp-device.in
-  '' + stdenv.lib.optionalString patch-kalmar-aligned-alloc ''
-    sed 's/\(posix_memalign(&memptr, alignment, size)\)/(void)\1/' -i include/kalmar_aligned_alloc.h
-  '' + ''
     sed -e 's|\(set(LLVM_SRC \).*|\1"${hcc-llvm.src}")|' \
         -e '\|set(LLVM_ROOT .*|d' \
         -e 's|SET(LOCAL_LLVM_INCLUDE compiler/include)|SET(LOCAL_LLVM_INCLUDE   ${hcc-llvm.src}/include)|' \

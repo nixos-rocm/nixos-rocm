@@ -1,14 +1,14 @@
 { stdenv, fetchFromGitHub, cmake
 , rocm-cmake, rocm-opencl-runtime, rocm-device-libs, rocm-llvm, rocm-lld
 , hcc, hcc-clang-unwrapped }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "clang-ocl";
-  version = "2018-06-18";
+  version = "0.4.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang-ocl";
-    rev = "799713643b5591a3b877c586ef2c7fbc012af819";
-    sha256 = "172wn8drixzxv4rlz5i33l31ixbmkn1nx7asm697pa86nw2lwdm0";
+    rev = "${version}";
+    sha256 = "0498785cw8v68lamip4ly0c6pmadqr1m2hxl57la6p6lg80bf63v";
   };
   propagatedBuildInputs = [ rocm-lld ];
   nativeBuildInputs = [ cmake rocm-cmake rocm-opencl-runtime hcc ];

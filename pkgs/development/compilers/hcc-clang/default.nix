@@ -2,12 +2,12 @@
 , rocr, hcc-llvm, hcc-lld, rocminfo }:
 stdenv.mkDerivation rec {
   name = "hcc-clang-unwrapped";
-  version = "7.0.0";
+  version = "8.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc-clang-upgrade";
-    rev = "4ed1d60af7c26e833d6d4452ba526d2daaa6ed35";
-    sha256 = "0sgq9raza9k0ajyhr76bsr0bb5jch76q9ca8k3d26wh8j7fgf0c2";
+    rev = "6ec3c61e09fbb60373eaf5a40021eb862363ba2c";
+    sha256 = "01h0y2b66r97n6px1mn31zv7q45fs3pmpnglxqlk8643im1jsqi0";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-llvm hcc-lld ];
@@ -21,7 +21,6 @@ stdenv.mkDerivation rec {
     "-DHCC_VERSION_MINOR=${stdenv.lib.versions.minor version}"
     "-DHCC_VERSION_PATCH=18373"
   ];
-  patches = [ ./flatwgs-not-null.patch ];
 
   preConfigure = ''
     sed 's,\(const char\* tmp = \)std::getenv("ROCM_ROOT");,\1"${rocminfo}";,' -i ./lib/Driver/ToolChains/Hcc.cpp
