@@ -4,21 +4,22 @@
 , boost, gtest, fftw, fftwFloat }:
 stdenv.mkDerivation rec {
   name = "rocFFT";
-  version = "0.8.8";
+  version = "0.9.0-20190213";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocFFT";
-    rev = "v${version}";
-    sha256 = "0vjwn29ih8xmb15ikvzcchcy9nj9646jj818c7ks0y5hgkbm8ynj";
+    # rev = "v${version}";
+    rev = "273c18b2abc1a3e1e4ea6283178254d2760d2997";
+    sha256 = "00aimcpyxwnn5bbcrv16pm9ldmhncwsx7bkkm253x8r243x2v575";
   };
 
   # Building this package is very RAM intensive: individual clang
   # processes use over 6GB of RAM.
   enableParallelBuilding = false;
 
-  nativeBuildInputs = [ cmake rocm-cmake pkgconfig ];
-  buildInputs = [ hcc hip rocr ]
-    ++ stdenv.lib.optionals doCheck [ boost gtest fftwFloat fftw ];
+  nativeBuildInputs = [ cmake rocm-cmake pkgconfig rocminfo ];
+  buildInputs = [ hcc hip rocr boost ]
+    ++ stdenv.lib.optionals doCheck [ gtest fftwFloat fftw ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
     "-DHSA_HEADER=${rocr}/include"

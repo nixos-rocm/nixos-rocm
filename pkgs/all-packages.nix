@@ -40,12 +40,12 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.0.0";
+    version = "2.1.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-${version}";
-      sha256 = "1by29sga3gcvynscpyq62f3y649f9yqvpgnzng2w5kmhkpb9v1zs";
+      sha256 = "0a9na5576wi4xhlnkjrk4w57glsyfj0mvv2zs5w886yayrhcfphd";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld { };
@@ -93,12 +93,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm {
     name = "hcc-llvm";
-    version = "2018-11-20";
+    version = "2019-01-17";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "6ae08f76c9c619f1aa3c7a16c29777aaeadbe1e1";
-      sha256 = "0iciq28hgz64lh896vpd8sg0x0rw2x9nyg8vkh153p6jryx3hqx1";
+      rev = "6e349ce344586b4254654aea8f34444a13aedb67";
+      sha256 = "0a9na5576wi4xhlnkjrk4w57glsyfj0mvv2zs5w886yayrhcfphd";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {
@@ -172,7 +172,7 @@ with pkgs;
   };
 
   rocblas = callPackage ./development/libraries/rocblas {
-    inherit (self) rocm-cmake hcc hip rocminfo rocr rocblas-tensile;
+    inherit (self) rocm-cmake hcc hcc-lld hip rocr rocblas-tensile;
     inherit (python2Packages) python;
   };
 
@@ -207,6 +207,11 @@ with pkgs;
     inherit (self) rocr hip rocrand;
     inherit (python3Packages) buildPythonPackage numpy;
   };
+
+  # This is not yet working. We are at least missing hsa-amd-aqlprofile.
+  # rocprofiler = callPackage ./development/tools/rocprofiler {
+  #   inherit (self) rocr roct;
+  # };
 
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
   amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};

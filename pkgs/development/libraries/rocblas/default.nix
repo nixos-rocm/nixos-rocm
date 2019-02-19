@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, libunwind, python
-, rocr, rocminfo, hcc, hip, rocm-cmake
+, rocr, hcc, hcc-lld, hip, rocm-cmake
 , doCheck ? false
 # Tensile slows the build a lot, but can produce a faster rocBLAS
 , useTensile ? true, rocblas-tensile ? null
@@ -9,15 +9,15 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "2.0.0";
+  version = "2.1.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
     rev = "v${version}";
-    sha256 = "0awdc85f62dxkcf0f2sc7v473lnb5dhfjbsn3rd6gljz9zvdqg83";
+    sha256 = "0rriii65akzcpncq4xrysf1rvng6z91q4ky5a6qz0iacnq1nvrmn";
   };
-  nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
-  buildInputs = [ libunwind pyenv hcc hip rocminfo rocr ]
+  nativeBuildInputs = [ cmake rocm-cmake pkgconfig python hcc-lld ];
+  buildInputs = [ libunwind pyenv hcc hip rocr ]
     ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack ];
   preConfigure = ''
     export CXX=${hcc}/bin/hcc
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
   ] ++ stdenv.lib.optionals useTensile [
     "-DVIRTUALENV_HOME_DIR=${rocblas-tensile}"
     "-DTensile_TEST_LOCAL_PATH=${rocblas-tensile}"
-    "-DTensile_ROOT=${rocblas-tensile}/lib/python${python.majorVersion}/site-packages"
+    "-DTensile_ROOT=${rocblas-tensile}/lib/python${python.pythonVersion}/site-packages"
     "-DTensile_LOGIC=hip_lite"
   ];
 

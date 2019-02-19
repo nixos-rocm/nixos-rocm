@@ -4,12 +4,12 @@
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
-  version = "1.7.0";
+  version = "1.7.1";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpen";
     rev = version;
-    sha256 = "023bfikpz2xzfpkfl7jp1cjv9yfmpq7xs8zbavaqgs90gi1l7kxh";
+    sha256 = "0y5jap6spk74snxsn4gphwam8dbs765v9kqh4j2478rhj9rs4kq2";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
   buildInputs = [ rocr half openssl boost rocblas miopengemm ]
@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
     "-DMIOPEN_AMDGCN_ASSEMBLER_PATH=${hcc}/bin"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DMIOPEN_USE_ROCBLAS=ON"
+    "-DBoost_USE_STATIC_LIBS=OFF"
   ] ++ (if useHip
   then [ "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
          "-DCMAKE_C_COMPILER=${hcc}/bin/clang"

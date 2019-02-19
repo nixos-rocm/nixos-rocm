@@ -5,8 +5,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "compiler-rt";
-    rev = "638adb5bd55f84981257ee0a634cd414a9374021";
-    sha256 = "0cb46hb5v4rwlpp9ijkg1dgksk72rby7jrcwmvl5w6fp81z588qn";
+    rev = "5fe32f97b2af1a96b7bee06ec57c6399bde9560b";
+    sha256 = "1p95zgl28mgfv1hwyhb94aqbbxaqsl5z5vjcq7hwwg3x7d92za17";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc-llvm ];

@@ -2,12 +2,12 @@
 , rocm-llvm, rocm-lld, rocm-clang, rocr }:
 stdenv.mkDerivation rec {
   name = "rocm-device-libs";
-  version = "2.0.0";
+  version = "2.1.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-Device-Libs";
     rev = "roc-${version}";
-    sha256 = "1wfdx0ikwlsiqkpkvm9rggbjjb064df3hzg2dwr5wd64gy61dy8p";
+    sha256 = "1bqmggi241kf78cybfgzi1z2s6z82v2xkynh2gyrm1ylii1fmvh5";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ rocm-llvm rocm-lld rocm-clang rocr ];

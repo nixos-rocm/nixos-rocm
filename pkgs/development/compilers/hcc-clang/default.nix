@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc-clang-upgrade";
-    rev = "6ec3c61e09fbb60373eaf5a40021eb862363ba2c";
-    sha256 = "01h0y2b66r97n6px1mn31zv7q45fs3pmpnglxqlk8643im1jsqi0";
+    rev = "683c680a6bff215baa3bd9d3099ba1a43e24cf2e";
+    sha256 = "00yncslqj9lwg33vnwfv04gj3grlr6qb3xincfpasaaf0r3l20gp";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-llvm hcc-lld ];

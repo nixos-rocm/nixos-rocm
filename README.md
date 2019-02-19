@@ -1,4 +1,4 @@
-# Radeon Open Compute (2.0.0) packages for NixOS
+# Radeon Open Compute (2.1.0) packages for NixOS
 
 ## Installation
 
@@ -27,16 +27,19 @@ After a `nixos-rebuild` and a reboot, both of these should work:
 OpenCL applications should work, and `glxinfo` should report that the Mesa
 stack is running hardware-accelerated on an AMD gpu.
 
-### NixOS 17.09/older unstable
+The `rocblas` and `rocfft` packages (and those that depend upon them) require a bit of additional configuration. The `nix` builder sandbox must be expanded to allow for build-time inspection of the current system for these packages to build. This may be achieved by adding the following lines to your `/etc/nix/configuration.nix` (with the caveat that your AMD GPU may not be at `/dev/dri/renderD128`):
+```
+  nix.sandboxPaths = [ 
+    "/dev/kfd" 
+    "/sys/devices/virtual/kfd" 
+    "/dev/dri/renderD128"
+  ];
 
-If you are using a recent version of nixpkgs that does not contain commit
-f620b1b (such as the nixos-17.09 channel), this overlay is likely to work if
-commit 5750406 is reverted.  However, this configuration is not frequently
-tested, and is not guaranteed to work.
+```
 
 ## Hardware support
 
-So far, this has only been tested with a Radeon Vega Frontier Edition and an RX 580.  Other cards supported by the upstream ROCm should also work, but have not been tested. Please let us know if we can expand the list of expected-to-work hardware!
+So far, this has been tested with a Radeon Vega Frontier Edition and an RX 580.  Other cards supported by the upstream ROCm should also work, but have not been tested. Please let us know if we can expand the list of expected-to-work hardware!
 
 ## Highlights of Included Software
 

@@ -15,7 +15,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.0.0";
+  version = "2.1.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "1wrj84p899n07w2x2hb4qvzif1c7xxpgzrd8ikg1ys7z66qcb6vc";
+        sha256 = "16dsblqccw93lax28678cdzad8jlw458db4dfp4109bpwm6ygdcr";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
@@ -66,7 +66,9 @@ stdenv.mkDerivation rec {
         -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
         -i CMakeLists.txt
 
-    sed 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h|g' -i runtime/device/rocm/CMakeLists.txt
+    sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h|g' \
+        -e 's|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"''${header}\"\n")|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"rocm/''${header}\"\n")|' \
+        -i runtime/device/rocm/CMakeLists.txt
 
     sed 's|\(target_link_libraries(amdocl64 [^)]*\)|\1 lldELF lldCommon clangFrontend clangCodeGen LLVMDebugInfoDWARF|' -i api/opencl/amdocl/CMakeLists.txt
   '';
@@ -74,7 +76,6 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DLLVM_DIR=${rocm-llvm.out}/lib/cmake/llvm"
     "-DClang_DIR=${rocm-clang-unwrapped}/lib/cmake/clang"
-    "-DLLD_INCLUDE_DIR=${rocm-lld}/include"
     "-DAMDGPU_TARGET_TRIPLE='amdgcn-amd-amdhsa'"
   ];
 
@@ -83,7 +84,6 @@ stdenv.mkDerivation rec {
                   rocm-clang rocm-clang-unwrapped rocm-opencl-driver
                   mesa_noglu python2 libX11 ];
 
-  #cmakeBuildType = "Debug";
   dontStrip = true;
 
   preFixup = ''
