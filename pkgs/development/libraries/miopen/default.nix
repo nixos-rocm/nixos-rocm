@@ -37,6 +37,7 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     sed -e 's,cmake_minimum_required( VERSION 2.8.12 ),cmake_minimum_required( VERSION 3.10 ),' \
         -e 's,\(set( MIOPEN_INSTALL_DIR\).*,\1 ''${CMAKE_INSTALL_PREFIX}),' \
+        -e 's,\(set(MIOPEN_DB_PATH "\)''${CMAKE_INSTALL_PREFIX}/\(.*\),\1\2,' \
         -i CMakeLists.txt
     sed 's/return record;/return std::move(record);/' -i src/include/miopen/db.hpp
     sed 's/return record;/return std::move(record);/' -i src/db.cpp
