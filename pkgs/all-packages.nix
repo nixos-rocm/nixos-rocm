@@ -7,36 +7,19 @@ with pkgs;
 {
 
   # The kernel
-  linux_4_13_kfd = callPackage ./os-specific/linux/kernel/linux-4.13-kfd.nix {
+  linux_4_18_kfd = (callPackage ./os-specific/linux/kernel/linux-4.18-kfd.nix {
+    buildLinux = attrs: callPackage ./os-specific/linux/kernel/generic.nix attrs;
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
-        kernelPatches.p9_fixes
-        # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
-        # when adding a new linux version
-        kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
-        {
-          # See https://cgit.freedesktop.org/%7Eagd5f/linux/commit/?h=amd-staging-drm-next&id=3f3a7c8259312084291859d3b623db4317365a07
-          patch = ./os-specific/linux/kernel/vboxvideo-ttm.patch;
-          name = "vboxvideo-ttm";
-        }
-
-      ]
-      ++ lib.optionals ((hostPlatform.platform.kernelArch or null) == "mips")
-      [ kernelPatches.mips_fpureg_emu
-        kernelPatches.mips_fpu_sigill
-        kernelPatches.mips_ext3_n32
       ];
-  };
-  linuxPackages_rocm = self.linuxPackages.extend (kSelf: kSuper: {
-    kernel = self.linux_4_13_kfd.override
-      (attrs: {
-        extraConfig = ''
-          KALLSYMS_ALL y
-          DRM_AMD_DC y
-        '';
-      });
-  });
+    extraConfig = ''
+      KALLSYMS_ALL y
+      DRM_AMD_DC y
+      UNUSED_SYMBOLS y
+    '';
+    });
+  linuxPackages_rocm = recurseIntoAttrs (linuxPackagesFor self.linux_4_18_kfd);
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
