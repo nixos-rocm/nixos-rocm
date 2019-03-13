@@ -4,11 +4,11 @@
 , gtest }:
 stdenv.mkDerivation rec {
   name = "rocrand";
-  version = "2019-02-13";
+  version = "1.8.2";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocRAND";
-    rev = "96d6da44b53206b7b32f5d2ab2ab382b2e301cad";
+    rev = "v${version}";
     sha256 = "1593h4pza0hyw11k7rxnpdamc4iinj8xhjgg394c6v0fxki09z7j";
   };
   nativeBuildInputs = [ cmake ed git rocm-cmake pkgconfig ];

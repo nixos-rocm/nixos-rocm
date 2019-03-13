@@ -1,12 +1,12 @@
 { fetchFromGitHub, buildPythonPackage, pyyaml }:
 buildPythonPackage rec {
   pname = "Tensile";
-  version = "4.8.0";
+  version = "4.9.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "Tensile";
     rev = "v${version}";
-    sha256 = "1948ydr40gzirb0jdjkcapack31sq2zjybihd0v7qa502japb5pk";
+    sha256 = "1znyljj89mpbzbhs0acq9xwb9lhjw33nk4z45vi3cicha72h20kr";
   };
   buildInputs = [ pyyaml ];
 }

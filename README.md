@@ -1,4 +1,13 @@
-# Radeon Open Compute (2.1.0) packages for NixOS
+# Radeon Open Compute (2.2.0) packages for NixOS
+
+## Note on ROCm Hardware Support
+Independent of NixOS, the ROCm software stack has a particular hardware requirement that is not universally enjoyed: PCI Express 3.0 (PCIe 3.0) with PCIe atomics. This requires that both the CPU and motherboard support atomic operations all the way from the CPU to the GPU (including any PCIe risers or splitters in which the GPU is installed). See the [ROCm documentation](https://github.com/RadeonOpenCompute/ROCm#hardware-support) for more information, but, in short, you may run this quick test to see if the kernel driver has loaded properly:
+
+```
+dmesg | grep kfd
+```
+
+If the output includes something like `kfd kfd: skipped device 1002:67df, PCI rejects atomics`, then ROCm does not support your hardware.
 
 ## Installation
 
@@ -22,7 +31,7 @@ After a `nixos-rebuild` and a reboot, both of these should work:
 ```
 
 (for the former, it may be necessary to link the rocm overlay into
-~/.config/nixpkgs/overlays/ so that the rocminfo package is available.)
+`~/.config/nixpkgs/overlays/` so that the rocminfo package is available.)
 
 OpenCL applications should work, and `glxinfo` should report that the Mesa
 stack is running hardware-accelerated on an AMD gpu.

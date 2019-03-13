@@ -23,12 +23,12 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.1.0";
+    version = "2.2.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-${version}";
-      sha256 = "0a9na5576wi4xhlnkjrk4w57glsyfj0mvv2zs5w886yayrhcfphd";
+      sha256 = "1h0jw7jqdf6kj4aam1qiwhgjsq0frhc9j3b8x3i90582k1y0gj4m";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld { };
@@ -39,7 +39,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/8.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/9.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
@@ -76,12 +76,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm {
     name = "hcc-llvm";
-    version = "2019-01-17";
+    version = "2019-02-06";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "6e349ce344586b4254654aea8f34444a13aedb67";
-      sha256 = "0a9na5576wi4xhlnkjrk4w57glsyfj0mvv2zs5w886yayrhcfphd";
+      rev = "68584f0b7bc07d43af64f90b3726988b5a513bf9";
+      sha256 = "1h0jw7jqdf6kj4aam1qiwhgjsq0frhc9j3b8x3i90582k1y0gj4m";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {
@@ -97,7 +97,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/8.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/9.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       rm $out/nix-support/add-hardening.sh

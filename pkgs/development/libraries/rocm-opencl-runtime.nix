@@ -15,7 +15,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.1.0";
+  version = "2.2.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "16dsblqccw93lax28678cdzad8jlw458db4dfp4109bpwm6ygdcr";
+        sha256 = "120br843mrs2hm15pkap3j2xpxy6112f1n36aw7q7lrqm22645sx";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
@@ -66,7 +66,7 @@ stdenv.mkDerivation rec {
         -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
         -i CMakeLists.txt
 
-    sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/8.0.0/include/opencl-c.h|g' \
+    sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/9.0.0/include/opencl-c.h|g' \
         -e 's|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"''${header}\"\n")|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"rocm/''${header}\"\n")|' \
         -i runtime/device/rocm/CMakeLists.txt
 

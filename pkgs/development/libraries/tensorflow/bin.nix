@@ -23,6 +23,7 @@
 , backports_weakref
 , enum34
 , tensorflow-tensorboard
+, tensorflow-estimator
 , zlib
 , python, bootstrapped-pip
 , symlinkJoin
@@ -49,15 +50,15 @@ let
 
 in buildPythonPackage rec {
   pname = "tensorflow";
-  version = "1.12.0";
+  version = "1.13.1";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/48/2e/81a8961bfa57b5fd4409c7941b7756e69d9c4a6a3711ffc83db4183a8516/tensorflow_rocm-1.12.0-cp36-cp36m-manylinux1_x86_64.whl";
-    sha256 = "0rm2wyd2a31mxhfhs3dq7kz76abxrsz595q1avdj7bcpfl208xi9";
+    url = "https://files.pythonhosted.org/packages/e7/84/2c26bca9ea97a089f8c655564f8815dc6e059096f783552532851051417b/tensorflow_rocm-1.13.1-cp36-cp36m-manylinux1_x86_64.whl";
+    sha256 = "0hyd63kv10yp4kfp16lh4r7s6kn8am1gc4hcnma43j2c4gqpdrkx";
   };
 
-  propagatedBuildInputs = [  protobuf numpy termcolor grpcio six astor absl-py gast tensorflow-tensorboard keras-applications keras-preprocessing ];
+  propagatedBuildInputs = [  protobuf numpy termcolor grpcio six astor absl-py gast tensorflow-tensorboard tensorflow-estimator keras-applications keras-preprocessing ];
 
   installPhase = ''
     runHook preInstall
