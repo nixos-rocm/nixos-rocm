@@ -56,6 +56,9 @@ stdenv.mkDerivation rec {
   # - fix a clang header path
   # - explicitly link libamdocl64.so to everything it
   #   needs from lld, llvm, and clang.
+  # - give oclruntime a dependency on oclrocm. Without this, only
+  #   parallel builds succeed because oclrocm coincidentally finishes
+  #   building before the build of oclruntime starts.
   patchPhase = ''
     sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
 
@@ -71,6 +74,8 @@ stdenv.mkDerivation rec {
         -i runtime/device/rocm/CMakeLists.txt
 
     sed 's|\(target_link_libraries(amdocl64 [^)]*\)|\1 lldELF lldCommon clangFrontend clangCodeGen LLVMDebugInfoDWARF|' -i api/opencl/amdocl/CMakeLists.txt
+
+    echo 'add_dependencies(oclruntime oclrocm)' >> runtime/CMakeLists.txt
   '';
 
   cmakeFlags = [
