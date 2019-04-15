@@ -9,12 +9,14 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "2.2.0";
+  version = "2.3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
-    rev = "v${version}";
-    sha256 = "0185yfgr075mxxvzwq801ycs791hhhmy62ah774xb2slfg3zn78b";
+    rev = with stdenv.lib.versions; 
+      "rocm-${stdenv.lib.concatStringsSep 
+                "." [(major version) (minor version)]}";
+    sha256 = "1qpidjg42bxqpf3vh83ks5xib3qlc0n4zlspyiwmn91jah3l8hp7";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python hcc-lld ];
   buildInputs = [ libunwind pyenv hcc hip rocr ]

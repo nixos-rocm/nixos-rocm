@@ -1,15 +1,15 @@
-{ stdenv, fetchFromGitHub, cmake, perl, writeText
+{ stdenv, fetchFromGitHub, cmake, perl, python, writeText
 , hcc, hcc-unwrapped, roct, rocr, rocminfo }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.2.0";
+  version = "2.3.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "1svc8s0bkyrkwcj0yyxbvvi9gdk01gvyi4sbk60z8z9zlzp1k7d8";
+    sha256 = "05nc00sdi695nqp1ls3k6q0s8xp2bsyxyhnyyis5cbairbxqk0mz";
   };
-  nativeBuildInputs = [ cmake ];
+  nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-unwrapped roct rocminfo ];
   buildInputs = [ hcc ];
 
@@ -34,6 +34,8 @@ stdenv.mkDerivation rec {
           -e 's,#!/bin/bash,#!${stdenv.shell},' \
           -i "$f"
     done
+
+    sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i hip_prof_gen.py
 
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,' \

@@ -50,12 +50,12 @@ let
 
 in buildPythonPackage rec {
   pname = "tensorflow";
-  version = "1.13.1";
+  version = "1.13.2";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/e7/84/2c26bca9ea97a089f8c655564f8815dc6e059096f783552532851051417b/tensorflow_rocm-1.13.1-cp36-cp36m-manylinux1_x86_64.whl";
-    sha256 = "0hyd63kv10yp4kfp16lh4r7s6kn8am1gc4hcnma43j2c4gqpdrkx";
+    url = "https://files.pythonhosted.org/packages/76/47/51f9b9b4a1e2ada403e1adb40dde246dc264ef33f5ce2ccddbde92b1d35e/tensorflow_rocm-1.13.2-cp36-cp36m-manylinux1_x86_64.whl";
+    sha256 = "0cipc98xxh37dc7gjzqlldd948grnb3w4zmrh56mkhfcgm2sw1ic";
   };
 
   propagatedBuildInputs = [  protobuf numpy termcolor grpcio six astor absl-py gast tensorflow-tensorboard tensorflow-estimator keras-applications keras-preprocessing ];

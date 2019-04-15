@@ -23,12 +23,12 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.2.0";
+    version = "2.3.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "roc-${version}";
-      sha256 = "1h0jw7jqdf6kj4aam1qiwhgjsq0frhc9j3b8x3i90582k1y0gj4m";
+      rev = "roc-ocl-${version}";
+      sha256 = "1ym4ai5h9i5cry518v64jadbyj4z786xr0p9vnzw710admdmkv23";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld { };
@@ -74,14 +74,14 @@ with pkgs;
   # hcc build into parts to make it a bit more manageable when dealing
   # with failures, and to have an opportunity to wrap hcc-clang before
   # hcc tools are built using that compiler.
-  hcc-llvm = callPackage ./development/compilers/llvm {
+  hcc-llvm = callPackage ./development/compilers/llvm rec {
     name = "hcc-llvm";
-    version = "2019-02-06";
+    version = "2.3.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "68584f0b7bc07d43af64f90b3726988b5a513bf9";
-      sha256 = "1h0jw7jqdf6kj4aam1qiwhgjsq0frhc9j3b8x3i90582k1y0gj4m";
+      rev = "roc-hcc-${version}";
+      sha256 = "08xmphdv3w7kg11zzsvk2jkgalr88fq7ppf1a9vh9lyjnrv8jv72";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {

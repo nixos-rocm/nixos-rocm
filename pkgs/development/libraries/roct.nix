@@ -1,13 +1,13 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, pciutils, numactl }:
 
 stdenv.mkDerivation rec {
-  version = "2.2.0";
+  version = "2.3.0";
   name = "roct";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCT-Thunk-Interface";
     rev = "roc-${version}";
-    sha256 = "019j50papjkqh62r1pcylnfvws82m0hmwylcmpc19imnaza3v163";
+    sha256 = "1wgykl5r1dnr8c3x3hc3diilv1z4l5jbvz60w9hmfccb4r9a5a8v";
   };
 
   preConfigure = ''

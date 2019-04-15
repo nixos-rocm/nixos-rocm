@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   buildInputs = [ rocm-opencl-runtime ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
-    "-DOPENCL_INCLUDE_DIRS=${rocm-opencl-runtime}/include/opencl2.2"
+    "-DOPENCL_INCLUDE_DIRS=${rocm-opencl-runtime}/include"
     "-DOPENCL_LIBRARIES=${rocm-opencl-runtime}/lib/libOpenCL.so"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
   ];

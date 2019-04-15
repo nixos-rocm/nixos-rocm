@@ -15,7 +15,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.2.0";
+  version = "2.3.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "120br843mrs2hm15pkap3j2xpxy6112f1n36aw7q7lrqm22645sx";
+        sha256 = "11qyv3kz2nqdd8hn40khjglgnsaf9b08fr9xl8zf6h9gixjg6277";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
@@ -64,9 +64,11 @@ stdenv.mkDerivation rec {
 
     sed 's,"/etc/OpenCL/vendors/","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
 
-    sed -e 's|add_subdirectory(compiler/llvm)|find_package(Clang REQUIRED CONFIG)|' \
-        -e 's|add_subdirectory(compiler/driver)|include_directories(${rocm-opencl-driver.src}/src)|' \
+    sed -e 's|add_subdirectory(compiler/llvm EXCLUDE_FROM_ALL)|find_package(Clang REQUIRED CONFIG)|' \
+        -e 's|add_subdirectory(compiler/driver EXCLUDE_FROM_ALL)|include_directories(${rocm-opencl-driver.src}/src)|' \
         -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
+        -e 's|include_directories(''${CMAKE_BINARY_DIR}/compiler/llvm/lib/Target/AMDGPU)||' \
+        -e '/install(PROGRAMS $<TARGET_FILE:clang> $<TARGET_FILE:lld>/,/        COMPONENT libraries)/d' \
         -i CMakeLists.txt
 
     sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/9.0.0/include/opencl-c.h|g' \
@@ -93,8 +95,7 @@ stdenv.mkDerivation rec {
 
   preFixup = ''
     patchelf --set-rpath "$out/lib" $out/bin/clinfo
-    ln -s $out/lib/libOpenCL.so.1.2 $out/lib/libOpenCL.so.1
-    ln -s $out/lib/libOpenCL.so.1 $out/lib/libOpenCL.so
-    ln -s $out/include/opencl2.2/CL $out/include/CL
+    ln -s $out/lib/x86_64/libOpenCL.so.1.2 $out/lib/x86_64/libOpenCL.so.1
+    ln -s $out/lib/x86_64/* $out/lib
   '';
 }
