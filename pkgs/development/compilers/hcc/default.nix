@@ -71,7 +71,7 @@ stdenv.mkDerivation rec {
     sed 's|CLANG=$BINDIR/hcc|CLANG=${hcc-clang}/bin/clang++|' -i lib/hc-host-assemble.in
     sed 's|LLVM_DIS=$BINDIR/llvm-dis|${hcc-llvm}/bin/llvm-dis|' -i lib/hc-kernel-assemble.in
 
-    sed -e "s;new RuntimeImpl(\"libmcwamp_\(hsa\|cpu\).so\";new RuntimeImpl(\"$out/lib/libmcwamp_\1.so\";" \
+    sed -e "s;new RuntimeImpl(\"libmcwamp_\(hsa\|cpu\).so\";new RuntimeImpl(\"$out/lib/libmcwamp_\1.so\";g" \
         -e "s|, \"libmcwamp_hsa.so\",|, \"$out/lib/libmcwamp_hsa.so\",|" \
         -i lib/mcwamp.cpp
   '';
