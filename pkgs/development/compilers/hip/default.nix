@@ -14,12 +14,12 @@ stdenv.mkDerivation rec {
   buildInputs = [ hcc ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2018-12-12" +%y%U%w
+  # day in the week: date -d "2019-03-26" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
-    "-DHIP_VERSION_PATCH=18493"
+    "-DHIP_VERSION_PATCH=19122"
     "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
   ];
