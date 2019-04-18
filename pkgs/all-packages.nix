@@ -195,6 +195,11 @@ with pkgs;
   # rocprofiler = callPackage ./development/tools/rocprofiler {
   #   inherit (self) rocr roct;
   # };
+  rocprim = callPackage ./development/libraries/rocprim {
+    stdenv = pkgs.overrideCC stdenv self.hcc;
+    inherit (self) hip;
+  };
+
 
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
   amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
