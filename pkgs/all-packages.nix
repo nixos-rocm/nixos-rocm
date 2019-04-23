@@ -209,7 +209,7 @@ with pkgs;
     opencl = self.rocm-opencl-runtime; 
   };
 
-  tensorflow-rocm = python36Packages.callPackage ./development/libraries/tensorflow/bin.nix {
+  tensorflow-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin.nix {
     inherit (self) hcc hcc-unwrapped hip miopen-hip miopengemm rocrand
                    rocfft rocblas rocr rccl cxlactivitylogger;
   };

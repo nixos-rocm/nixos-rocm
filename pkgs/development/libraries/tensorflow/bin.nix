@@ -4,7 +4,7 @@
 # definitions. To benefit from this hook, add `tensorflow-rocm` to a
 # `nix-shell` as its own entity rather than among a list of packages
 # in a `withPackages` call. For example:
-# `nix-shell -p 'python36.withPackages (ps: [ps.jupyter])' -p tensorflow-rocm`
+# `nix-shell -p 'python37.withPackages (ps: [ps.jupyter])' -p tensorflow-rocm`
 # 
 # You can then start `jupyter-notebook` as normal.
 { stdenv
@@ -35,7 +35,7 @@
 , hcc, hcc-unwrapped, hip, miopen-hip, miopengemm, rocrand, rocfft, rocblas
 , rocr, rccl, cxlactivitylogger
 }:
-assert python.pythonVersion == "3.6";
+assert python.pythonVersion == "3.7";
 
 # We keep this binary build for two reasons:
 # - the source build doesn't work on Darwin.
@@ -54,8 +54,8 @@ in buildPythonPackage rec {
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/76/47/51f9b9b4a1e2ada403e1adb40dde246dc264ef33f5ce2ccddbde92b1d35e/tensorflow_rocm-1.13.2-cp36-cp36m-manylinux1_x86_64.whl";
-    sha256 = "0cipc98xxh37dc7gjzqlldd948grnb3w4zmrh56mkhfcgm2sw1ic";
+    url = "https://files.pythonhosted.org/packages/a3/24/9ffc858f5c23cdef328fc1b348d92d5fb24a3e491b53db149e489c53b3f8/tensorflow_rocm-1.13.2-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "0bhrnpxxd6dgq6mbmnmjafp4k3bgwrj31055719jhg6fbrg2j8fl";
   };
 
   propagatedBuildInputs = [  protobuf numpy termcolor grpcio six astor absl-py gast tensorflow-tensorboard tensorflow-estimator keras-applications keras-preprocessing ];
