@@ -23,12 +23,12 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.3.0";
+    version = "2.4.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-ocl-${version}";
-      sha256 = "1ym4ai5h9i5cry518v64jadbyj4z786xr0p9vnzw710admdmkv23";
+      sha256 = "0j07s56k1nwrlk5bklyr2w0wjpjx4agp24c6zcrzbcynppvqn885";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld { };
@@ -76,12 +76,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm rec {
     name = "hcc-llvm";
-    version = "2.3.0";
+    version = "2.4.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-hcc-${version}";
-      sha256 = "08xmphdv3w7kg11zzsvk2jkgalr88fq7ppf1a9vh9lyjnrv8jv72";
+      sha256 = "1py89k7qqgykvn2hcji3jlykmf1qaasfw52bhzizl68f5nwl1dmn";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {
@@ -205,8 +205,8 @@ with pkgs;
   amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
   cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {};
 
-  clpeak = pkgs.callPackage ./tools/clpeak { 
-    opencl = self.rocm-opencl-runtime; 
+  clpeak = pkgs.callPackage ./tools/clpeak {
+    opencl = self.rocm-opencl-runtime;
   };
 
   tensorflow-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin.nix {

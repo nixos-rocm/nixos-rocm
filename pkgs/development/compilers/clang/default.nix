@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, cmake, python, rocr, rocm-llvm }:
 stdenv.mkDerivation rec {
   name = "clang-unwrapped";
-  version = "2.3.0";
+  version = "2.4.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang";
     rev = "roc-${version}";
-    sha256 = "1frc1r2zw6a89wh7rf2fk7hmklkrsa4ndagw1yldrvpn212i778f";
+    sha256 = "0kfh1sbj7zl90fyfndws7a22ih4fadj0x6izfw4d7vdlk43p8wnx";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ rocm-llvm rocr ];

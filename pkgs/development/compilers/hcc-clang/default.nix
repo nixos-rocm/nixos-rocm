@@ -2,12 +2,12 @@
 , rocr, hcc-llvm, hcc-lld, rocminfo }:
 stdenv.mkDerivation rec {
   name = "hcc-clang-unwrapped";
-  version = "2.3.0";
+  version = "2.4.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc-clang-upgrade";
     rev = "roc-${version}";
-    sha256 = "0h436c314irqwpm6alanqwvl0yjycighd7ldpzcn5gk3i4z8w608";
+    sha256 = "0yqglyi9m5r96jmlwdif048a9yjf43f5wp7mkbvlg1lgn1cvs615";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-llvm hcc-lld ];

@@ -4,12 +4,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "2.3.0";
+  version = "2.4.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     rev = "roc-${version}";
-    sha256 = "0dv6mh2179k5njimi1b2vhjh6v30ia3dzalsa0pdgj2fds3214bn";
+    sha256 = "0ap39ddnj64k55hfah8g5l9mj3xla42immn45j4jjrmrcxm0ayj8";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];

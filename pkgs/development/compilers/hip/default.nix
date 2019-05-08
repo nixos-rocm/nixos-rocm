@@ -2,12 +2,12 @@
 , hcc, hcc-unwrapped, roct, rocr, rocminfo }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.3.0";
+  version = "2.4.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "05nc00sdi695nqp1ls3k6q0s8xp2bsyxyhnyyis5cbairbxqk0mz";
+    sha256 = "18m09a325ag9inyfxacsxps58lsm52cmj259gc2wyzjqgm3a4xqp";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-unwrapped roct rocminfo ];

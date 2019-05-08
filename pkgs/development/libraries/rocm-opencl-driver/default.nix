@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, cmake, rocm-llvm, rocm-lld, rocm-clang-unwrapped }:
 stdenv.mkDerivation rec {
   name = "rocm-opencl-driver";
-  version = "2.3.0";
+  version = "2.4.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-OpenCL-Driver";
