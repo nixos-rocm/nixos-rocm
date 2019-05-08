@@ -18,6 +18,7 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DHIP_PLATFORM=hcc"
     "-DCMAKE_CXX_COMPILER=hcc"
+    "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_TEST=${if doCheck then "YES" else "NO"}"
   ];
   patchPhase = ''
