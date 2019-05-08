@@ -191,15 +191,26 @@ with pkgs;
     inherit (python3Packages) buildPythonPackage numpy;
   };
 
-  # This is not yet working. We are at least missing hsa-amd-aqlprofile.
-  # rocprofiler = callPackage ./development/tools/rocprofiler {
-  #   inherit (self) rocr roct;
-  # };
   rocprim = callPackage ./development/libraries/rocprim {
     stdenv = pkgs.overrideCC stdenv self.hcc;
     inherit (self) hip;
   };
 
+  hipcub = callPackage ./development/libraries/hipcub {
+    inherit (self) hcc rocprim;
+  };
+
+  rocsparse = callPackage ./development/libraries/rocsparse {
+    inherit (self) hcc rocprim hipcub;
+  };
+
+  roctracer = callPackage ./development/tools/roctracer {
+    inherit (self) hcc-unwrapped hip;
+  };
+
+  rocprofiler = callPackage ./development/tools/rocprofiler {
+    inherit (self) rocr roct roctracer hcc-unwrapped;
+  };
 
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
   amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
