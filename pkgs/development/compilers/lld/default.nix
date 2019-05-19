@@ -1,15 +1,9 @@
-{ stdenv, cmake, fetchFromGitHub, libxml2, rocm-llvm }:
+{ stdenv, cmake, fetchFromGitHub, libxml2, llvm
+, name, version, src}:
 stdenv.mkDerivation rec {
-  name = "rocm-lld";
-  version = "2.4.0";
-  src = fetchFromGitHub {
-    owner = "RadeonOpenCompute";
-    repo = "lld";
-    rev = "roc-ocl-${version}";
-    sha256 = "0lcjr0kknb54hgcb0vp5apkqi9226ikk1fy9y1hjn1a34n998pxy";
-  };
+  inherit name version src;
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ rocm-llvm libxml2 ];
+  buildInputs = [ llvm libxml2 ];
 
   outputs = [ "out" "dev" ];
   enableParallelBuilding = true;
