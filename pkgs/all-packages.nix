@@ -321,6 +321,10 @@ with pkgs;
     inherit (self) hcc rocprim hipcub;
   };
 
+  hipsparse = callPackage ./development/libraries/hipsparse {
+    inherit (self) rocsparse hip rocm-cmake;
+  };
+
   roctracer = callPackage ./development/tools/roctracer {
     inherit (self) hcc-unwrapped hip;
   };
