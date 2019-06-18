@@ -1,22 +1,17 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, pkgconfig
+{ stdenv, fetchFromGitHub, cmake, pkgconfig, numactl
 , rocm-cmake, hcc, hip
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
-  version = "0.7.5";
+  version = "2.5.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rccl";
     rev = version;
-    sha256 = "15dp74dsf6f6k5lgs94983q2vh8nsnm3c0fhqzyv8hdhsl6g4aml";
+    sha256 = "0mwnzblvwgd7n97416hvk6bkkj73n1a1mhilas9n23zrdd0iavp7";
   };
-  patches = [(fetchpatch {
-    name = "optional-tests.patch";
-    url = "https://github.com/ROCmSoftwarePlatform/rccl/commit/b51b758bdfb1d0d43ff1c2466a88ef522e26f336.patch";
-    sha256 = "0dwfb2g4ncnsk7cs5yhfl50m3iizmadrgs8p4pqxhz43m6r32nb9";
-  })];
   nativeBuildInputs = [ cmake pkgconfig ];
-  buildInputs = [ hcc hip ];
+  buildInputs = [ hcc hip numactl ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"

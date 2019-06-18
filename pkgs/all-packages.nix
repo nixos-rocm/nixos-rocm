@@ -23,33 +23,33 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.4.0";
+    version = "2.5.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-ocl-${version}";
-      sha256 = "0j07s56k1nwrlk5bklyr2w0wjpjx4agp24c6zcrzbcynppvqn885";
+      sha256 = "1dam2rr25gpmha4rh7wa4hcm0xwh6a9j87qkfj83da4g54d7jw8l";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld rec {
     name = "rocm-lld";
-    version = "2.4.0";
+    version = "2.5.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "lld";
       rev = "roc-ocl-${version}";
-      sha256 = "0lcjr0kknb54hgcb0vp5apkqi9226ikk1fy9y1hjn1a34n998pxy";
+      sha256 = "06xd8zlyh040mhachhnschpyf03d74fm01vqimrbf6zxxcyijrbh";
     };
     llvm = self.rocm-llvm;
   };
   rocm-clang-unwrapped = callPackage ./development/compilers/clang rec {
     name = "clang-unwrapped";
-    version = "2.4.0";
+    version = "2.5.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "clang";
       rev = "roc-${version}";
-      sha256 = "0kfh1sbj7zl90fyfndws7a22ih4fadj0x6izfw4d7vdlk43p8wnx";
+      sha256 = "0rmly3jcdbc1wirx5m2vc5s6grza7zc32glrr4fs8x29xbx6pc1f";
     };
     llvm = self.rocm-llvm;
     inherit (self) rocr;
@@ -100,12 +100,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm rec {
     name = "hcc-llvm";
-    version = "2.4.0";
+    version = "2.5.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-hcc-${version}";
-      sha256 = "1py89k7qqgykvn2hcji3jlykmf1qaasfw52bhzizl68f5nwl1dmn";
+      sha256 = "02mclz0sgj0pjhwm98alva45z39803xrg3mdp2jz9kyfinxnnxh4";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {
@@ -171,13 +171,24 @@ with pkgs;
   # HIP's clang backend requires the `amd-common` branches of the
   # LLVM, LLD, and Clang forks.
 
+  # NOTE: For the ROCm 2.5 release, the amd-common branches and HIP
+  # master are not buildable. Part of this is due to flux related to
+  # AMD's preparation to launch their Navi GPU, so it will hopefully
+  # settle down a bit over the coming weeks. I've held hip-clang back
+  # to a mid-May state so that it still works.
+
   # The amd-common branch of the llvm fork
   amd-llvm = callPackage ./development/compilers/llvm rec {
     name = "amd-llvm";
+    # version = "20190616";
     version = "20190515";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
+      # rev = "08ba61dfeeac3e1eccff413870340197935e28bc";
+      # sha256 = "17vmk66am406m5mjcsf4q3avzxysfhjlbiagynppczgbhcf4cyyf";
+
+      # May 15
       rev = "5fd8f8dab1e6d6d3b7b9b567a759163da6aabae6";
       sha256 = "1ryv64ba7b0qn51cl1l4x41zhzmkw0m7xf1fl34i2jbvya1w5b0i";
     };
@@ -186,10 +197,15 @@ with pkgs;
   # The amd-common branch of the lld fork
   amd-lld = callPackage ./development/compilers/lld {
     name = "amd-lld";
+    # version = "20190615";
     version = "20190515";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "lld";
+      # rev = "da40cb6c781c0b87cc8cb195c61adb4dcf92de8c";
+      # sha256 = "143cqrx90g6r2z5h75j68qfn99jpvd4zircm1awj4p44chqaa7ig";
+
+      # May 15
       rev = "84142b8b4f5fab12f67fd262cd50babc4d99213e";
       sha256 = "18a4liy836q9w1jqmpsn34dq3fqikxknahagzw9nxnhjjlybxmd6";
     };
@@ -199,10 +215,17 @@ with pkgs;
   # The amd-common branch of the clang fork
   amd-clang-unwrapped = (callPackage ./development/compilers/clang {
     name = "amd-clang";
-    version = "20190515";
+    # version = "20190616";
+    version = "20190515";    
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "clang";
+      # Newer commits include wave32 support which isn't yet available
+      # in device libraries
+      # rev = "77f1817db541df2497c4052afb2d4aca23b905f4";
+      # sha256 = "054zasppsypl4ypzid0jr1p8zyx7sgy9l5m91mam4hzs0sqds0nr";
+
+      # May 15
       rev = "a8f58aed8a62226070db160b4dc7ef7c0926b377";
       sha256 = "00bgxcc5vv5x3ngfxzr5gbbjxf5mq416h5aqkbk7i2mavmm643mf";
     };
@@ -244,16 +267,26 @@ with pkgs;
     lld = self.amd-lld;
   }).overrideAttrs (_: {
     cmakeFlags = [
-    "-DCMAKE_C_COMPILER=${self.amd-clang}/bin/clang"
-    "-DCMAKE_CXX_COMPILER=${self.amd-clang}/bin/clang++"
-    "-DLLVM_DIR=${self.amd-llvm}"
+      "-DCMAKE_C_COMPILER=${self.amd-clang}/bin/clang"
+      "-DCMAKE_CXX_COMPILER=${self.amd-clang}/bin/clang++"
+      "-DLLVM_DIR=${self.amd-llvm}"
     ];
   });
+
+  amd-comgr = callPackage ./development/libraries/comgr {
+    llvm = self.amd-llvm;
+    lld = self.amd-lld;
+    clang = self.amd-clang;
+    device-libs = self.amd-device-libs;
+  };
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
     inherit (self) roct rocr rocminfo hcc;
+    llvm = self.amd-llvm;
+    clang-unwrapped = self.amd-clang-unwrapped;
     clang = self.amd-clang;
+    comgr = self.amd-comgr;
     device-libs = self.amd-device-libs;
   };
 

@@ -2,7 +2,7 @@
 let pyenv = python.withPackages (ps: [ps.sqlite3dbm]); in
 stdenv.mkDerivation rec {
   name = "rocprofiler";
-  version = "2.4.0";
+  version = "2.5.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "rocprofiler";
