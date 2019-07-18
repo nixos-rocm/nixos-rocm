@@ -16,6 +16,7 @@
 , numpy
 , six
 , termcolor
+, wrapt
 , protobuf
 , absl-py
 , grpcio
@@ -50,15 +51,15 @@ let
 
 in buildPythonPackage rec {
   pname = "tensorflow";
-  version = "1.13.3";
+  version = "1.14.0";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/18/70/be443928e19305f8ba8a5cfac738b506dc7447d0f285438b7e2543d05631/tensorflow_rocm-1.13.3-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "0wrf7l1nh1407lcqb0vwpaqmgm9vllbyc2n62avyfz8abql3pdv4";
+    url = "https://files.pythonhosted.org/packages/20/1c/a074def3e9d6c20bc3be7c5f8e2dbe565a42c7c1258c43910d67068e0f2a/tensorflow_rocm-1.14.0-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "1w7ldkyp50imgq18jryc7pnmf6ymqk58dwq5y7n2f5pv41p912ak";
   };
 
-  propagatedBuildInputs = [  protobuf numpy termcolor grpcio six astor absl-py gast tensorflow-tensorboard tensorflow-estimator keras-applications keras-preprocessing ];
+  propagatedBuildInputs = [  protobuf numpy termcolor wrapt grpcio six astor absl-py gast tensorflow-tensorboard tensorflow-estimator keras-applications keras-preprocessing ];
 
   installPhase = ''
     runHook preInstall
@@ -94,7 +95,7 @@ in buildPythonPackage rec {
   lib.optionalString (stdenv.isLinux) ''
     rrPath="$out/${python.sitePackages}/tensorflow/:$out/${python.sitePackages}/tensorflow/contrib/tensor_forest/:${rpath}"
     internalLibPath="$out/${python.sitePackages}/tensorflow/python/_pywrap_tensorflow_internal.so"
-    find $out -name '*${stdenv.hostPlatform.extensions.sharedLibrary}' -exec patchelf --set-rpath "$rrPath" {} \;
+    find $out -name '*${stdenv.hostPlatform.extensions.sharedLibrary}*' -exec patchelf --set-rpath "$rrPath" {} \;
   '';
 
   # The tensorflow shared library statically links some libstdc++

@@ -9,11 +9,11 @@
 # package is a also a dependency of your derivation.
 { stdenv, fetchurl, writeText, dpkg }:
 stdenv.mkDerivation rec {
-  version = "2.5.0";
+  version = "2.6.0";
   name = "rocr-ext-${version}";
   src = fetchurl {
-    url = "http://repo.radeon.com/rocm/apt/debian/pool/main/h/hsa-ext-rocr-dev/hsa-ext-rocr-dev_1.1.9-74-g4eea4a1_amd64.deb";
-    sha256 = "1skgr3wc27jmrm1girk7qsvy9fsrf1p26v8zl0w9vshkrf0qfc79";
+    url = "http://repo.radeon.com/rocm/apt/debian/pool/main/h/hsa-ext-rocr-dev/hsa-ext-rocr-dev_1.1.9-87-g1566fdd_amd64.deb";
+    sha256 = "0hnp48vx2axmdxw40fvfga9ajr3zrr22ky0958sgnazxnj424qdf";
   };
   builder = writeText "builder.sh" ''
     source $stdenv/setup

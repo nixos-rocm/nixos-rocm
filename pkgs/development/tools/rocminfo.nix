@@ -1,20 +1,20 @@
 { stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake }:
 
 stdenv.mkDerivation rec {
-  version = "2019-05-21";
-  name = "rocminfo";
+  version = "2.6.0";
+  pname = "rocminfo";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "rocminfo";
-    rev = "4e30bc4a5b3b9ef6efbe6571a8b7f799201a210c";
-    sha256 = "07dn4ircy92gfavi4fqb67mghpqrjpv4vm099hcbr18x81fdxz21";
+    rev = "roc-${version}";
+    sha256 = "105qzvmcilrabcaq28z5bxqhw6dpp1cwqajr29x9jnbs3grk7bwh";
   };
 
   enableParallelBuilding = true;
   buildInputs = [ cmake rocm-cmake ];
   cmakeFlags = [
-    "-DROCR_INC_DIR=${rocr}/include"
-    "-DROCR_LIB_DIR=${rocr}/lib"
+    "-DROCM_DIR=${rocr}"
+    "-DROCRTST_BLD_TYPE=Release"
   ];
 
   patchPhase = ''

@@ -9,23 +9,22 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "2.5.0";
+  version = "2.6.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
     rev = with stdenv.lib.versions; 
       "rocm-${stdenv.lib.concatStringsSep 
                 "." [(major version) (minor version)]}";
-    sha256 = "0x35517ipb1clkqfqfcij2q78630q9izbw6v013zmlhbalmkw2i4";
+    sha256 = "1zydaqrp03yd0plq3cvcw425wad9v5wraikqbdjp0djfmcd6xv2g";
   };
-  nativeBuildInputs = [ cmake rocm-cmake pkgconfig python hcc-lld ];
-  buildInputs = [ libunwind pyenv hcc hip rocr ]
+  nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
+
+  buildInputs = [ libunwind pyenv hip rocr ]
     ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack ];
-  preConfigure = ''
-    export CXX=${hcc}/bin/hcc
-  '';
+
   cmakeFlags = [
-    "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
+    "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_WITH_TENSILE=${if useTensile then "ON" else "OFF"}"
   ] ++ stdenv.lib.optionals doCheck [
@@ -35,7 +34,7 @@ stdenv.mkDerivation rec {
   ] ++ stdenv.lib.optionals useTensile [
     "-DVIRTUALENV_HOME_DIR=${rocblas-tensile}"
     "-DTensile_TEST_LOCAL_PATH=${rocblas-tensile}"
-    "-DTensile_ROOT=${rocblas-tensile}/lib/python${python.pythonVersion}/site-packages"
+    "-DTensile_ROOT=${rocblas-tensile}/bin"
     "-DTensile_LOGIC=hip_lite"
   ];
 

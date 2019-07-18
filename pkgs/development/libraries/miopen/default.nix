@@ -4,12 +4,12 @@
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
-  version = "1.8.1";
+  version = "2.0.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpen";
     rev = version;
-    sha256 = "02fy5scnzqzyjy1jb6nfvgq2gphxlaw13ilgqz8cm2i6f8xrvx6n";
+    sha256 = "0wm279k8yawhv3ks9ydx76bm6gklybgyim0q9zi9wajr37bkf7pv";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
   buildInputs = [ rocr half openssl boost rocblas miopengemm ]
@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     sed -e 's,cmake_minimum_required( VERSION 2.8.12 ),cmake_minimum_required( VERSION 3.10 ),' \
         -e 's,\(set( MIOPEN_INSTALL_DIR\).*,\1 ''${CMAKE_INSTALL_PREFIX}),' \
-        -e 's,\(set(MIOPEN_DB_PATH "\)''${CMAKE_INSTALL_PREFIX}/\(.*\),\1\2,' \
+        -e 's,\(set(MIOPEN_SYSTEM_DB_PATH "\)''${CMAKE_INSTALL_PREFIX}/\(.*\),\1\2,' \
         -i CMakeLists.txt
     sed 's/return record;/return std::move(record);/' -i src/include/miopen/db.hpp
     sed 's/return record;/return std::move(record);/' -i src/db.cpp

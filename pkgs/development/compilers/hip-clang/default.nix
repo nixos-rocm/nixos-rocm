@@ -2,12 +2,12 @@
 , llvm, clang, clang-unwrapped, device-libs, hcc, roct, rocr, rocminfo, comgr}:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.5.0";
+  version = "2.6.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "16vhrxva23rsldg97j98dskkk49md7chqgg8sjl11jqw4z7c29gd";
+    sha256 = "00pm00428k76vwmki82m01a5kv1r89vxnzwa8fyai3iwy4fbk4q8";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ clang roct rocminfo device-libs ];

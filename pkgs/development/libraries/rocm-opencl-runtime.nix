@@ -3,6 +3,7 @@
 , libGL_driver
 , cmake
 , rocr
+, roct
 , rocm-llvm
 , rocm-lld
 , rocm-device-libs
@@ -15,7 +16,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.5.0";
+  version = "2.6.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -23,7 +24,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "09nm88v6dgbsm9pjc67xx0qja0kyhnwjg28509591bz00rgzffj6";
+        sha256 = "14mrwksm3k7x9r4jmjc0rgv72z6csbr8zl06xh70amv4zymzx6jc";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
@@ -87,7 +88,7 @@ stdenv.mkDerivation rec {
   ];
 
   enableParallelBuilding = true;
-  buildInputs = [ cmake rocr rocm-llvm rocm-lld rocm-device-libs
+  buildInputs = [ cmake rocr roct rocm-llvm rocm-lld rocm-device-libs
                   rocm-clang rocm-clang-unwrapped rocm-opencl-driver
                   mesa_noglu python2 libX11 ];
 

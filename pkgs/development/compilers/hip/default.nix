@@ -1,27 +1,27 @@
 { stdenv, fetchFromGitHub, cmake, perl, python, writeText
-, hcc, hcc-unwrapped, roct, rocr, rocminfo }:
+, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.5.0";
+  version = "2.6.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "16vhrxva23rsldg97j98dskkk49md7chqgg8sjl11jqw4z7c29gd";
+    sha256 = "00pm00428k76vwmki82m01a5kv1r89vxnzwa8fyai3iwy4fbk4q8";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ hcc-unwrapped roct rocminfo ];
-  buildInputs = [ hcc ];
+  buildInputs = [ hcc comgr ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-06-02" +%y%U%w
+  # day in the week: date -d "2019-06-28" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
-    "-DHIP_VERSION_PATCH=19220"
+    "-DHIP_VERSION_PATCH=19255"
     "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
+    "-DCMAKE_BUILD_TYPE=Release"
   ];
 
   # - fix bash paths
@@ -46,8 +46,6 @@ stdenv.mkDerivation rec {
     sed -i 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' -i bin/hipconfig
 
     sed -e '/execute_process(COMMAND git show -s --format=@%ct/,/    OUTPUT_STRIP_TRAILING_WHITESPACE)/d' \
-        -e '/string(REGEX REPLACE ".*based on HCC " "" HCC_VERSION ''${HCC_VERSION})/,/string(REGEX REPLACE " .*" "" HCC_VERSION ''${HCC_VERSION})/d' \
-        -e 's/\(message(STATUS "Looking for HCC in: " ''${HCC_HOME} ". Found version: " ''${HCC_VERSION})\)/string(REGEX REPLACE ".*based on HCC[ ]*(LLVM)?[ ]*([^)\\r\\n ]*).*" "\\\\2" HCC_VERSION ''${HCC_VERSION})\n\1/' \
         -i CMakeLists.txt
   '';
 

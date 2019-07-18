@@ -1,7 +1,7 @@
-# Radeon Open Compute (2.5.0) packages for NixOS
+# Radeon Open Compute (2.6.0) packages for NixOS
 
 ## Note on ROCm Hardware Support
-Independent of NixOS, the ROCm software stack has a particular hardware requirement that is not universally enjoyed: PCI Express 3.0 (PCIe 3.0) with PCIe atomics. This requires that both the CPU and motherboard support atomic operations all the way from the CPU to the GPU (including any PCIe risers or splitters in which the GPU is installed). See the [ROCm documentation](https://github.com/RadeonOpenCompute/ROCm#hardware-support) for more information, but, in short, you may run this quick test on kernels <= 4.19 to see if the kernel driver has loaded properly:
+Independent of NixOS, the ROCm software stack has a particular hardware requirement for gfx803 (aka Polaris, aka RX570/580/590 GPUs) that is not universally enjoyed: PCI Express 3.0 (PCIe 3.0) with PCIe atomics. This requires that both the CPU and motherboard support atomic operations all the way from the CPU to the GPU (including any PCIe risers or splitters in which the GPU is installed). See the [ROCm documentation](https://github.com/RadeonOpenCompute/ROCm#hardware-support) for more information, but, in short, you may run this quick test on kernels <= 4.19 to see if the kernel driver has loaded properly:
 
 ```
 dmesg | grep kfd

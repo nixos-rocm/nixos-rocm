@@ -3,12 +3,12 @@
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
-  version = "2.5.0";
+  version = "2.6.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rccl";
     rev = version;
-    sha256 = "0mwnzblvwgd7n97416hvk6bkkj73n1a1mhilas9n23zrdd0iavp7";
+    sha256 = "0pg7vgscbbsyxqgcvwy0m2dr9b7bvwzda11k6b23b718wmzlylql";
   };
   nativeBuildInputs = [ cmake pkgconfig ];
   buildInputs = [ hcc hip numactl ];

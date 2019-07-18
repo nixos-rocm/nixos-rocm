@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     owner = "ROCmSoftwarePlatform";
     repo = "rocFFT";
     rev = "v${version}";
-    sha256 = "1pdabkyxasih1bsw2pk9b5hhxdhdsvs24mb1q6112n1a4gawncrk";
+    sha256 = "0a3yna40b1h6yda4nwwgksfw9p99bflvav74mqdbphymp55h8rrs";
   };
 
   # Building this package is very RAM intensive: individual clang

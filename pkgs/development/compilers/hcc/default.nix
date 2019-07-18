@@ -4,12 +4,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "2.5.0";
+  version = "2.6.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
-    rev = "roc-${version}";
-    sha256 = "1qn5qvgsjk5ghz4ic1zpwlb79myyfgqkicr0wqga09zxpx5r5f94";
+    rev = "roc-hcc-${version}";
+    sha256 = "1bmpxbl7nv0923z89zk13lwwi3jmpi6k9hgggm1sn1lsnzsx06z5";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
@@ -75,6 +75,10 @@ stdenv.mkDerivation rec {
     sed -e "s;new RuntimeImpl(\"libmcwamp_\(hsa\|cpu\).so\";new RuntimeImpl(\"$out/lib/libmcwamp_\1.so\";g" \
         -e "s|, \"libmcwamp_hsa.so\",|, \"$out/lib/libmcwamp_hsa.so\",|" \
         -i lib/mcwamp.cpp
+
+    sed -e 's,$\(install_prefix\|rocm_path/hcc\)/bin/llvm-objdump,${llvm}/bin/llvm-objdump,' \
+        -e 's,$\(install_prefix\|rocm_path/hcc\)/bin/clang-offload-bundler,${clang-unwrapped}/bin/clang-offload-bundler,' \
+        -i lib/extractkernel.in
   '';
 
   # Scripts like hc-host-assemble and hc-kernel-assemble are placed in
