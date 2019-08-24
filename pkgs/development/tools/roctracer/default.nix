@@ -1,12 +1,12 @@
 {stdenv, fetchFromGitHub, cmake, roct, rocr, hcc-unwrapped, hip, python}:
 stdenv.mkDerivation rec {
   name = "roctracer";
-  version = "2.6.0";
+  version = "2.7.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "roctracer";
     rev = "roc-${version}";
-    sha256 = "1pa499rpj8mpswsslf1c13c9man45cr7jkgxsia8rvp321jw45ww";
+    sha256 = "0qlynzxlrvsx709nmjcv4gpqyzxnzy3f6cc85zhh3f9npq7i0j3j";
   };
   src2 = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";

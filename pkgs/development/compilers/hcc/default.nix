@@ -4,12 +4,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "2.6.0";
+  version = "2.7.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     rev = "roc-hcc-${version}";
-    sha256 = "1bmpxbl7nv0923z89zk13lwwi3jmpi6k9hgggm1sn1lsnzsx06z5";
+    sha256 = "0w16zalhyqcvxmj3jnp4yqwahbgg70pawk331vsfrai532mpqndb";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
@@ -76,8 +76,8 @@ stdenv.mkDerivation rec {
         -e "s|, \"libmcwamp_hsa.so\",|, \"$out/lib/libmcwamp_hsa.so\",|" \
         -i lib/mcwamp.cpp
 
-    sed -e 's,$\(install_prefix\|rocm_path/hcc\)/bin/llvm-objdump,${llvm}/bin/llvm-objdump,' \
-        -e 's,$\(install_prefix\|rocm_path/hcc\)/bin/clang-offload-bundler,${clang-unwrapped}/bin/clang-offload-bundler,' \
+    sed -e 's|\(my $llvm_objdump = \).*|\1"${llvm}/bin/llvm-objdump";|' \
+        -e 's|\(my $clang_offload_bundler = \).*|\1"${clang-unwrapped}/bin/clang-offload-bundler";|' \
         -i lib/extractkernel.in
   '';
 

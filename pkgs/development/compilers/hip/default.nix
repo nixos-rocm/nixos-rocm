@@ -2,23 +2,23 @@
 , hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.6.0";
+  version = "2.7.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "00pm00428k76vwmki82m01a5kv1r89vxnzwa8fyai3iwy4fbk4q8";
+    sha256 = "0ibklghp9h598phh6dizkyxnk3syj9mv4bip5bfai0d5l5l6iyl6";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc comgr ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-06-28" +%y%U%w
+  # day in the week: date -d "2019-07-18" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
-    "-DHIP_VERSION_PATCH=19255"
+    "-DHIP_VERSION_PATCH=19284"
     "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
     "-DCMAKE_BUILD_TYPE=Release"

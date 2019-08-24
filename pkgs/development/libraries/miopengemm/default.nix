@@ -2,12 +2,12 @@
 , rocm-cmake, rocm-opencl-runtime, hcc }:
 stdenv.mkDerivation {
   name = "miopengemm";
-  version = "2018-04-03";
+  version = "2019-07-18";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpenGEMM";
-    rev = "9547fb9e8499a5a9f16da83b1e6b749de82dd9fb";
-    sha256 = "0n02kd1687a8m3ilfrkpdxswnh83mcm4i48gf6irw7dzgdgyxczy";
+    rev = "6275a879995b58a6e0b8cca7b1ad8421a5e02ade";
+    sha256 = "18204r5fj0ch4vcr833xi0fshjfzd8jxf7jdsblkv1n193fl2668";
   };
   nativeBuildInputs = [ cmake rocm-cmake ];
   buildInputs = [ rocm-opencl-runtime ];

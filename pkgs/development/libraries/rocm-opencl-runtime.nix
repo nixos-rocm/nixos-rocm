@@ -16,7 +16,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.6.0";
+  version = "2.7.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "14mrwksm3k7x9r4jmjc0rgv72z6csbr8zl06xh70amv4zymzx6jc";
+        sha256 = "1p3znl0w8c137iqv2q6dv3q7a8di37nzmz4wlxvix7p4fqw87am0";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
