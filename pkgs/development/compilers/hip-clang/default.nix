@@ -2,12 +2,12 @@
 , llvm, clang, clang-unwrapped, device-libs, hcc, roct, rocr, rocminfo, comgr}:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.6.0";
+  version = "2.7.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "00pm00428k76vwmki82m01a5kv1r89vxnzwa8fyai3iwy4fbk4q8";
+    sha256 = "0ibklghp9h598phh6dizkyxnk3syj9mv4bip5bfai0d5l5l6iyl6";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ clang roct rocminfo device-libs ];
@@ -20,12 +20,12 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-06-02" +%y%U%w
+  # day in the week: date -d "2019-07-18" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_COMPILER=clang"
-    "-DHIP_VERSION_PATCH=19220"
+    "-DHIP_VERSION_PATCH=19284"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
   ];
@@ -54,7 +54,7 @@ stdenv.mkDerivation rec {
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
-        -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang}/resource-root/include";,' \
+        -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
         -e 's,^\(    $HIPCXXFLAGS .= " -std=c++11 -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocr}/include";,' \
         -i bin/hipcc
     sed -e 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
@@ -77,7 +77,7 @@ stdenv.mkDerivation rec {
     mkdir -p $out/lib
     ln -s ${device-libs}/lib $out/lib/bitcode
     mkdir -p $out/include
-    ln -s ${clang-unwrapped}/lib/clang/9.0.0/include $out/include/clang
+    ln -s ${clang-unwrapped}/lib/clang/10.0.0/include $out/include/clang
   '';
 
   setupHook = writeText "setupHook.sh" ''

@@ -1,13 +1,16 @@
 { fetchFromGitHub, buildPythonPackage, pyyaml, pytest, lib, rocminfo, hcc, rocm-smi }:
 buildPythonPackage rec {
   pname = "Tensile";
-  version = "2.6.0";
+  version = "2.7.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "Tensile";
-    rev = with lib.versions; 
-      "rocm-${lib.concatStringsSep "." [(major version) (minor version)]}";
-    sha256 = "09qql1br23ldjmp61lgwgylsbdhwjysg9s022ivsjw6ix1cc5p8z";
+    # rev = with lib.versions; 
+    #   "rocm-${lib.concatStringsSep "." [(major version) (minor version)]}";
+    # sha256 = "1yr2a67ip292jr76319nbzs4kdwnzs9v2l91zzvkyzfd0r5db7as";
+    rev = "ec048ee3951723e4e6a43ac2a307f735fb16bfc7";
+    sha256 = "1yr2a67ip292jr76319nbzs4kdwnzs9v2l91zzvkyzfd0r5db7as";
+    
   };
   buildInputs = [ pyyaml pytest ];
   patchPhase = ''

@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, cmake }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "rocm-cmake";
-  version = "2019-06-28";
+  version = "2.7.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "rocm-cmake";
-    rev = "56e04c087dfc092a3b5ca68849b0d4a7defd4729";
-    sha256 = "1a7in9idqc4wr1x9jvnbqs3ykasjbqvby1jd5828aaz7w4zj0yd4";
+    rev = "roc-${version}";
+    sha256 = "0pp7mdd8px52vxp2pj6nsj4cn11k58j65ffvam5j4jsafxsrgmd5";
   };
   nativeBuildInputs = [ cmake ];
 }

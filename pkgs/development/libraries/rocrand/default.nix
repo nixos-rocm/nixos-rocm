@@ -4,12 +4,12 @@
 , gtest }:
 stdenv.mkDerivation rec {
   name = "rocrand";
-  version = "2.6.0";
+  version = "2.7";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocRAND";
-    rev = version;
-    sha256 = "05mhqsab6dpb1yn6i1ji8ygiglmqw0ky88jcgrzpgl8v9wmrh7mf";
+    rev = "rocm-${version}";
+    sha256 = "10m3gpv9fp5g739c54hqrhlal2kzzwvny6ah2ih6zr2rj3a3shbc";
   };
   nativeBuildInputs = [ cmake ed git rocm-cmake pkgconfig ];
   buildInputs = [ hcc hip rocminfo libunwind rocr ]
@@ -43,5 +43,10 @@ stdenv.mkDerivation rec {
     cp -rs $out/rocrand/include/* $out/include
     cp -rs $out/hiprand/lib/* $out/lib
     cp -rs $out/rocrand/lib/* $out/lib
+    for f in $(find $out/lib/cmake -name '*.cmake'); do
+      sed -e "s,get_filename_component(PACKAGE_PREFIX_DIR .*,set(PACKAGE_PREFIX_DIR \"$out\")," \
+          -e "s,get_filename_component(_IMPORT_PREFIX .*,set(_IMPORT_PREFIX \"$out\")," \
+          -i ''${f}
+    done
   '';
 }
