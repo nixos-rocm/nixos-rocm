@@ -253,8 +253,7 @@ with pkgs;
   amd-clang = pkgs.wrapCCWith rec {
     isClang = true;
     cc = self.amd-clang-unwrapped;
-    extraPackages = [ # libstdcxxHook
-    self.amd-clang-unwrapped ];
+    extraPackages = [ libstdcxxHook self.amd-clang-unwrapped ];
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
@@ -343,7 +342,10 @@ with pkgs;
   # Currently broken
   miopen-cl = callPackage ./development/libraries/miopen {
     inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
-                   clang-ocl miopengemm hip rocblas;
+                   clang-ocl miopengemm rocblas;
+    hip = self.hip-clang;
+    comgr = self.amd-comgr;
+    clang = self.amd-clang;
   };
 
   miopen-hip = self.miopen-cl.override {
@@ -352,14 +354,17 @@ with pkgs;
 
   rocfft = callPackage ./development/libraries/rocfft {
     inherit (self) rocr rocminfo hcc hip rocm-cmake;
+    comgr = self.amd-comgr;
   };
 
   rccl = callPackage ./development/libraries/rccl {
     inherit (self) rocm-cmake hcc hip;
+    comgr = self.amd-comgr;
   };
 
   rocrand = callPackage ./development/libraries/rocrand {
     inherit (self) rocm-cmake rocminfo hcc hip rocr;
+    comgr = self.amd-comgr;
   };
   rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
     inherit (self) rocr hip rocrand;

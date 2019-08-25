@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, perl, python, writeText
+{ stdenv, fetchFromGitHub, cmake, perl, python, writeText, file
 , llvm, clang, clang-unwrapped, device-libs, hcc, roct, rocr, rocminfo, comgr}:
 stdenv.mkDerivation rec {
   name = "hip";
@@ -56,6 +56,7 @@ stdenv.mkDerivation rec {
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
         -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
         -e 's,^\(    $HIPCXXFLAGS .= " -std=c++11 -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocr}/include";,' \
+        -e 's|`file|`${file}/bin/file|' \
         -i bin/hipcc
     sed -e 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,$HCC_HOME/bin/llc,${llvm}/bin/llc,' \

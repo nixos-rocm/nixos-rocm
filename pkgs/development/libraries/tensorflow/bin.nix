@@ -56,7 +56,7 @@ in buildPythonPackage rec {
 
   src = fetchurl {
     url = "https://files.pythonhosted.org/packages/45/9e/d4ea5103c3f96f49c4b44bfc1bf9a9b0ad82455d45a54455f312e9fa321c/tensorflow_rocm-1.14.1-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "1w7ldkyrrrimgq18jryc7pnmf6ymqk58dwq5y7n2f5pv41p912ak";
+    sha256 = "160j1qfyklwa0d4l9wgg3wlg0b1i4j7fkahfi80wzgg95k49802s";
   };
 
   propagatedBuildInputs = [  protobuf numpy termcolor wrapt grpcio six astor absl-py gast tensorflow-tensorboard tensorflow-estimator keras-applications keras-preprocessing ];

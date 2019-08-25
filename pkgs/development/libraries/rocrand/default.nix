@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, ed, pkgconfig
-, libunwind, git, rocm-cmake, rocminfo, hcc, hip, rocr
+, libunwind, git, rocm-cmake, rocminfo, hcc, hip, rocr, comgr
 , doCheck ? false
 , gtest }:
 stdenv.mkDerivation rec {
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     sha256 = "10m3gpv9fp5g739c54hqrhlal2kzzwvny6ah2ih6zr2rj3a3shbc";
   };
   nativeBuildInputs = [ cmake ed git rocm-cmake pkgconfig ];
-  buildInputs = [ hcc hip rocminfo libunwind rocr ]
+  buildInputs = [ hcc hip rocminfo libunwind rocr comgr ]
     ++ stdenv.lib.optionals doCheck [ gtest ];
 
   # We first move the `project` command to before we `include` another

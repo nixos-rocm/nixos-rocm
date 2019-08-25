@@ -26,8 +26,8 @@ stdenv.mkDerivation rec {
     "-DMIOPEN_USE_ROCBLAS=ON"
     "-DBoost_USE_STATIC_LIBS=OFF"
   ] ++ (if useHip
-  then [ "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
-         "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
+  then [ "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+         "-DCMAKE_C_COMPILER=${clang}/bin/clang"
          "-DMIOPEN_BACKEND=HIP"
          "-DENABLE_HIP_WORKAROUNDS=NO" ]
   else [ "-DMIOPEN_BACKEND=OpenCL"
@@ -38,8 +38,15 @@ stdenv.mkDerivation rec {
     sed -e 's,cmake_minimum_required( VERSION 2.8.12 ),cmake_minimum_required( VERSION 3.10 ),' \
         -e 's,\(set( MIOPEN_INSTALL_DIR\).*,\1 ''${CMAKE_INSTALL_PREFIX}),' \
         -e 's,\(set(MIOPEN_SYSTEM_DB_PATH "\)''${CMAKE_INSTALL_PREFIX}/\(.*\),\1\2,' \
+        -e '/enable_testing()/d' \
+        -e '/add_subdirectory(test)/d' \
+        -e '/^include(ClangTidy)/,/^)$/d' \
         -i CMakeLists.txt
     sed 's/return record;/return std::move(record);/' -i src/include/miopen/db.hpp
     sed 's/return record;/return std::move(record);/' -i src/db.cpp
+    for f in src/CMakeLists.txt addkernels/CMakeLists.txt; do
+      sed '/^[[:space:]]*clang_tidy_check(.*/d' -i "$f"
+    done
+    sed '/add_dependencies(tidy miopen_tidy_inlining)/d' -i src/CMakeLists.txt
   '';
 }
