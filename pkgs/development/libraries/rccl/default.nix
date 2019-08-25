@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, numactl
-, rocm-cmake, hcc, hip
+, rocm-cmake, hcc, hip, comgr
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
     sha256 = "1cs0b88fa41n278jqlrcq6y437cikfi5713l7s7nbaz2ivhhldqm";
   };
   nativeBuildInputs = [ cmake pkgconfig ];
-  buildInputs = [ hcc hip numactl ];
+  buildInputs = [ hcc hip numactl comgr ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"

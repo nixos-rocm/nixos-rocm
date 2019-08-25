@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig
-, rocr, rocminfo, hcc, hip, rocm-cmake
+, rocr, rocminfo, hcc, hip, rocm-cmake, comgr
 , doCheck ? false
 , boost, gtest, fftw, fftwFloat }:
 stdenv.mkDerivation rec {
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = false;
 
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig rocminfo ];
-  buildInputs = [ hcc hip rocr boost ]
+  buildInputs = [ hcc hip rocr boost comgr ]
     ++ stdenv.lib.optionals doCheck [ gtest fftwFloat fftw ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"

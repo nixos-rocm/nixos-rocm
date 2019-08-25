@@ -13,14 +13,11 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
-    # rev = with stdenv.lib.versions; 
-    #   "rocm-${stdenv.lib.concatStringsSep 
+    # rev = with stdenv.lib.versions;
+    #   "rocm-${stdenv.lib.concatStringsSep
     #             "." [(major version) (minor version)]}";
-    # sha256 = "0ydzbwxq84ng1ka1ax78mvqx3g37ckbwz2l23iqg7l1qa1q0ymmg";
-    # rev = "b548b687b28f95ed6b2a01aab45fc4970c68d763";
-    # sha256 = "03x8lmjaw3vdi4wa1j8phbbwy1a2r2hkmgg1bl2ypycm6g7mhw3k";
-    rev = "834406c9012bba7fd1c76d6d3b8fe8350bb3ee23";
-    sha256 = "1acm1psq61xfqjicax3jm5wpq9jawyk528amw7qrk3cj1fndzdqz";
+    rev = "39b5e1e3d73f11821babd9ccfd796fc63e16a12c";
+    sha256 = "0niw49bkq7wyh7a4k3250g4mz7837g0kv66brqyq4gisvdgs8f83";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 
@@ -43,10 +40,12 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
+    patchShebangs ./header_compilation_tests.sh
     sed -e '/include(virtualenv)/d' \
         -e '/virtualenv_install.*/d' \
         -e 's|/opt/rocm/hcc|${hcc}|' \
         -e 's|/opt/rocm/hip|${hip}|' \
         -i CMakeLists.txt
+    sed '/add_custom_command(/,/^ )/d' -i library/src/CMakeLists.txt
   '';
 }
