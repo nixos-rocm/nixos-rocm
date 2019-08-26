@@ -1,5 +1,6 @@
 { stdenv, fetchFromGitHub, cmake, perl, python, writeText
-, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr }:
+, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr
+, file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";
   version = "2.7.0";
@@ -42,6 +43,11 @@ stdenv.mkDerivation rec {
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
+        -e "s,\$HIP_PATH/\(bin\|lib\),$out/\1,g" \
+        -e "s,^\$HIP_LIB_PATH=\$ENV{'HIP_LIB_PATH'};,\$HIP_LIB_PATH=\"$out/lib\";," \
+        -e 's,`file,`${file}/bin/file,g' \
+        -e 's,`readelf,`${binutils-unwrapped}/bin/readelf,' \
+        -e 's, ar , ${binutils-unwrapped}/bin/ar ,g' \
         -i bin/hipcc
     sed -i 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' -i bin/hipconfig
 

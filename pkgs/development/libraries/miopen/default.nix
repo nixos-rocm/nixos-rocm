@@ -1,6 +1,6 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig, half, openssl, boost
-, rocm-cmake, rocm-opencl-runtime, rocr, hcc, clang-ocl, miopengemm, rocblas
-, useHip ? false, hip }:
+{ stdenv, fetchFromGitHub, cmake, pkgconfig, half, openssl, boost# , clang-tools
+, rocm-cmake, rocm-opencl-runtime, rocr, hcc, clang, clang-ocl, miopengemm, rocblas
+, comgr, useHip ? false, hip }:
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
@@ -12,16 +12,15 @@ stdenv.mkDerivation rec {
     sha256 = "0cb6fla6d9dlvjzc5d25dl8m7vpvqq6bh64l29z1cq3vx42ir8ip";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
-  buildInputs = [ rocr half openssl boost rocblas miopengemm ]
+  buildInputs = [ rocr half openssl boost rocblas miopengemm comgr ]
     ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl hip]);
 
-  preConfigure = stdenv.lib.optionalString (!useHip) ''
+  preConfigure = ''
     NIX_CFLAGS_COMPILE="-D__HIP_PLATFORM_HCC__ ''${NIX_CFLAGS_COMPILE}"
   '';
 
   cmakeFlags = [
     "-DCMAKE_PREFIX_PATH=${hcc};${hip};${clang-ocl}"
-    "-DMIOPEN_AMDGCN_ASSEMBLER_PATH=${hcc}/bin"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DMIOPEN_USE_ROCBLAS=ON"
     "-DBoost_USE_STATIC_LIBS=OFF"
