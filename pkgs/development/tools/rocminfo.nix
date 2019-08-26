@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake }:
+{ stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake, busybox, gnugrep }:
 
 stdenv.mkDerivation rec {
   version = "2.7.0";
@@ -19,6 +19,7 @@ stdenv.mkDerivation rec {
 
   patchPhase = ''
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i rocm_agent_enumerator
+    sed 's,lsmod | grep ,${busybox}/bin/lsmod | ${gnugrep}/bin/grep ,' -i rocminfo.cc
   '';
 
   installPhase = ''
