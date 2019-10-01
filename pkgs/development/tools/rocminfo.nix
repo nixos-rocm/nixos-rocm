@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, rocr, python, rocm-cmake, busybox, gnugrep }:
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, rocr, python, rocm-cmake, busybox, gnugrep }:
 
 stdenv.mkDerivation rec {
   version = "2.7.0";
@@ -15,9 +15,14 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DROCM_DIR=${rocr}"
     "-DROCRTST_BLD_TYPE=Release"
+    "-DCMAKE_CXX_FLAGS=-Wno-error=format-truncation"
   ];
+  patches = [ (fetchpatch {
+    url = "https://github.com/RadeonOpenCompute/rocminfo/commit/4d1d2a16958d6da8c9d56eaf266b43aea70350ce.patch";
+    sha256 = "1gx7hz17rgvmbvlblvkps5a43cjxm0svb4b6gh5rb9ff37dbhii0";
+  })];
 
-  patchPhase = ''
+  prePatch = ''
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i rocm_agent_enumerator
     sed 's,lsmod | grep ,${busybox}/bin/lsmod | ${gnugrep}/bin/grep ,' -i rocminfo.cc
   '';
