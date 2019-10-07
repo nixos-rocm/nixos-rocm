@@ -4,12 +4,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hcc";
-  version = "2.7.0";
+  version = "2.8.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     rev = "roc-hcc-${version}";
-    sha256 = "0w16zalhyqcvxmj3jnp4yqwahbgg70pawk331vsfrai532mpqndb";
+    sha256 = "1dh81nvkvn00n3i1954k7sgw60igvh66l7gp0dcmqy7sg474km2q";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
@@ -64,6 +64,7 @@ stdenv.mkDerivation rec {
         -e '/install(PROGRAMS $<TARGET_FILE:LLVMAMDGPUDesc>/,/^)$/d' \
         -e '/install(PROGRAMS $<TARGET_FILE:llvm-as>/,/COMPONENT compiler)/d' \
         -e '/install(FILES ''${CLANG_BIN_DIR}\/lib\/clang\/''${CLANG_VERSION}\/lib\/linux\/libclang_rt.builtins-''${RT_BUILTIN_SUFFIX}.a/,/COMPONENT compiler)/d' \
+        -e '/install(PROGRAMS $<TARGET_FILE:LLVMSelectAcceleratorCode>/,/^)/d' \
         -i CMakeLists.txt
 
     sed 's,__hcc_backend__,HCC_BACKEND_AMDGPU,g' -i include/hc.hpp

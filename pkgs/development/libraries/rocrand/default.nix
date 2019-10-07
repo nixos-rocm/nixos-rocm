@@ -28,12 +28,17 @@ stdenv.mkDerivation rec {
   #       -e '/^[[:space:]]*find_package(hip REQUIRED CONFIG PATHS .*$/ d' \
   #       -i cmake/Dependencies.cmake
   # '';
+  # patchPhase = ''
+  #   sed -e "s,\(set(INCLUDE_INSTALL_DIR \).*,\1\"$out/rocrand/include\")," \
+  #       -e "s,\(set(LIB_INSTALL_DIR \).*,\1\"$out/rocrand/lib\")," \
+  #       -i library/CMakeLists.txt
+  # '';
   cmakeFlags = [
     "-DHSA_HEADER=${rocr}/include"
     "-DHSA_LIBRARY=${rocr}/lib/libhsa-runtime64.so"
     "-DHIP_PLATFORM=hcc"
     "-DHIP_PATH=${hip}"
-    "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
+    "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
   ] ++ (let flag = if doCheck then "ON" else "OFF";
         in [ "-DBUILD_TEST=${flag} -DBUILD_BENCHMARK=${flag}" ]);

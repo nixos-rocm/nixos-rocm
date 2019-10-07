@@ -3,16 +3,16 @@
 , llvm, clang, clang-unwrapped, device-libs, hcc, roct, rocr, rocminfo, comgr}:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.7.0";
+  version = "2.8.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "0ibklghp9h598phh6dizkyxnk3syj9mv4bip5bfai0d5l5l6iyl6";
+    sha256 = "02vj1vwpdhpymbwd8mswag74idr1bf0g8zkgqc9d404l3vl0w2r1";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ clang roct rocminfo device-libs ];
-  buildInputs = [ clang device-libs rocr comgr ];
+  propagatedBuildInputs = [ clang roct rocminfo device-libs rocr ];
+  buildInputs = [ clang device-libs rocr comgr hcc ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
@@ -21,12 +21,13 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-07-18" +%y%U%w
+  # day in the week: date -d "2019-09-04" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_COMPILER=clang"
-    "-DHIP_VERSION_PATCH=19284"
+    # "-DHIP_VERSION_PATCH=19353"
+    "-DHIP_VERSION_GITDATE=19353"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
   ];
@@ -50,7 +51,7 @@ stdenv.mkDerivation rec {
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
         -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${device-libs}/lib";,' \
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
-        -e 's,^\($HIP_RUNTIME=\).*$,\1"clang";,' \
+        -e 's,^\($HIP_RUNTIME=\).*$,\1"VDI";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,'g \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
@@ -72,7 +73,7 @@ stdenv.mkDerivation rec {
         -e 's/\(message(STATUS "Looking for HCC in: " ''${HCC_HOME} ". Found version: " ''${HCC_VERSION})\)/string(REGEX REPLACE ".*based on HCC[ ]*(LLVM)?[ ]*([^)\\r\\n ]*).*" "\\\\2" HCC_VERSION ''${HCC_VERSION})\n\1/' \
         -i CMakeLists.txt
   '';
-
+#         -e 's/set(HIP_VERSION_PATCH .*//g' \
   preInstall = ''
     mkdir -p $out/lib/cmake
   '';
