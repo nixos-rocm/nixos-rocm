@@ -16,8 +16,12 @@ stdenv.mkDerivation rec {
     # rev = with stdenv.lib.versions;
     #   "rocm-${stdenv.lib.concatStringsSep
     #             "." [(major version) (minor version)]}";
-    rev = "39b5e1e3d73f11821babd9ccfd796fc63e16a12c";
-    sha256 = "0niw49bkq7wyh7a4k3250g4mz7837g0kv66brqyq4gisvdgs8f83";
+    # sha256 = "0ydzbwxq84ng1ka1ax78mvqx3g37ckbwz2l23iqg7l1qa1q0ymmg";
+    # rev = "39b5e1e3d73f11821babd9ccfd796fc63e16a12c";
+    # sha256 = "0niw49bkq7wyh7a4k3250g4mz7837g0kv66brqyq4gisvdgs8f83";
+
+    rev = "2b1befc1e791998f00f1bf1e71f7ca4b2490cb2c";
+    sha256 = "1qvkn208qf6zxdr9vlx70rm68vmcdxskg745i026xczpk107faxk";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 

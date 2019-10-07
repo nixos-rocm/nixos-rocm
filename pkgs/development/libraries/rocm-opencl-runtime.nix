@@ -16,7 +16,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.7.0";
+  version = "2.8.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -24,15 +24,18 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "1p3znl0w8c137iqv2q6dv3q7a8di37nzmz4wlxvix7p4fqw87am0";
+        sha256 = "1h4g2lpbxwndaks7l8rdzymg0i34r45x3xdk51zlrf8ccv906kk6";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "KhronosGroup";
         repo = "OpenCL-ICD-Loader";
-        rev = "261c1288aadd9dcc4637aca08332f603e6c13715";
-        sha256 = "1dg8qnsw5v96sz21xs6ayv5ih8zq5ng0l4mjcl1rm4cn75g0gz9k";
-        name = "OpenCL-ICD-Loader-261c128-src";
+        # rev = "261c1288aadd9dcc4637aca08332f603e6c13715";
+        # sha256 = "1dg8qnsw5v96sz21xs6ayv5ih8zq5ng0l4mjcl1rm4cn75g0gz9k";
+        # name = "OpenCL-ICD-Loader-261c128-src";
+        rev = "6c03f8b58fafd9dd693eaac826749a5cfad515f8";
+        sha256 = "00icrlc00dpc87prbd2j1350igi9pbgkz27hc3rf73s5994yn86a";
+        name = "OpenCL-ICD-Loader-6c03f8b-src";
       })
     ];
 
@@ -44,7 +47,7 @@ stdenv.mkDerivation rec {
   postUnpack = ''
     chmod --recursive +w .
     mkdir ROCm-OpenCL-Runtime-${tag}-src/library/
-    mv OpenCL-ICD-Loader-261c128-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
+    mv OpenCL-ICD-Loader-6c03f8b-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
     cp -r ${rocm-device-libs.src} ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
     chmod --recursive +w ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
   '';
@@ -63,16 +66,16 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
 
-    sed 's,"/etc/OpenCL/vendors/","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/icd_linux.c
+    sed 's,"ICD_VENDOR_PATH","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/loader/linux/icd_linux.c
 
     sed -e 's|add_subdirectory(compiler/llvm EXCLUDE_FROM_ALL)|find_package(Clang REQUIRED CONFIG)|' \
         -e 's|add_subdirectory(compiler/driver EXCLUDE_FROM_ALL)|include_directories(${rocm-opencl-driver.src}/src)|' \
         -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
         -e 's|include_directories(''${CMAKE_BINARY_DIR}/compiler/llvm/lib/Target/AMDGPU)||' \
-        -e '/install(PROGRAMS $<TARGET_FILE:clang> $<TARGET_FILE:lld>/,/        COMPONENT libraries)/d' \
+        -e '/install(PROGRAMS $<TARGET_FILE:clang> $<TARGET_FILE:lld>/,/^[[:space:]]*COMPONENT DEV)/d' \
         -i CMakeLists.txt
 
-    sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/9.0.0/include/opencl-c.h|g' \
+    sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/10.0.0/include/opencl-c.h|g' \
         -e 's|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"''${header}\"\n")|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"rocm/''${header}\"\n")|' \
         -i runtime/device/rocm/CMakeLists.txt
 
@@ -95,8 +98,10 @@ stdenv.mkDerivation rec {
   dontStrip = true;
 
   preFixup = ''
-    patchelf --set-rpath "$out/lib" $out/bin/clinfo
-    ln -s $out/lib/x86_64/libOpenCL.so.1.2 $out/lib/x86_64/libOpenCL.so.1
-    ln -s $out/lib/x86_64/* $out/lib
+    patchelf --set-rpath "$out/lib" $out/bin/x86_64/clinfo
+    ln -s $out/bin/x86_64/* $out/bin
   '';
+    # ln -s $out/lib/x86_64/libOpenCL.so.1.2 $out/lib/x86_64/libOpenCL.so.1
+    # ln -s $out/lib/x86_64/* $out/lib
+
 }

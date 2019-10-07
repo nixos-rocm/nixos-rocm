@@ -1,12 +1,12 @@
 { stdenv, cmake, fetchFromGitHub, libxml2, hcc-llvm }:
 stdenv.mkDerivation rec {
   name = "hcc-lld";
-  version = "2.7.0";
+  version = "2.8.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "lld";
     rev = "roc-hcc-${version}";
-    sha256 = "1q32qpkn6ibaihh90mciirb2ypz12zzqk3kjm82p4w7dsb5m5li7";
+    sha256 = "13lndrykz3m7fzvbkdy1wai0mc2yw3lvwz47wia5wq34gsjj5zfb";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ hcc-llvm libxml2 ];

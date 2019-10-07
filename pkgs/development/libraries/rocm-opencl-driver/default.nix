@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, cmake, rocm-llvm, rocm-lld, rocm-clang-unwrapped }:
 stdenv.mkDerivation rec {
   name = "rocm-opencl-driver";
-  version = "2.7.0";
+  version = "2.8.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-OpenCL-Driver";
     rev = "roc-${version}";
-    sha256 = "08jhngvfpmzhsyyvhnpqf6j48j8ql9yvpfnf27js8c89p7b64vfz";
+    sha256 = "0vc2yhyrdyp7jpj4d70k2v44d96ylkwpmj4r7rg49rkxrr5qrdp4";
   };
   nativeBuildInputs = [ cmake ];
   cmakeFlags = [

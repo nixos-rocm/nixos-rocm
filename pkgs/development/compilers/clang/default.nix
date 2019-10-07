@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, python, rocr, llvm
-, name, version, src}:
+, name, version, src, clang-tools-extra_src ? null}:
 stdenv.mkDerivation rec {
   inherit name version src;
   nativeBuildInputs = [ cmake python ];
@@ -15,6 +15,10 @@ stdenv.mkDerivation rec {
     #undef LLVM_REPOSITORY
     #undef CLANG_REVISION
     #undef CLANG_REPOSITORY
+  '';
+
+  postUnpack = stdenv.lib.optionalString (!(isNull clang-tools-extra_src)) ''
+    ln -s ${clang-tools-extra_src} $sourceRoot/tools/extra
   '';
 
   # Rather than let cmake extract version information from LLVM or
