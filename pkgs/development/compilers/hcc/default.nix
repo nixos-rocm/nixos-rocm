@@ -34,7 +34,7 @@ stdenv.mkDerivation rec {
   # - Don't build clang and llvm as part of this build
   # - __hcc_backend__ can only be set to HCC_BACKEND_AMDGPU
   # - Fix more clang and llvm paths
-  patchPhase = ''
+  prePatch = ''
     for f in $(find lib -name '*.in'); do
       sed -e 's_#!/bin/bash_#!${stdenv.shell}_' \
           -e 's_#!/usr/bin/perl_#!${perl}/bin/perl_' \
@@ -80,6 +80,11 @@ stdenv.mkDerivation rec {
     sed -e 's|\(my $llvm_objdump = \).*|\1"${llvm}/bin/llvm-objdump";|' \
         -e 's|\(my $clang_offload_bundler = \).*|\1"${clang-unwrapped}/bin/clang-offload-bundler";|' \
         -i lib/extractkernel.in
+  '';
+  patches = [ ./hcc-config-hsa.patch ];
+  inherit rocr;
+  postPatch = ''
+    substituteInPlace lib/hcc-config.cmake.in --subst-var rocr
   '';
 
   # Scripts like hc-host-assemble and hc-kernel-assemble are placed in
