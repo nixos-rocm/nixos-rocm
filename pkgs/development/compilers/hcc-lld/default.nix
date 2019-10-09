@@ -1,7 +1,7 @@
 { stdenv, cmake, fetchFromGitHub, libxml2, hcc-llvm }:
 stdenv.mkDerivation rec {
   name = "hcc-lld";
-  version = "2.8.0";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "lld";

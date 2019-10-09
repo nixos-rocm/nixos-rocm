@@ -1,22 +1,21 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig
-, rocr, rocminfo, hcc, hip, rocm-cmake, comgr
+, rocr, rocminfo, clang, hcc, hip, rocm-cmake, comgr
 , doCheck ? false
 , boost, gtest, fftw, fftwFloat }:
 stdenv.mkDerivation rec {
   name = "rocFFT";
-  version = "2.7";
+  version = "2.9";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocFFT";
-    # rev = "rocm-${version}";
-    # sha256 = "1q10qsy7grch2ibc686z1yl0bgnrzfp5lxfy2jnasfbk0nys1mc7";
-    rev = "655899d8117e69fbd83190d057fa4c5479d7c798";
-    sha256 = "1c1zv9682c5k5c3p434n0qavlqnil0v78bzmnlimk6gckf03yw6z";
+    rev = "rocm-${version}";
+    sha256 = "1qwlpfwckhwn7mgjlhvv52cnwixj6jd0f6w8jay0ksdqyn72dlrq";
   };
 
   # Building this package is very RAM intensive: individual clang
   # processes use over 6GB of RAM.
   enableParallelBuilding = false;
+  CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HIP__";
 
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig rocminfo ];
   buildInputs = [ hcc hip rocr boost comgr ]

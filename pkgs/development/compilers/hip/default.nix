@@ -3,23 +3,23 @@
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.7.0";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "0ibklghp9h598phh6dizkyxnk3syj9mv4bip5bfai0d5l5l6iyl6";
+    sha256 = "1a2qbwqyhdvcx8c2cvhwj4x10jrdw1d154yd3w1x6x9xkja7yqni";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc comgr ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-07-18" +%y%U%w
+  # day in the week: date -d "2019-09-09" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
-    "-DHIP_VERSION_PATCH=19284"
+    "-DHIP_VERSION_GITDATE=19361"
     "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
     "-DCMAKE_BUILD_TYPE=Release"

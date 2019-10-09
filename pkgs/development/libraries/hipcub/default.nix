@@ -1,12 +1,12 @@
 {stdenv, fetchFromGitHub, cmake, rocm-cmake, pkgconfig, hcc, hip-clang, rocprim}:
 stdenv.mkDerivation rec {
   name = "hipcub";
-  version = "2.7";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "hipCUB";
-    rev = "rocm-${version}";
-    sha256 = "1id4j0cp9lqzkqnhb5kyv2fmkbi0qqp9z8mmr5p7gnrlx8fxka1r";
+    rev = version;
+    sha256 = "1ipqjac17pv1cvraqfxcfg3rzncww46rnlfgb6rzyjcbg6h2p0si";
   };
   patchPhase = ''
     sed -e '/find_package(Git/,/endif()/d' \

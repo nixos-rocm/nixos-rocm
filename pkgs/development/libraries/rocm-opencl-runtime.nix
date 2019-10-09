@@ -1,6 +1,6 @@
 { stdenv
 , fetchFromGitHub
-, libGL_driver
+, addOpenGLRunpath
 , cmake
 , rocr
 , roct
@@ -16,7 +16,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.8.0";
+  version = "2.9.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "1h4g2lpbxwndaks7l8rdzymg0i34r45x3xdk51zlrf8ccv906kk6";
+        sha256 = "0kvkbaqjnydrf6shlhr4yskdia2a78rcy6zlmqv6m83l71s9q7mb";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
@@ -66,7 +66,7 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
 
-    sed 's,"ICD_VENDOR_PATH","${libGL_driver.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/loader/linux/icd_linux.c
+    sed 's,ICD_VENDOR_PATH,"${addOpenGLRunpath.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/loader/linux/icd_linux.c
 
     sed -e 's|add_subdirectory(compiler/llvm EXCLUDE_FROM_ALL)|find_package(Clang REQUIRED CONFIG)|' \
         -e 's|add_subdirectory(compiler/driver EXCLUDE_FROM_ALL)|include_directories(${rocm-opencl-driver.src}/src)|' \
@@ -100,6 +100,8 @@ stdenv.mkDerivation rec {
   preFixup = ''
     patchelf --set-rpath "$out/lib" $out/bin/x86_64/clinfo
     ln -s $out/bin/x86_64/* $out/bin
+    rm -f $out/lib/libOpenCL*
+    ln -s $out/lib/x86_64/* $out/lib
   '';
     # ln -s $out/lib/x86_64/libOpenCL.so.1.2 $out/lib/x86_64/libOpenCL.so.1
     # ln -s $out/lib/x86_64/* $out/lib

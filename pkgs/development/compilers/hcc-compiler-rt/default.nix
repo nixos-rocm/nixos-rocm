@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, cmake, python, hcc-llvm }:
 stdenv.mkDerivation rec {
   name = "hcc-compiler-rt";
-  version = "2.8.0";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "compiler-rt";
