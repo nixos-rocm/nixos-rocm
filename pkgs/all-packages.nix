@@ -1,6 +1,6 @@
 # All packages in the 30_rocm package set that are ready for use.
 
-self: pkgs:
+defaultTargets: self: pkgs:
 
 with pkgs;
 
@@ -23,17 +23,17 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.8.0";
+    version = "2.9.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-ocl-${version}";
-      sha256 = "161rfsdfsa9fs8ibk3lz7ci4g3wnjx8rsgrm1mfin5xl48x4fjca";
+      sha256 = "1m7041rr5f85cknlz49mvy8xpk4bhm5b5p1wxnv6adkf1mmp4qq4";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld rec {
     name = "rocm-lld";
-    version = "2.8.0";
+    version = "2.9.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "lld";
@@ -44,12 +44,12 @@ with pkgs;
   };
   rocm-clang-unwrapped = callPackage ./development/compilers/clang rec {
     name = "clang-unwrapped";
-    version = "2.8.0";
+    version = "2.9.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "clang";
       rev = "roc-${version}";
-      sha256 = "0rddrcaby2dca3gd4ff7svawr8wqmr2j2v6hwy3vxmx66fihgrkz";
+      sha256 = "1z9k1qfbf3vjjrzy7qc90bm2ck04pi6a7r2yl4gkqvsp5djdb4w3";
     };
     llvm = self.rocm-llvm;
     inherit (self) rocr;
@@ -74,7 +74,9 @@ with pkgs;
   rocr = callPackage ./development/libraries/rocr {};
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
-  rocminfo = callPackage ./development/tools/rocminfo.nix {};
+  rocminfo = callPackage ./development/tools/rocminfo.nix {
+    inherit defaultTargets;
+  };
 
   # OpenCL stack
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
@@ -83,7 +85,7 @@ with pkgs;
     clang = self.rocm-clang;
     lld = self.rocm-lld;
     tagPrefix = "roc-ocl";
-    sha256 = "0m2nmzad6ywwz16nahw5qayb5h28i0vnhfnrwf75da8rf2imp76p";
+    sha256 = "0i3s9261v0xlm5n274vcjhqp7b82hlkismqiblj44cwf622bwqar";
   };
   rocm-opencl-driver = callPackage ./development/libraries/rocm-opencl-driver {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
@@ -104,7 +106,7 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm rec {
     name = "hcc-llvm";
-    version = "2.8.0";
+    version = "2.9.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
@@ -143,6 +145,7 @@ with pkgs;
     tagPrefix = "roc-hcc";
     sha256 = "0i3s9261v0xlm5n274vcjhqp7b82hlkismqiblj44cwf622bwqar";
   };
+
   # Now we build hcc itself using hcc-llvm, hcc-clang, and hcc-compiler-rt
   hcc-unwrapped = callPackage ./development/compilers/hcc {
     inherit (self) rocr rocminfo;
@@ -177,9 +180,6 @@ with pkgs;
 
   # HIP
 
-  # The hcc-llvm doesn't support GFX908, but comgr has been updated to
-  # do so. This is another breakage of the ROCm 2.7 release that
-  # should go away with hcc.
   hcc-comgr = (callPackage ./development/libraries/comgr {
     llvm = self.hcc-llvm;
     lld = self.hcc-lld;
@@ -198,28 +198,28 @@ with pkgs;
 
   # HIP's clang backend requires the `amd-common` branches of the
   # LLVM, LLD, and Clang forks.
-# BUILD TO HERE
+
   # The amd-common branch of the llvm fork
   amd-llvm = callPackage ./development/compilers/llvm rec {
     name = "amd-llvm";
-    version = "20191002";
+    version = "20191003";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "ceab2d5db530debcde830a919bb7f6b8e51d6cfe";
-      sha256 = "0h2n6lzgjapfn1qipmhvifjyrk783bagdkg6c3myn884yvl0safn";
+      rev = "c38780c1b2096b9d8c4c88b8000fe2774b0f892a";
+      sha256 = "0a9d7cdc6cyi8lzadkccy68yh00wg62qw17wpldmr8jpzcihhb2n";
     };
   };
 
   # The amd-common branch of the lld fork
   amd-lld = callPackage ./development/compilers/lld {
     name = "amd-lld";
-    version = "20191001";
+    version = "20191003";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "lld";
-      rev = "609a1e2afc44237dbd55ec595b4ec1ae9eecf8fa";
-      sha256 = "1032kaj66rafbihx24mm2wacjvqfkdgjcxswhn69ijpd71ah6z5p";
+      rev = "e5162a691f6596aa1f165305ebeeffce93597968";
+      sha256 = "0f504n7nvdw0ggncqgij98r6r013hnzlz12xxk57z2m3zcm728mq";
     };
     llvm = self.amd-llvm;
   };
@@ -230,16 +230,16 @@ with pkgs;
     rev = "6f382a084eda3115da1ec10040dab24ef0db9749";
     sha256 = "1ny12mlg8mfxicy8x7pspr7n9m1vyrnm44dhda1hc1q59r0gdfyn";
   };
-# UPDATE TO HERE
+
   # The amd-common branch of the clang fork
   amd-clang-unwrapped = (callPackage ./development/compilers/clang {
     name = "amd-clang";
-    version = "20191002";
+    version = "20191003";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "clang";
-      rev = "45fa31afbc14e159f9267180c9046ef67abe4809";
-      sha256 = "1d9wpw57s6wj5pmsybqsampdlw16qhinxgc1fgmvg4292xhczhn1";
+      rev = "a09d37e345861d68f9768939e485d265f4fcb0ce";
+      sha256 = "185fq21dpng55y80jxw7g03cpas26glx2rh5ib62nyi2q3h4yfia";
     };
     inherit (self) rocr;
     llvm = self.amd-llvm;
@@ -269,7 +269,7 @@ with pkgs;
       echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
       rm $out/nix-support/add-hardening.sh
       touch $out/nix-support/add-hardening.sh
-      ln -s ${self.amd-llvm}/bin/llvm-link $out/llvm-link
+      ln -s ${self.amd-llvm}/bin/llvm-link $out/bin/llvm-link
     '';
   };
 
@@ -309,7 +309,7 @@ with pkgs;
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
-    inherit (self) roct rocr rocminfo hcc;
+    inherit (self) roct rocr rocminfo hcc hcc-unwrapped;
     llvm = self.amd-llvm;
     clang-unwrapped = self.amd-clang-unwrapped;
     clang = self.amd-clang;
@@ -334,13 +334,14 @@ with pkgs;
   };
 
   rocblas = callPackage ./development/libraries/rocblas {
-    inherit (self) rocm-cmake hcc hcc-lld rocr rocblas-tensile;
+    inherit (self) rocm-cmake hcc hcc-unwrapped hcc-lld rocr rocblas-tensile;
     # hip = self.hip;
     # comgr = self.hcc-comgr;
+    # clang = self.hcc-clang;
     hip = self.hip-clang;
     comgr = self.amd-comgr;
+    clang = self.amd-clang;
     inherit (python3Packages) python;
-    
   };
 
   # MIOpen
@@ -370,8 +371,10 @@ with pkgs;
     inherit (self) rocr rocminfo hcc rocm-cmake;
     # hip = self.hip;
     # comgr = self.hcc-comgr;
+    # clang = self.hcc-clang;
     hip = self.hip-clang;
     comgr = self.amd-comgr;
+    clang = self.amd-clang;
   };
 
   rccl = callPackage ./development/libraries/rccl {

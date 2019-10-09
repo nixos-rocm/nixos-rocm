@@ -27,6 +27,7 @@ stdenv.mkDerivation rec {
   # depencencies of the `clangBasic` target.
   preConfigure = ''
     sed 's/  ''${version_inc}//' -i lib/Basic/CMakeLists.txt
+    sed 's|sys::path::parent_path(BundlerExecutable)|StringRef("${llvm}/bin")|' -i tools/clang-offload-bundler/ClangOffloadBundler.cpp
   '';
   postConfigure = ''
     mkdir -p lib/Basic

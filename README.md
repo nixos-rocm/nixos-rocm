@@ -1,25 +1,23 @@
-# Radeon Open Compute (2.6.0) packages for NixOS
+# Radeon Open Compute (2.9.0) packages for NixOS
+
+## 🚨 Installation Has Changed! 🚨
+
+As of ROCm 2.8, using the `rocm_agent_enumerator` program that is part of the `rocminfo` package no longer works for `nix` builds. Among other checks, the program must be run by a user in the `video` group. Rather than trying to make all `nixbld` users satisfy these requirements, the new arrangement is that we manually specify the GPU targets we are building for. This mechanism is in place in `rocm_agent_enumerator` to support CI configurations that may not have all the required hardware, and so probably also makes sense for `nix` builds. To this end, **we now pass the overlay a list of GPU targets**: e.g. `(import /path/to/nixos-rocm ["gfx900"])`.
 
 ## Note on ROCm Hardware Support
-Independent of NixOS, the ROCm software stack has a particular hardware requirement for gfx803 (aka Polaris, aka RX570/580/590 GPUs) that is not universally enjoyed: PCI Express 3.0 (PCIe 3.0) with PCIe atomics. This requires that both the CPU and motherboard support atomic operations all the way from the CPU to the GPU (including any PCIe risers or splitters in which the GPU is installed). See the [ROCm documentation](https://github.com/RadeonOpenCompute/ROCm#hardware-support) for more information, but, in short, you may run this quick test on kernels <= 4.19 to see if the kernel driver has loaded properly:
-
-```
-dmesg | grep kfd
-```
-
-If the output includes something like `kfd kfd: skipped device 1002:67df, PCI rejects atomics`, then ROCm does not support your hardware.
+Independent of NixOS, the ROCm software stack has a particular hardware requirement for gfx803 (aka Polaris, aka RX570/580/590 GPUs) that is not universally enjoyed: PCI Express 3.0 (PCIe 3.0) with PCIe atomics. This requires that both the CPU and motherboard support atomic operations all the way from the CPU to the GPU (including any PCIe risers or splitters in which the GPU is installed). See the [ROCm documentation](https://github.com/RadeonOpenCompute/ROCm#hardware-support) for more information.
 
 ## Installation
 
 This overlay should work with the latest nixos-unstable channel. To use these
-packages, clone this repo somewhere and then add `(import /path/to/this/repo)`
-to `nixpkgs.overlays` in `configuration.nix`.
+packages, clone this repo somewhere and then add `(import /path/to/this/repo ["gfx803"])`
+to `nixpkgs.overlays` in `configuration.nix` to target . Other common targets are `"gfx900"` for Vega 10, and `"gfx906"` for Vega 20.
 
 As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm stack.
 
 Add these lines to configuration.nix to enable the ROCm stack:
 ```
-  boot.kernelPackages = pkgs.linuxPackages_5_1;
+  boot.kernelPackages = pkgs.linuxPackages_5_2;
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
 ```

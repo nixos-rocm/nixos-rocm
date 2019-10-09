@@ -1,7 +1,7 @@
 {stdenv, fetchFromGitHub, cmake, llvm, lld, clang, device-libs}:
 stdenv.mkDerivation rec {
   pname = "comgr";
-  version = "2.8.0";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-CompilerSupport";

@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, cmake, opencl }:
 stdenv.mkDerivation {
   name = "clpeak";
-  version = "2019-05-04";
+  version = "2019-08-24";
   src = fetchFromGitHub {
     owner = "krrishnarraj";
     repo = "clpeak";
-    rev = "15330946a225b1f083ea042ee8db2722e962b3d2";
-    sha256 = "0xkkqashqsdaj24yndpi4xqkzmb0xhdbyhg7a35r4amfwjj4g5m7";
+    rev = "8e18c59bfbbeee0eb2005f882cd3bb5ad4cf6107";
+    sha256 = "0kvca1hp7b8ac429gs6wqji0x4i9lnixjbn275pl8b9zxnis9lp1";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ opencl ];

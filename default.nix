@@ -6,7 +6,7 @@
 # non-conflicting or to completely replace underlying packages, which
 # are merged in from ./pkgs/all-packages.nix.
 
-self: super:
+defaultTargets: self: super:
 
 { # Overrides of existing packages go here
-} // (import ./pkgs/all-packages.nix self super)
+} // (import ./pkgs/all-packages.nix defaultTargets self super)

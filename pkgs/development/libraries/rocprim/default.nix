@@ -5,12 +5,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "rocprim";
-  version = "2.7";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocPRIM";
-    rev = "rocm-${version}";
-    sha256 = "0kp44zziigmxl5iii5cs3xzlw2q4wppkfbmxhwnkqrzkl5005q4d";
+    rev = version;
+    sha256 = "0xx4p4pqic2bx6ri8fgwj02q7rnpy7cjj593vlc3jrb4sqvww96i";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig ] 
     ++ stdenv.lib.optional doCheck gtest;

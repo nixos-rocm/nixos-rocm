@@ -1,7 +1,13 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, rocr, python, rocm-cmake, busybox, gnugrep }:
-
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, rocr, python, rocm-cmake, busybox, gnugrep
+  # rocminfo requires that the calling user have a password and be in
+  # the video group. If we let rocm_agent_enumerator rely upon
+  # rocminfo's output, then it, too, has those requirements. Instead,
+  # we can specify the GPU targets for this system (e.g. "gfx803" for
+  # Polaris) such that no system call is needed for downstream
+  # compilers to determine the desired target.
+, defaultTargets ? []}:
 stdenv.mkDerivation rec {
-  version = "2.8.0";
+  version = "2.9.0";
   pname = "rocminfo";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
@@ -26,5 +32,7 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
     cp rocminfo $out/bin
     cp rocm_agent_enumerator $out/bin
+  '' + stdenv.lib.optionalString (defaultTargets != []) ''
+    echo '${stdenv.lib.concatStringsSep "\n" defaultTargets}' > $out/bin/target.lst
   '';
 }

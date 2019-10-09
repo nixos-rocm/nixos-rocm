@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, libunwind, python
-, rocr, hcc, hcc-lld, hip, rocm-cmake, comgr
+, rocr, hcc, hcc-unwrapped, hcc-lld, hip, rocm-cmake, comgr, clang
 , doCheck ? false
 # Tensile slows the build a lot, but can produce a faster rocBLAS
 , useTensile ? true, rocblas-tensile ? null
@@ -9,27 +9,23 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "2.7.0";
+  version = "2.9.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
-    # rev = with stdenv.lib.versions;
-    #   "rocm-${stdenv.lib.concatStringsSep
-    #             "." [(major version) (minor version)]}";
-    # sha256 = "0ydzbwxq84ng1ka1ax78mvqx3g37ckbwz2l23iqg7l1qa1q0ymmg";
-    # rev = "39b5e1e3d73f11821babd9ccfd796fc63e16a12c";
-    # sha256 = "0niw49bkq7wyh7a4k3250g4mz7837g0kv66brqyq4gisvdgs8f83";
-
-    rev = "2b1befc1e791998f00f1bf1e71f7ca4b2490cb2c";
-    sha256 = "1qvkn208qf6zxdr9vlx70rm68vmcdxskg745i026xczpk107faxk";
+    rev = with stdenv.lib.versions;
+      "rocm-${stdenv.lib.concatStringsSep "." [(major version) (minor version)]}";
+    sha256 = "0niw49bkq7wyh7a4k3250g4mz7837g0kv66brqyq4gisvdgs8f83";
   };
-  nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
+  nativeBuildInputs = [ cmake rocm-cmake pkgconfig python hcc-unwrapped ];
 
   buildInputs = [ libunwind pyenv hip rocr comgr ]
-    ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack ];
+                ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack ];
 
+  CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__clang__ -D__HIP__ -fdeclspec";
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+    "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_WITH_TENSILE=${if useTensile then "ON" else "OFF"}"
   ] ++ stdenv.lib.optionals doCheck [
@@ -41,14 +37,16 @@ stdenv.mkDerivation rec {
     "-DTensile_TEST_LOCAL_PATH=${rocblas-tensile}"
     "-DTensile_ROOT=${rocblas-tensile}/bin"
     "-DTensile_LOGIC=hip_lite"
+    "-DTensile_CODE_OBJECT_VERSION=V3"
+    "-DTensile_COMPILER=hipcc"
   ];
 
   patchPhase = ''
     patchShebangs ./header_compilation_tests.sh
     sed -e '/include(virtualenv)/d' \
         -e '/virtualenv_install.*/d' \
-        -e 's|/opt/rocm/hcc|${hcc}|' \
-        -e 's|/opt/rocm/hip|${hip}|' \
+        -e '/list( APPEND CMAKE_PREFIX_PATH \/opt\/rocm\/hcc \/opt\/rocm\/hip )/d' \
+        -e 's,if( CMAKE_CXX_COMPILER MATCHES ".*/hcc$" ),if( TRUE ),' \
         -i CMakeLists.txt
     sed '/add_custom_command(/,/^ )/d' -i library/src/CMakeLists.txt
   '';
