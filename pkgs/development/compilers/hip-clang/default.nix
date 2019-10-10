@@ -79,7 +79,7 @@ stdenv.mkDerivation rec {
         -e 's/\(message(STATUS "Looking for HCC in: " ''${HCC_HOME} ". Found version: " ''${HCC_VERSION})\)/string(REGEX REPLACE ".*based on HCC[ ]*(LLVM)?[ ]*([^)\\r\\n ]*).*" "\\\\2" HCC_VERSION ''${HCC_VERSION})\n\1/' \
         -i CMakeLists.txt
   '';
-#         -e 's/set(HIP_VERSION_PATCH .*//g' \
+
   preInstall = ''
     mkdir -p $out/lib/cmake
   '';
