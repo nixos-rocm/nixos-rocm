@@ -87,6 +87,7 @@ stdenv.mkDerivation rec {
   postInstall = ''
     mkdir -p $out/share
     mv $out/lib/cmake $out/share/
+    mv $out/cmake/* $out/share/cmake/hip
     mkdir -p $out/lib
     ln -s ${device-libs}/lib $out/lib/bitcode
     mkdir -p $out/include
