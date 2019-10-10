@@ -15,8 +15,8 @@ stdenv.mkDerivation rec {
     sha256 = "192yjnvwsiyvxxibaafdvzs4njrzk23mz3my7917kfxh0x1lawwc";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ clang roct rocminfo device-libs rocr ];
-  buildInputs = [ clang device-libs rocr comgr hcc ];
+  propagatedBuildInputs = [ clang roct rocminfo device-libs rocr comgr ];
+  buildInputs = [ clang device-libs rocr hcc ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
