@@ -196,6 +196,10 @@ with pkgs;
     comgr = self.hcc-comgr;
   };
 
+  hcc-openmp = pkgs.llvmPackages_8.openmp.override {
+    llvm = self.hcc-llvm;
+  };
+
   # HIP's clang backend requires the `amd-common` branches of the
   # LLVM, LLD, and Clang forks.
 
@@ -221,6 +225,10 @@ with pkgs;
       rev = "e5162a691f6596aa1f165305ebeeffce93597968";
       sha256 = "0f504n7nvdw0ggncqgij98r6r013hnzlz12xxk57z2m3zcm728mq";
     };
+    llvm = self.amd-llvm;
+  };
+
+  amd-openmp = pkgs.llvmPackages_8.openmp.override {
     llvm = self.amd-llvm;
   };
 
