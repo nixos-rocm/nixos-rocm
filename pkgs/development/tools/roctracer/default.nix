@@ -32,6 +32,7 @@ stdenv.mkDerivation rec {
   '';
   postFixup = ''
     patchelf --replace-needed libroctracer64.so.1 $out/roctracer/lib/libroctracer64.so.1 $out/roctracer/tool/libtracer_tool.so
+    ln -s $out/roctracer/include/* $out/include
   '';
 
 }

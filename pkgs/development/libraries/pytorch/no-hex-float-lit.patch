@@ -1,0 +1,12 @@
+diff -ru '--exclude=*~' --exclude build A2/aten/src/ATen/native/QuantizedLinear.cpp B/aten/src/ATen/native/QuantizedLinear.cpp
+--- A2/aten/src/ATen/native/QuantizedLinear.cpp	2019-10-12 16:34:35.418019062 -0400
++++ B/aten/src/ATen/native/QuantizedLinear.cpp	2019-10-12 16:34:23.848647885 -0400
+@@ -292,7 +292,7 @@
+   unsigned short significand_bits = value & 0x3ff;
+ 
+   float sign = sign_bits ? -1 : 1;
+-  float significand = 1 + significand_bits * 0x1p-10;
++  float significand = 1 + significand_bits * 0.000976562;
+   float exponent = exponent_bits - 0xf;
+ 
+   return sign * std::ldexp(significand, exponent);
