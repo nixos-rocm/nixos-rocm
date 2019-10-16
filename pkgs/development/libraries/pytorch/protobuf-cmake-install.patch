@@ -1,0 +1,28 @@
+diff -ruN A/third_party/protobuf/cmake/install.cmake B/third_party/protobuf/cmake/install.cmake
+--- A/third_party/protobuf/cmake/install.cmake	2019-10-13 02:35:03.072383784 -0400
++++ B/third_party/protobuf/cmake/install.cmake	2019-10-13 02:36:11.860348146 -0400
+@@ -89,7 +89,7 @@
+ # Install configuration
+ set(_cmakedir_desc "Directory relative to CMAKE_INSTALL to install the cmake configuration files")
+ if(NOT MSVC)
+-  set(CMAKE_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/protobuf" CACHE STRING "${_cmakedir_desc}")
++  set(CMAKE_INSTALL_CMAKEDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/protobuf" CACHE STRING "${_cmakedir_desc}")
+ else()
+   set(CMAKE_INSTALL_CMAKEDIR "cmake" CACHE STRING "${_cmakedir_desc}")
+ endif()
+@@ -119,12 +119,12 @@
+ endif (protobuf_BUILD_PROTOC_BINARIES)
+ 
+ install(EXPORT protobuf-targets
+-  DESTINATION "${CMAKE_INSTALL_CMAKEDIR}"
++  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/protobuf"
+   NAMESPACE protobuf::
+   COMPONENT protobuf-export)
+ 
+-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_CMAKEDIR}/
+-  DESTINATION "${CMAKE_INSTALL_CMAKEDIR}"
++install(DIRECTORY ${CMAKE_INSTALL_CMAKEDIR}/
++  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/protobuf"
+   COMPONENT protobuf-export
+   PATTERN protobuf-targets.cmake EXCLUDE
+ )

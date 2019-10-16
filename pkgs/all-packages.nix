@@ -467,13 +467,20 @@ with pkgs;
     hip = self.hip-clang;
   };
 
-  # Not yet working
   pytorch-rocm = python37Packages.callPackage ./development/libraries/pytorch/default.nix {
     inherit (self) rocr miopengemm miopen-hip rocsparse hipsparse rocthrust 
       rccl rocrand rocblas rocfft rocprim hipcub roctracer;
     hip = self.hip;
     comgr = self.hcc-comgr;
+    openmp = self.hcc-openmp;
     hcc = self.hcc-unwrapped;
+    # hip = self.hip-clang;
+    # comgr = self.amd-comgr;
+    # openmp = self.amd-openmp;
+  };
+
+  torchvision-rocm = python37Packages.torchvision.override {
+    pytorch = self.pytorch-rocm;
   };
 
   hipCPU = callPackage ./development/compilers/hipsycl/hipCPU.nix {

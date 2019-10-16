@@ -1,0 +1,11 @@
+diff --exclude '*~' -ruN A/torch/CMakeLists.txt B/torch/CMakeLists.txt
+--- A/torch/CMakeLists.txt	2019-10-13 02:35:03.243388917 -0400
++++ B/torch/CMakeLists.txt	2019-10-15 20:18:40.671857320 -0400
+@@ -37,6 +37,7 @@
+ # Generate files
+ set(TOOLS_PATH "${TORCH_ROOT}/tools")
+ 
++file(GLOB JIT_TEST_SRCS ${CMAKE_SOURCE_DIR}/test/cpp/jit/test_*.cpp)
+ 
+ set(TORCH_PYTHON_SRCS
+     ${GENERATED_THNN_CXX}

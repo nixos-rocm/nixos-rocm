@@ -1,0 +1,21 @@
+diff --exclude '*~' -ruN A/setup.py B/setup.py
+--- A/setup.py	2019-10-13 02:35:02.525367344 -0400
++++ B/setup.py	2019-10-14 21:19:51.567112366 -0400
+@@ -234,7 +234,7 @@
+ 
+ # Constant known variables used throughout this file
+ cwd = os.path.dirname(os.path.abspath(__file__))
+-lib_path = os.path.join(cwd, "torch", "lib")
++lib_path = os.path.join(cwd, "build", "lib")
+ third_party_path = os.path.join(cwd, "third_party")
+ caffe2_build_dir = os.path.join(cwd, "build")
+ # lib/pythonx.x/site-packages
+@@ -460,7 +460,7 @@
+             filename = self.get_ext_filename(fullname)
+             report("\nCopying extension {}".format(ext.name))
+ 
+-            src = os.path.join("torch", rel_site_packages, filename)
++            src = os.path.join("build", filename)
+             if not os.path.exists(src):
+                 report("{} does not exist".format(src))
+                 del self.extensions[i]

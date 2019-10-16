@@ -1,0 +1,11 @@
+diff --exclude '*~' -ruN A/torch/CMakeLists.txt B/torch/CMakeLists.txt
+--- A/torch/CMakeLists.txt	2019-10-13 02:35:03.243388917 -0400
++++ B/torch/CMakeLists.txt	2019-10-14 11:19:44.914249588 -0400
+@@ -376,6 +376,7 @@
+ 
+ target_include_directories(torch_python PUBLIC ${TORCH_PYTHON_INCLUDE_DIRECTORIES})
+ 
++target_link_directories(torch_python PUBLIC ${CMAKE_BINARY_DIR}/lib)
+ 
+ if (NOT TORCH_PYTHON_LINK_FLAGS STREQUAL "")
+     set_target_properties(torch_python PROPERTIES LINK_FLAGS ${TORCH_PYTHON_LINK_FLAGS})
