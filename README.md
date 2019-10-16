@@ -58,4 +58,12 @@ So far, this has been tested with a Radeon Vega Frontier Edition, an RX 580, and
 
 ## Highlights of Included Software
 
-Libraries and compilers for: [OpenCL](https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime), [HCC](https://github.com/RadeonOpenCompute/hcc), [HIP](https://github.com/ROCm-Developer-Tools/HIP), and [TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream).
+Libraries and compilers for: 
+
+* [OpenCL](https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime)
+* [HCC](https://github.com/RadeonOpenCompute/hcc)
+* [HIP](https://github.com/ROCm-Developer-Tools/HIP)
+* [pytorch](https://github.com/ROCmSoftwarePlatform/pytorch)
+
+Note: TensorFlow with ROCm 2.9 crashes at runtime for me, though it worked in 2.7. This will need further debugging.
+~~[TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream)~~
