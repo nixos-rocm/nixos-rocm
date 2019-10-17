@@ -461,12 +461,6 @@ with pkgs;
     hip = self.hip-clang;
   };
 
-  tensorflow-rocm-src = python37Packages.callPackage ./development/libraries/tensorflow/default.nix {
-    inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
-                   rocfft rocblas rocr rccl cxlactivitylogger amd-clang;
-    hip = self.hip-clang;
-  };
-
   pytorch-rocm = python37Packages.callPackage ./development/libraries/pytorch/default.nix {
     inherit (self) rocr miopengemm miopen-hip rocsparse hipsparse rocthrust 
       rccl rocrand rocblas rocfft rocprim hipcub roctracer;
@@ -481,19 +475,5 @@ with pkgs;
 
   torchvision-rocm = python37Packages.torchvision.override {
     pytorch = self.pytorch-rocm;
-  };
-
-  hipCPU = callPackage ./development/compilers/hipsycl/hipCPU.nix {
-    clang = self.amd-clang-unwrapped;
-  };
-
-  hipsycl = callPackage ./development/compilers/hipsycl {
-    inherit (self) rocr hipCPU;
-    device-libs = self.amd-device-libs;
-    llvm = self.amd-llvm;
-    clang = self.amd-clang;
-    clang-unwrapped = self.amd-clang-unwrapped;
-    # hcc = self.amd-hcc;
-    hip = self.hip-clang;
   };
 }
