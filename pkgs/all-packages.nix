@@ -1,6 +1,6 @@
 # All packages in the 30_rocm package set that are ready for use.
 
-defaultTargets: self: pkgs:
+self: pkgs:
 
 with pkgs;
 
@@ -75,7 +75,7 @@ with pkgs;
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
-    inherit defaultTargets;
+    defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
 
   # OpenCL stack
