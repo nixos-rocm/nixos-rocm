@@ -73,18 +73,15 @@ stdenv.mkDerivation rec {
     sed 's|CLANG=$BINDIR/hcc|CLANG=${clang}/bin/clang++|' -i lib/hc-host-assemble.in
     sed 's|LLVM_DIS=$BINDIR/llvm-dis|${llvm}/bin/llvm-dis|' -i lib/hc-kernel-assemble.in
 
-    sed -e "s;new RuntimeImpl(\"libmcwamp_\(hsa\|cpu\).so\";new RuntimeImpl(\"$out/lib/libmcwamp_\1.so\";g" \
-        -e "s|, \"libmcwamp_hsa.so\",|, \"$out/lib/libmcwamp_hsa.so\",|" \
-        -i lib/mcwamp.cpp
-
     sed -e 's|\(my $llvm_objdump = \).*|\1"${llvm}/bin/llvm-objdump";|' \
         -e 's|\(my $clang_offload_bundler = \).*|\1"${clang-unwrapped}/bin/clang-offload-bundler";|' \
         -i lib/extractkernel.in
   '';
-  patches = [ ./hcc-config-hsa.patch ];
+  patches = [ ./hcc-config-hsa.patch ./libmcwamp-out-path.patch ];
   inherit rocr;
   postPatch = ''
     substituteInPlace lib/hcc-config.cmake.in --subst-var rocr
+    substituteInPlace lib/mcwamp.cpp --subst-var out
   '';
 
   # Scripts like hc-host-assemble and hc-kernel-assemble are placed in
