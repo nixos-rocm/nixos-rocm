@@ -458,10 +458,12 @@ with pkgs;
     inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
                    rocfft rocblas rocr rccl cxlactivitylogger;
     hip = self.hip;
-    # hip = self.hip-clang;
   };
 
-    hip = self.hip-clang;
+  tensorflow2-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin2.nix {
+    inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
+                   rocfft rocblas rocr rccl cxlactivitylogger;
+    hip = self.hip;
   };
 
   pytorch-rocm = python37Packages.callPackage ./development/libraries/pytorch/default.nix {
