@@ -362,13 +362,13 @@ with pkgs;
   miopen-cl = callPackage ./development/libraries/miopen {
     inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
                    clang-ocl miopengemm rocblas;
-    # comgr = self.hcc-comgr;
-    # hip = self.hip;
-    # clang = self.hcc;
+    comgr = self.hcc-comgr;
+    hip = self.hip;
+    clang = self.hcc;
 
-    hip = self.hip-clang;
-    comgr = self.amd-comgr;
-    clang = self.amd-clang;
+    # hip = self.hip-clang;
+    # comgr = self.amd-comgr;
+    # clang = self.amd-clang;
   };
 
   miopen-hip = self.miopen-cl.override {

@@ -15,7 +15,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ rocr half openssl boost rocblas miopengemm comgr ]
     ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl hip]);
 
-  CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__clang__ -D__HIP__ -D__HIP_VDI__";
+  # CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__clang__ -D__HIP__ -D__HIP_VDI__";
+  CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HCC__";
 
   cmakeFlags = [
     "-DCMAKE_PREFIX_PATH=${hcc};${hip};${clang-ocl}"
@@ -24,10 +25,11 @@ stdenv.mkDerivation rec {
     "-DBoost_USE_STATIC_LIBS=OFF"
     "-DMIOPEN_USE_MIOPENGEMM=ON"
   ] ++ (if useHip
-  then [ "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+        then [ # "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+          "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
          "-DCMAKE_C_COMPILER=${clang}/bin/clang"
          "-DMIOPEN_BACKEND=HIP"
-         "-DENABLE_HIP_WORKAROUNDS=NO" ]
+         "-DENABLE_HIP_WORKAROUNDS=YES" ]
   else [ "-DMIOPEN_BACKEND=OpenCL"
          "-DOPENCL_INCLUDE_DIRS=${rocm-opencl-runtime}/include/opencl2.2"
          "-DOPENCL_LIB_DIRS=${rocm-opencl-runtime}/lib"
