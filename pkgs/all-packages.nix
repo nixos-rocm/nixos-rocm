@@ -457,7 +457,10 @@ with pkgs;
   tensorflow-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin.nix {
     inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
                    rocfft rocblas rocr rccl cxlactivitylogger;
-    # hip = self.hip;
+    hip = self.hip;
+    # hip = self.hip-clang;
+  };
+
     hip = self.hip-clang;
   };
 
