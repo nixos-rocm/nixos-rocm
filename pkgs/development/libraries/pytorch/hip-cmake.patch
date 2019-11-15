@@ -1,0 +1,23 @@
+diff --exclude '*~' -ruN A2/cmake/public/LoadHIP.cmake B/cmake/public/LoadHIP.cmake
+--- A2/cmake/public/LoadHIP.cmake	2019-10-12 16:34:48.286432382 -0400
++++ B/cmake/public/LoadHIP.cmake	2019-11-07 20:49:46.471257580 -0500
+@@ -128,12 +128,17 @@
+ ADD_DEFINITIONS(-DNDEBUG)
+ 
+ macro(find_package_and_print_version PACKAGE_NAME)
+-  find_package("${PACKAGE_NAME}" ${ARGN})
++  find_package("${PACKAGE_NAME}")
+   message("${PACKAGE_NAME} VERSION: ${${PACKAGE_NAME}_VERSION}")
+ endmacro()
+ 
+ # Find the HIP Package
+ find_package_and_print_version(HIP 1.0)
++if(NOT FOUND_HIP_MODULE)
++  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${HIP_BIN_INSTALL_DIR}/../share/cmake/hip")
++  find_package(HIP REQUIRED MODULE)
++  set(FOUND_HIP_MODULE YES)
++endif()
+ 
+ IF(HIP_FOUND)
+   set(PYTORCH_FOUND_HIP TRUE)
+diff --exclude '*~' -ruN A2/third_party/protobuf/cmake/install.cmake B/third_party/protobuf/cmake/install.cmake

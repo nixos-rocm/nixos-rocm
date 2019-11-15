@@ -15,7 +15,7 @@ buildPythonPackage rec {
     fetchSubmodules = true;
   };
 
-  nativeBuildInputs = [ cmake pkg-config utillinux which git ];
+  nativeBuildInputs = [ cmake pkg-config utillinux which git hip ];
   buildInputs = [ 
     numpy.blas
     numactl
@@ -75,6 +75,7 @@ buildPythonPackage rec {
     ./setup-lib-dirs.patch
     ./link-mcwamp.patch
     ./add-jit-srcs.patch
+    ./hip-cmake.patch
   ];
 
   postConfigure = ''
