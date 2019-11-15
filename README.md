@@ -69,7 +69,5 @@ Libraries and compilers for:
 * [OpenCL](https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime)
 * [HCC](https://github.com/RadeonOpenCompute/hcc)
 * [HIP](https://github.com/ROCm-Developer-Tools/HIP)
-* [pytorch](https://github.com/ROCmSoftwarePlatform/pytorch)
-
-Note: TensorFlow with ROCm 2.9 crashes at runtime for me, though it worked in 2.7. This will need further debugging.
-~~[TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream)~~
+* [pytorch](https://github.com/ROCmSoftwarePlatform/pytorch) (Note that AMD's ROCm port of pytorch does not support current pytorch extension mechanisms for C++ or CUDA plugins, so many libraries that depend upon pytorch will not work.)
+* [TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream)
