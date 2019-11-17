@@ -22,9 +22,12 @@
 , astunparse
 , grpcio
 , google-pasta
+, markdown
 , mock
 , backports_weakref
 , enum34
+, werkzeug
+, wheel
 , tensorflow-tensorboard
 , tensorflow-estimator
 , zlib
@@ -63,6 +66,32 @@ let
     };
     propagatedBuildInputs = [ astunparse ];
   };
+  tensorboard_1_14_0 = buildPythonPackage rec {
+    pname = "tensorflow-tensorboard";
+    version = "1.14.0";
+    format = "wheel";
+    src = fetchurl {
+      url = "https://files.pythonhosted.org/packages/91/2d/2ed263449a078cd9c8a9ba50ebd50123adf1f8cfbea1492f9084169b89d9/tensorboard-1.14.0-py3-none-any.whl";
+      sha256 = "1z631614jk5zgasgmwfr33gz8bwv11p9f5llzlwvx3a8rnyv3q2h";
+    };
+    propagatedBuildInputs = [
+      numpy
+      werkzeug
+      protobuf
+      markdown
+      grpcio absl-py
+      wheel
+    ];
+  };
+  tensorflow-estimator_1_14_0 = buildPythonPackage rec {
+    pname = "tensorflow-estimator";
+    version = "1.14.0";
+    format = "wheel";
+    src = fetchurl {
+      url = "https://files.pythonhosted.org/packages/3c/d5/21860a5b11caf0678fbc8319341b0ae21a07156911132e0e71bffed0510d/tensorflow_estimator-1.14.0-py2.py3-none-any.whl";
+      sha256 = "14irpsyj14vn2dpwr601f54058wywci1pv0hss8s01rl0rk3y1ya";
+    };
+  };
 in buildPythonPackage {
   pname = "tensorflow";
   version = "1.14.3";
@@ -84,8 +113,10 @@ in buildPythonPackage {
     gast_0_2_2
     google-pasta
     wrapt
-    tensorflow-estimator
-    tensorflow-tensorboard
+    # tensorflow-estimator
+    # tensorflow-tensorboard
+    tensorflow-estimator_1_14_0
+    tensorboard_1_14_0
     keras-applications
     keras-preprocessing
   ];
