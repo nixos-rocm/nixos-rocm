@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, cmake, python, hcc-llvm }:
 stdenv.mkDerivation rec {
   name = "hcc-compiler-rt";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "compiler-rt";
     rev = "roc-hcc-${version}";
-    sha256 = "1dzgnxs9i7s5k5lzfrn0m3l5jx9pnhxc4kdwfvpp1hs6qlwy9jy9";
+    sha256 = "0gp3iy3nqq76hqish9pj94a49ab5fx7yl6ygw4rx471mxwc5fmyb";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc-llvm ];

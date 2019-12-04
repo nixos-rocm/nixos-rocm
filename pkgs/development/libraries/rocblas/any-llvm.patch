@@ -1,0 +1,17 @@
+diff --exclude '*~' -ruN A/Tensile/Source/lib/CMakeLists.txt B/Tensile/Source/lib/CMakeLists.txt
+--- A/Tensile/Source/lib/CMakeLists.txt	2019-11-26 13:37:01.772547849 -0500
++++ B/Tensile/Source/lib/CMakeLists.txt	2019-11-26 13:38:28.521496158 -0500
+@@ -43,7 +43,7 @@
+     )
+ 
+ if(TENSILE_USE_LLVM)
+-    find_package(LLVM 6.0 QUIET CONFIG)
++    find_package(LLVM QUIET CONFIG)
+     if(NOT LLVM_FOUND)
+         find_package(LLVM 7.0 REQUIRED CONFIG)
+     endif()
+@@ -91,4 +91,3 @@
+     message(STATUS "${_variableName}=${${_variableName}}")
+ endforeach()
+ endif()
+-

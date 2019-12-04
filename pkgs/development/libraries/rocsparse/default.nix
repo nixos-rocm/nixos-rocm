@@ -1,14 +1,14 @@
 {stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-cmake, hip, rocprim, hipcub, comgr}:
 stdenv.mkDerivation rec {
   name = "rocsparse";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocSPARSE";
-    rev = with stdenv.lib.versions; 
-          "rocm-${stdenv.lib.concatStringsSep 
+    rev = with stdenv.lib.versions;
+          "rocm-${stdenv.lib.concatStringsSep
                     "." [(major version) (minor version)]}";
-    sha256 = "1gv8vi34gf3h0bcvprqgdwqp88i9n4xscxb1mzy540i2b28kdr2p";
+    sha256 = "0lr2vy3vxa0yrlscm10s6gp0vn87gsnimcdr3qvp7r32gmsjk6dz";
   };
 
   postPatch = ''
@@ -26,11 +26,11 @@ stdenv.mkDerivation rec {
     "-DCMAKE_CXX_COMPILER=hipcc"
     "-DHIP_COMPILER=clang"
     "-DHIP_PLATFORM=hcc"
-    "-DCMAKE_INSTALL_INCLUDEDIR=include"    
+    "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_TEST=NO"
     "-DCMAKE_PREFIX_PATH=${rocm-cmake}/share/rocm/cmake"
   ];
   nativeBuildInputs = [ cmake rocm-cmake ];
   buildInputs = [ hip rocprim hipcub comgr ];
-  
+
 }

@@ -1,14 +1,14 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig, numactl
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, pkgconfig, numactl
 , rocm-cmake, hcc, hip, comgr
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rccl";
     rev = version;
-    sha256 = "09540rqv6b7nrrjchkk35v2966f1l8wsanildwc38nngzfxxwcd3";
+    sha256 = "16l0k4p4liny3z20fxfgmxfmjj0mkj6djas6c26xfmccshqjhx4s";
   };
   nativeBuildInputs = [ cmake pkgconfig ];
   buildInputs = [ hcc hip numactl comgr ];
@@ -20,12 +20,12 @@ stdenv.mkDerivation rec {
   ];
   inherit doCheck;
 
-  # These get rccl building with hip-clang, though they likely break
-  # rccl functionality
-  patchPhase = ''
-    sed '/.*hipDeviceAttributeHdpMemFlushCntl.*/d' -i src/transport/net.cc
-    sed '/.*hipDeviceAttributeHdpMemFlushCntl.*/d' -i src/transport/p2p.cc
-  '';
+  # Revert a patch that removed gfx803 as a GPU target
+  patches = [ (fetchpatch {
+    url = "https://github.com/ROCmSoftwarePlatform/rccl/commit/58a6e535f6bf62742e1f2431f77ad2e34114d51a.patch";
+    sha256 = "02n8pk998gvn7ivkk36l3pnsraxgjc09bfbifydizpj1qka5kwg5";
+    revert = true;
+  })];
 
   # NOTE: This works in a nix-shell, but not with nix-build due to user groups
   checkPhase = stdenv.lib.optionalString doCheck ''

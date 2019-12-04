@@ -2,12 +2,12 @@
 , gtest, doCheck ? false }:
 stdenv.mkDerivation rec {
   name = "rocthrust";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocThrust";
     rev = version;
-    sha256 = "05ig1awwz2r4m28fiax93ijqa01n026h6qn3pz1gvqnl8jiyvm4c";
+    sha256 = "1fna4q9smg21pmhxx64n62n5vc516pls4glxpc9y87nfkn9i98al";
   };
 
   postPatch = ''
@@ -22,11 +22,10 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=hipcc"
     "-DHIP_PLATFORM=hcc"
-    "-DCMAKE_INSTALL_INCLUDEDIR=include"    
+    "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_TEST=${if doCheck then "YES" else "NO"}"
-    # "-DCMAKE_PREFIX_PATH=${rocm-cmake}/share/rocm/cmake"
   ];
   nativeBuildInputs = [ cmake rocm-cmake ];
   buildInputs = [ hip rocprim comgr ] ++ stdenv.lib.optionals doCheck [ gtest ];
-  
+
 }

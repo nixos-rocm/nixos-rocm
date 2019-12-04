@@ -1,12 +1,12 @@
 {stdenv, fetchFromGitHub, cmake, rocm-cmake, pkgconfig, hcc, hip-clang, rocprim}:
 stdenv.mkDerivation rec {
   name = "hipcub";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "hipCUB";
     rev = version;
-    sha256 = "1ipqjac17pv1cvraqfxcfg3rzncww46rnlfgb6rzyjcbg6h2p0si";
+    sha256 = "0i7lv20bsyzyr38vnfj8d720s85q0l5z39m0f6cqmv33nw99hc3q";
   };
   patchPhase = ''
     sed -e '/find_package(Git/,/endif()/d' \
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=hipcc"
     "-DHIP_PLATFORM=clang"
-    "-DCMAKE_INSTALL_INCLUDEDIR=include"    
+    "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_TEST=NO"
   ];
   buildInputs = [ hip-clang rocprim ];

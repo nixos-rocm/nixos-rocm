@@ -23,33 +23,33 @@ with pkgs;
 
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "2.9.0";
+    version = "2.10.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-ocl-${version}";
-      sha256 = "1m7041rr5f85cknlz49mvy8xpk4bhm5b5p1wxnv6adkf1mmp4qq4";
+      sha256 = "0a9d7cdc6cyi8lzadkccy68yh00wg62qw17wpldmr8jpzcihhb2n";
     };
   };
   rocm-lld = self.callPackage ./development/compilers/lld rec {
     name = "rocm-lld";
-    version = "2.9.0";
+    version = "2.10.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "lld";
       rev = "roc-ocl-${version}";
-      sha256 = "13lndrykz3m7fzvbkdy1wai0mc2yw3lvwz47wia5wq34gsjj5zfb";
+      sha256 = "1lsphljcf49xc7xlczv4c5dfxsv4sq86077x7xmfnhzrca64ksv1";
     };
     llvm = self.rocm-llvm;
   };
   rocm-clang-unwrapped = callPackage ./development/compilers/clang rec {
     name = "clang-unwrapped";
-    version = "2.9.0";
+    version = "2.10.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "clang";
       rev = "roc-${version}";
-      sha256 = "1z9k1qfbf3vjjrzy7qc90bm2ck04pi6a7r2yl4gkqvsp5djdb4w3";
+      sha256 = "185fq21dpng55y80jxw7g03cpas26glx2rh5ib62nyi2q3h4yfia";
     };
     llvm = self.rocm-llvm;
     inherit (self) rocr;
@@ -85,7 +85,7 @@ with pkgs;
     clang = self.rocm-clang;
     lld = self.rocm-lld;
     tagPrefix = "roc-ocl";
-    sha256 = "0i3s9261v0xlm5n274vcjhqp7b82hlkismqiblj44cwf622bwqar";
+    sha256 = "0z9fk8hkwf3mqc1pgs597p4qcbl228q0mr22rxyz0d6y8nqr0i2z";
   };
   rocm-opencl-driver = callPackage ./development/libraries/rocm-opencl-driver {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
@@ -106,12 +106,12 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm rec {
     name = "hcc-llvm";
-    version = "2.9.0";
+    version = "2.10.0";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
       rev = "roc-hcc-${version}";
-      sha256 = "1fk9w34xq1qligwys4ims5mgs6hk9lfvb91sk0wl2776ybqkxj26";
+      sha256 = "0mwy2w6npcs5b9l7ylr849fagikqalqq3lx8ak9jlsrs4g2qx99c";
     };
   };
   hcc-lld = callPackage ./development/compilers/hcc-lld {
@@ -143,7 +143,7 @@ with pkgs;
     clang = self.hcc-clang;
     lld = self.hcc-lld;
     tagPrefix = "roc-hcc";
-    sha256 = "0i3s9261v0xlm5n274vcjhqp7b82hlkismqiblj44cwf622bwqar";
+    sha256 = "0awgca508k9l3nxib12z43mzh0160c2k63dpx8ixvcpvda9zad1h";
   };
 
   # Now we build hcc itself using hcc-llvm, hcc-clang, and hcc-compiler-rt
@@ -196,7 +196,7 @@ with pkgs;
     comgr = self.hcc-comgr;
   };
 
-  hcc-openmp = pkgs.llvmPackages_8.openmp.override {
+  hcc-openmp = pkgs.llvmPackages_9.openmp.override {
     llvm = self.hcc-llvm;
   };
 
@@ -206,12 +206,12 @@ with pkgs;
   # The amd-common branch of the llvm fork
   amd-llvm = callPackage ./development/compilers/llvm rec {
     name = "amd-llvm";
-    version = "20191003";
+    version = "20191025";
     src = fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "llvm";
-      rev = "c38780c1b2096b9d8c4c88b8000fe2774b0f892a";
-      sha256 = "0a9d7cdc6cyi8lzadkccy68yh00wg62qw17wpldmr8jpzcihhb2n";
+      rev = "7b3a23a98c2e869965f64657ee11a7cb13feffa5";
+      sha256 = "16dbz6dw3vkvz0sljbr0z7kcax0lh1c0rxyhi07fydmi49ils4nx";
     };
   };
 
@@ -289,8 +289,8 @@ with pkgs;
     source = pkgs.fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "ROCm-Device-Libs";
-      rev = "c3967062378a1a33b66d8ff10455f4d72d567939";
-      sha256 = "1n219sn3636s8nbp779daix155j3rklgahxrlfyi893vxi13yv4h";
+      rev = "628eea44063452c5c7fcea6432d35efd8d302548";
+      sha256 = "07xhywpdd6d073q1px81cl2zf0cyll37air2dj1h8s9kbm48wc0q";
     };
   }).overrideAttrs (_: {
     cmakeFlags = [
@@ -306,14 +306,7 @@ with pkgs;
     lld = self.amd-lld;
     clang = self.amd-clang;
     device-libs = self.amd-device-libs;
-  }).overrideAttrs (_: {
-    # A newer revision is needed for the latest LLVM
-    src = pkgs.fetchFromGitHub {
-      owner = "RadeonOpenCompute";
-      repo = "ROCm-CompilerSupport";
-      rev = "7c581b41567121ef78b5bc8da3c34bb5ce777e75";
-      sha256 = "0bb38bgphybhsyyv5xzf3c1vccrqd871mq2jxpb5frxxicgwqaa4";
-    };});
+  });
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {

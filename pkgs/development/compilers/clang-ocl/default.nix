@@ -3,7 +3,7 @@
 , hcc, hcc-clang-unwrapped, amd-clang, amd-clang-unwrapped }:
 stdenv.mkDerivation rec {
   name = "clang-ocl";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang-ocl";

@@ -4,7 +4,7 @@
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpen";
@@ -13,10 +13,7 @@ stdenv.mkDerivation rec {
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
   buildInputs = [ rocr half openssl boost rocblas miopengemm comgr ]
-    ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl hip]);
-
-  # CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__clang__ -D__HIP__ -D__HIP_VDI__";
-  CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HCC__";
+    ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl hip hcc]);
 
   cmakeFlags = [
     "-DCMAKE_PREFIX_PATH=${hcc};${hip};${clang-ocl}"
@@ -25,14 +22,15 @@ stdenv.mkDerivation rec {
     "-DBoost_USE_STATIC_LIBS=OFF"
     "-DMIOPEN_USE_MIOPENGEMM=ON"
   ] ++ (if useHip
-        then [ # "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
-          "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
-         "-DCMAKE_C_COMPILER=${clang}/bin/clang"
-         "-DMIOPEN_BACKEND=HIP"
-         "-DENABLE_HIP_WORKAROUNDS=YES" ]
-  else [ "-DMIOPEN_BACKEND=OpenCL"
-         "-DOPENCL_INCLUDE_DIRS=${rocm-opencl-runtime}/include/opencl2.2"
-         "-DOPENCL_LIB_DIRS=${rocm-opencl-runtime}/lib"
+        then [ "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
+               "-DCMAKE_C_COMPILER=${clang}/bin/clang"
+               "-DMIOPEN_BACKEND=HIP"
+               "-DENABLE_HIP_WORKAROUNDS=YES" ]
+        else [ "-DMIOPEN_BACKEND=OpenCL"
+               "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
+               "-DCMAKE_C_COMPILER=${clang}/bin/clang"
+               "-DOPENCL_INCLUDE_DIRS=${rocm-opencl-runtime}/include/opencl2.2"
+               "-DOPENCL_LIB_DIRS=${rocm-opencl-runtime}/lib"
   ]);
   patchPhase = ''
     sed -e 's,cmake_minimum_required( VERSION 2.8.12 ),cmake_minimum_required( VERSION 3.10 ),' \

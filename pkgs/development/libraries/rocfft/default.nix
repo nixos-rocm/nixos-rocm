@@ -4,12 +4,12 @@
 , boost, gtest, fftw, fftwFloat }:
 stdenv.mkDerivation rec {
   name = "rocFFT";
-  version = "2.9";
+  version = "2.10";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocFFT";
     rev = "rocm-${version}";
-    sha256 = "1qwlpfwckhwn7mgjlhvv52cnwixj6jd0f6w8jay0ksdqyn72dlrq";
+    sha256 = "169bs1236vs419qfz23crbhlibnq1i3kd26bppr2j8sr77xgnbwx";
   };
 
   # Building this package is very RAM intensive: individual clang

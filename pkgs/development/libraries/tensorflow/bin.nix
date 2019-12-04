@@ -5,7 +5,7 @@
 # `nix-shell` as its own entity rather than among a list of packages
 # in a `withPackages` call. For example:
 # `nix-shell -p 'python37.withPackages (ps: [ps.jupyter])' -p tensorflow-rocm`
-# 
+#
 # You can then start `jupyter-notebook` as normal.
 { stdenv
 , lib
@@ -94,20 +94,20 @@ let
   };
 in buildPythonPackage {
   pname = "tensorflow";
-  version = "1.14.3";
+  version = "1.14.4";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/27/8c/5dec7c6fd8758124f7d9de499ffd25d283a0c09f573ecacb5fe571ca968d/tensorflow_rocm-1.14.3-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "169j99sn878q1imj9nnglcvrhg3z7kc2jchqm9pwm2i0iq4cflwh";
+    url = "https://files.pythonhosted.org/packages/42/c1/c53f96478c1e8b04b30faa96526edae01c2b35adf047ed19156ca392ce03/tensorflow_rocm-1.14.4-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "0ibsqfykwrxkqvsangj515zs7jd9lml86nsw4ak9vxldll4hq1b8";
   };
 
-  propagatedBuildInputs = [ 
-    protobuf 
-    numpy 
-    termcolor 
+  propagatedBuildInputs = [
+    protobuf
+    numpy
+    termcolor
     grpcio
-    six 
+    six
     astor
     absl-py
     gast_0_2_2
