@@ -53,6 +53,8 @@ stdenv.mkDerivation rec {
     sed -e 's|BINDIR=$(dirname $0)|BINDIR=${llvm}/bin|' \
         -e "s|EMBED=\$BINDIR/clamp-embed|EMBED=$out/bin/clamp-embed|" \
         -i lib/clamp-device.in
+    sed -e 's|objcopy|${llvm}/bin/llvm-objcopy|g' \
+        -i lib/clamp-embed.in
     sed -e 's|`file |`${file}/bin/file |g' -i lib/clamp-link.in
     sed -e 's|\(set(LLVM_SRC \).*|\1"${llvm.src}")|' \
         -e '\|set(LLVM_ROOT .*|d' \
