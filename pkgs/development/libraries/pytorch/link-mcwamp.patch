@@ -1,35 +1,35 @@
 diff --exclude '*~' -ruN A/c10/hip/CMakeLists.txt B/c10/hip/CMakeLists.txt
---- A/c10/hip/CMakeLists.txt	2019-10-13 02:35:02.579368968 -0400
-+++ B/c10/hip/CMakeLists.txt	2019-10-15 20:26:51.188348300 -0400
+--- A/c10/hip/CMakeLists.txt    2019-11-26 20:36:56.801756323 -0500
++++ B/c10/hip/CMakeLists.txt    2019-11-26 20:50:53.971928130 -0500
 @@ -44,7 +44,7 @@
  # ---[ Dependency of c10_hip
  target_link_libraries(c10_hip PUBLIC c10)
- 
+
 -target_link_libraries(c10_hip PUBLIC ${PYTORCH_HIP_HCC_LIBRARIES})
 +target_link_libraries(c10_hip PUBLIC ${PYTORCH_HIP_HCC_LIBRARIES} @mcwamp@)
- 
+
  target_include_directories(
      c10_hip PUBLIC
 diff --exclude '*~' -ruN A/caffe2/CMakeLists.txt B/caffe2/CMakeLists.txt
---- A/caffe2/CMakeLists.txt	2019-10-13 02:35:02.581369028 -0400
-+++ B/caffe2/CMakeLists.txt	2019-10-15 20:23:36.798062357 -0400
-@@ -522,7 +522,7 @@
+--- A/caffe2/CMakeLists.txt     2019-11-26 20:36:56.803756325 -0500
++++ B/caffe2/CMakeLists.txt     2019-11-26 20:51:26.559975390 -0500
+@@ -547,7 +547,7 @@
      # caffe2_nvrtc's stubs to driver APIs are useful for HIP.
      # See NOTE [ ATen NVRTC Stub and HIP ]
      add_library(caffe2_nvrtc SHARED ${ATen_NVRTC_STUB_SRCS})
--    target_link_libraries(caffe2_nvrtc ${CUDA_NVRTC} ${PYTORCH_HIP_HCC_LIBRARIES} ${ROCM_HIPRTC_LIB})
-+    target_link_libraries(caffe2_nvrtc ${CUDA_NVRTC} ${PYTORCH_HIP_HCC_LIBRARIES} ${ROCM_HIPRTC_LIB} @mcwamp@)
-     target_link_libraries(caffe2_nvrtc ${CUDA_NVRTC} ${CUDA_CUDA_LIB} ${CUDA_NVRTC_LIB})
-     target_include_directories(caffe2_nvrtc PRIVATE ${CUDA_INCLUDE_DIRS})
+-    target_link_libraries(caffe2_nvrtc ${PYTORCH_HIP_HCC_LIBRARIES} ${ROCM_HIPRTC_LIB})
++    target_link_libraries(caffe2_nvrtc ${PYTORCH_HIP_HCC_LIBRARIES} ${ROCM_HIPRTC_LIB} @mcwamp@)
      target_compile_definitions(caffe2_nvrtc PRIVATE USE_ROCM __HIP_PLATFORM_HCC__)
+     install(TARGETS caffe2_nvrtc DESTINATION "${TORCH_INSTALL_LIB_DIR}")
+   endif()
 diff --exclude '*~' -ruN A/test/cpp/jit/CMakeLists.txt B/test/cpp/jit/CMakeLists.txt
---- A/test/cpp/jit/CMakeLists.txt	2019-10-13 02:35:02.651371132 -0400
-+++ B/test/cpp/jit/CMakeLists.txt	2019-10-15 20:27:19.340340710 -0400
+--- A/test/cpp/jit/CMakeLists.txt       2019-11-26 20:36:56.791756309 -0500
++++ B/test/cpp/jit/CMakeLists.txt       2019-11-26 20:52:13.150043071 -0500
 @@ -23,6 +23,7 @@
    target_link_libraries(test_jit PRIVATE
      ${ROCM_HIPRTC_LIB}
      ${PYTORCH_HIP_HCC_LIBRARIES}
 +    @mcwamp@
      ${TORCH_CUDA_LIBRARIES})
- 
+
    target_link_libraries(test_jit PRIVATE caffe2_gpu)

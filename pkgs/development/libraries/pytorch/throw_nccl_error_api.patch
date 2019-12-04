@@ -1,0 +1,12 @@
+diff --exclude '*~' -ruN A/torch/csrc/cuda/nccl.h B/torch/csrc/cuda/nccl.h
+--- A/torch/csrc/cuda/nccl.h	2019-11-26 20:36:57.412757126 -0500
++++ B/torch/csrc/cuda/nccl.h	2019-12-04 11:38:37.836042861 -0500
+@@ -19,7 +19,7 @@
+ // Don't use them outside of these files.
+ namespace detail {
+ 
+-void throw_nccl_error(ncclResult_t status);
++TORCH_CUDA_API void throw_nccl_error(ncclResult_t status);
+ 
+ static inline void NCCL_CHECK(ncclResult_t status) {
+   if (status != ncclSuccess) {

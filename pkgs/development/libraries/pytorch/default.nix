@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, cmake, symlinkJoin, utillinux, which, git, openssl
 , buildPythonPackage, python, numpy, pyyaml, cffi, numactl, opencv3, lmdb, pkg-config
 , rocr, hip, openmp, rocrand, rocblas, rocfft, rocm-cmake, rccl, rocprim, hipcub
-, miopen-hip, miopengemm, rocsparse, hipsparse, rocthrust, comgr
+, miopen, miopengemm, rocsparse, hipsparse, rocthrust, comgr
 , hcc
 , roctracer }:
 buildPythonPackage rec {
@@ -10,13 +10,13 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "pytorch";
-    rev = "c3a845bb0682f5ced87af2c8c38d1907edebfdd5";
-    sha256 = "1194j8yyi2q0s3v7qi68366qx65pzzq3j8xhdfxqiiwscsicwy9l";
+    rev = "0827395419a00f1ac815977671632b79723c0a45";
+    sha256 = "00rbiqkizqpa8y1ja8rzbrqzm9qjcxbgq0m3ccg4km1hz8js5ra6";
     fetchSubmodules = true;
   };
 
   nativeBuildInputs = [ cmake pkg-config utillinux which git hip ];
-  buildInputs = [ 
+  buildInputs = [
     numpy.blas
     numactl
     lmdb
@@ -27,7 +27,7 @@ buildPythonPackage rec {
     openmp
     rocr
     rccl
-    miopen-hip
+    miopen
     miopengemm
     rocrand
     rocblas
@@ -63,19 +63,21 @@ buildPythonPackage rec {
     "-DUSE_OPENCV=ON"
     "-DUSE_DISTRIBUTED=OFF"
     "-DBUILD_TEST=ON"
+    "-DUSE_NCCL=ON"
   ];
 
   doCheck = false;
 
-  patches = [ 
-    ./no-hex-float-lit.patch 
-    ./protobuf-cmake-install.patch 
+  patches = [
+    ./no-hex-float-lit.patch
+    ./protobuf-cmake-install.patch
     ./hip-version-torch.patch
     ./torch-python-lib-dirs.patch
     ./setup-lib-dirs.patch
     ./link-mcwamp.patch
     ./add-jit-srcs.patch
     ./hip-cmake.patch
+    ./throw_nccl_error_api.patch
   ];
 
   postConfigure = ''
@@ -89,7 +91,7 @@ buildPythonPackage rec {
   # https://github.com/pytorch/pytorch/blob/v1.0.0/setup.py#L267
   PYTORCH_BUILD_VERSION = version;
   PYTORCH_BUILD_NUMBER = 0;
-  
+
   preFixup = ''
     function join_by { local IFS="$1"; shift; echo "$*"; }
     function strip2 {

@@ -364,7 +364,7 @@ with pkgs;
                    clang-ocl miopengemm rocblas;
     comgr = self.hcc-comgr;
     hip = self.hip;
-    clang = self.hcc;
+    clang = self.hcc-clang;
 
     # hip = self.hip-clang;
     # comgr = self.amd-comgr;
@@ -389,7 +389,7 @@ with pkgs;
     inherit (self) rocm-cmake hcc;
     # hip = self.hip;
     # comgr = self.hcc-comgr;
-    hip = self.hip-clang; 
+    hip = self.hip-clang;
     comgr = self.amd-comgr;
   };
 
@@ -467,12 +467,14 @@ with pkgs;
   };
 
   pytorch-rocm = python37Packages.callPackage ./development/libraries/pytorch/default.nix {
-    inherit (self) rocr miopengemm miopen-hip rocsparse hipsparse rocthrust 
+    inherit (self) rocr miopengemm rocsparse hipsparse rocthrust
       rccl rocrand rocblas rocfft rocprim hipcub roctracer;
+    miopen = self.miopen-hip;
     hip = self.hip;
     comgr = self.hcc-comgr;
     openmp = self.hcc-openmp;
     hcc = self.hcc-unwrapped;
+
     # hip = self.hip-clang;
     # comgr = self.amd-comgr;
     # openmp = self.amd-openmp;

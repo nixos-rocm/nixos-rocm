@@ -1,11 +1,12 @@
-diff -ruN A/caffe2/CMakeLists.txt B/caffe2/CMakeLists.txt
---- A/caffe2/CMakeLists.txt	2019-10-13 02:35:02.581369028 -0400
-+++ B/caffe2/CMakeLists.txt	2019-10-13 13:44:51.006281439 -0400
-@@ -754,6 +754,7 @@
- 
- 
-   set_property(TARGET torch PROPERTY CXX_STANDARD 11)
-+  target_compile_definitions(torch PUBLIC HIP_VERSION=2)
- 
- 
-   install(DIRECTORY "${TORCH_SRC_DIR}/csrc"
+diff --exclude '*~' -ruN A/caffe2/CMakeLists.txt B/caffe2/CMakeLists.txt
+--- A/caffe2/CMakeLists.txt     2019-11-26 20:36:56.803756325 -0500
++++ B/caffe2/CMakeLists.txt     2019-11-26 20:40:57.716081278 -0500
+@@ -878,7 +878,7 @@
+ # NB: This must be target_compile_definitions, not target_compile_options,
+ # as the latter is not respected by nvcc
+ target_compile_definitions(torch PRIVATE "-DCAFFE2_BUILD_MAIN_LIB")
+-
++target_compile_definitions(torch PUBLIC HIP_VERSION=2)
+
+ # ATen parallelism settings
+ #  OMP - OpenMP for intra-op, native thread pool for inter-op parallelism
