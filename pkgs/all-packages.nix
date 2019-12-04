@@ -335,13 +335,20 @@ with pkgs;
   };
 
   rocblas = callPackage ./development/libraries/rocblas {
-    inherit (self) rocm-cmake hcc hcc-unwrapped hcc-lld rocr rocblas-tensile;
-    # hip = self.hip;
-    # comgr = self.hcc-comgr;
-    # clang = self.hcc-clang;
-    hip = self.hip-clang;
-    comgr = self.amd-comgr;
-    clang = self.amd-clang;
+    inherit (self) rocm-cmake hcc hcc-unwrapped rocr rocblas-tensile;
+    hip = self.hip;
+    comgr = self.hcc-comgr;
+    clang = self.hcc-clang;
+    # llvm = self.hcc-llvm;
+    openmp = self.hcc-openmp;
+
+    # hip = self.hip-clang;
+    # comgr = self.amd-comgr;
+    # clang = self.amd-clang;
+    # # llvm = self.amd-llvm;
+    # openmp = self.amd-openmp;
+
+    llvm = pkgs.llvmPackages_6.llvm;
     inherit (python3Packages) python;
   };
 
