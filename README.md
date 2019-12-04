@@ -24,7 +24,7 @@ As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm sta
 
 Add these lines to `configuration.nix` to enable the ROCm stack:
 ```
-  boot.kernelPackages = pkgs.linuxPackages_5_2;
+  boot.kernelPackages = pkgs.linuxPackages_5_3;
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
 ```
