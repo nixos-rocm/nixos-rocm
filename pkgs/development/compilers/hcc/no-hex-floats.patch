@@ -1,0 +1,18 @@
+diff -ruN --exclude '*~' A/include/kalmar_math.h B/include/kalmar_math.h
+--- A/include/kalmar_math.h	2019-11-13 15:44:18.682425447 -0500
++++ B/include/kalmar_math.h	2019-11-18 20:17:37.052510969 -0500
+@@ -535,11 +535,11 @@
+         namespace
+         {   // TODO: this is temporary, lifted straight out of irif.h.
+             // Namespace is merely for documentation.
+-            #define M_LOG2_10_F 0x1.a934f0p+1f
++            #define M_LOG2_10_F 3.32193f
+             // Value of 1 / log2(10)
+-            #define M_RLOG2_10_F 0x1.344136p-2f
++            #define M_RLOG2_10_F 0.30103f
+             // Value of 1 / M_LOG2E_F = 1 / log2(e)
+-            #define M_RLOG2_E_F 0x1.62e430p-1f
++            #define M_RLOG2_E_F 0.693147f
+         }
+ 
+         HCC_MATH_LIB_FN

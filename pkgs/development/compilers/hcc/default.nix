@@ -79,7 +79,7 @@ stdenv.mkDerivation rec {
         -e 's|\(my $clang_offload_bundler = \).*|\1"${clang-unwrapped}/bin/clang-offload-bundler";|' \
         -i lib/extractkernel.in
   '';
-  patches = [ ./hcc-config-hsa.patch ./libmcwamp-out-path.patch ];
+  patches = [ ./hcc-config-hsa.patch ./libmcwamp-out-path.patch ./no-hex-floats.patch ];
   inherit rocr;
   postPatch = ''
     substituteInPlace lib/hcc-config.cmake.in --subst-var rocr
