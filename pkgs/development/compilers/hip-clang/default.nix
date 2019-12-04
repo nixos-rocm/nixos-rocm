@@ -1,18 +1,14 @@
-{ stdenv, fetchFromGitHub, cmake, perl, python, writeText
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, device-libs, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr}:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
-    # rev = "roc-${version}";
-    # sha256 = "1a2qbwqyhdvcx8c2cvhwj4x10jrdw1d154yd3w1x6x9xkja7yqni";
-
-    # October 7, 2019
-    rev = "c4156b2e7a32ab213ffe4400b2a39c6d37d7da4f";
-    sha256 = "192yjnvwsiyvxxibaafdvzs4njrzk23mz3my7917kfxh0x1lawwc";
+    rev = "roc-${version}";
+    sha256 = "1nyan3ivf6c86qh3di6zb7xq0v8yky0s6g1x7vzn71k32xsiphaw";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ clang roct rocminfo device-libs rocr comgr ];
@@ -25,12 +21,14 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-09-09" +%y%U%w
+  # day in the week: date -d "2019-11-14" +%y%U%w
+  workweek = "19454";
+
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_COMPILER=clang"
-    "-DHIP_VERSION_GITDATE=19361"
+    "-DHIP_VERSION_GITDATE=${workweek}"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
   ];
@@ -41,11 +39,17 @@ stdenv.mkDerivation rec {
   # - fix hcc version parsing
   # - add linker flags for libhsa-runtime64 and hc_am since libhip_hcc
   #   refers to them.
-  patchPhase = ''
+  prePatch = ''
     for f in $(find bin -type f); do
       sed -e 's,#!/usr/bin/perl,#!${perl}/bin/perl,' \
           -e 's,#!/bin/bash,#!${stdenv.shell},' \
           -i "$f"
+    done
+
+    for f in $(find . -regex '.*\.cpp\|.*\.h\(pp\)?'); do
+      if grep -q __hcc_workweek__ "$f" ; then
+        substituteInPlace "$f" --replace '__hcc_workweek__' '${workweek}'
+      fi
     done
 
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i hip_prof_gen.py

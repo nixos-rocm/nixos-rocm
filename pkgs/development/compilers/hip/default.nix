@@ -3,23 +3,23 @@
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.9.0";
+  version = "2.10.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "1a2qbwqyhdvcx8c2cvhwj4x10jrdw1d154yd3w1x6x9xkja7yqni";
+    sha256 = "1nyan3ivf6c86qh3di6zb7xq0v8yky0s6g1x7vzn71k32xsiphaw";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc comgr ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-09-09" +%y%U%w
+  # day in the week: date -d "2019-11-14" +%y%U%w
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
-    "-DHIP_VERSION_GITDATE=19361"
+    "-DHIP_VERSION_GITDATE=19454"
     "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
     "-DCMAKE_BUILD_TYPE=Release"
@@ -34,6 +34,12 @@ stdenv.mkDerivation rec {
       sed -e 's,#!/usr/bin/perl,#!${perl}/bin/perl,' \
           -e 's,#!/bin/bash,#!${stdenv.shell},' \
           -i "$f"
+    done
+
+    for f in $(find . -regex '.*\.cpp\|.*\.h\(pp\)?'); do
+      if grep -q __hcc_workweek__ "$f" ; then
+        substituteInPlace "$f" --replace '__hcc_workweek__' '19454'
+      fi
     done
 
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i hip_prof_gen.py
