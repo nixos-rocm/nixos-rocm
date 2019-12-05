@@ -1,4 +1,4 @@
-# Radeon Open Compute (2.9.0) packages for NixOS
+# Radeon Open Compute (2.10.0) packages for NixOS
 
 ## 🚨 Installation Has Changed! 🚨
 
@@ -71,3 +71,9 @@ Libraries and compilers for:
 * [HIP](https://github.com/ROCm-Developer-Tools/HIP)
 * [pytorch](https://github.com/ROCmSoftwarePlatform/pytorch) (Note that AMD's ROCm port of pytorch does not support current pytorch extension mechanisms for C++ or CUDA plugins, so many libraries that depend upon pytorch will not work.)
 * [TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream)
+
+## Miscellaneous Notes and Workarounds
+
+The ROCm suite of libraries and compilers is still somewhat immature and changing rapidly. This brings with it some irregularities due to upstream quirks, and means that our packaging is always racing to keep up with the rapid rate of change. These are notes on problems you may run into as a ROCm user.
+
+-  When running things like pytorch or tensorflow that rely upon MIOpen on a gfx803 GPU, you may need to set the environment variable `MIOPEN_DEBUG_CONV_IMPLICIT_GEMM=0` to avoid an error like `Failed to get function: gridwise_convolution_implicit_gemm_v4_nchw_kcyx_nkhw_lds_double_buffer`.
