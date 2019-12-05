@@ -251,6 +251,7 @@ with pkgs;
     };
     inherit (self) rocr;
     llvm = self.amd-llvm;
+    lld = self.amd-lld;
     # clang-tools-extra_src = self.amd-clang-tools-src;
   }).overrideAttrs(_: {
     # HIP assumes LLVM and LLD binaries are in its own binary directory

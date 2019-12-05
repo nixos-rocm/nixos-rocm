@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, python, rocr, llvm
+{ stdenv, fetchFromGitHub, cmake, python, rocr, llvm, lld
 , name, version, src, clang-tools-extra_src ? null}:
 stdenv.mkDerivation rec {
   inherit name version src;
@@ -28,6 +28,9 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     sed 's/  ''${version_inc}//' -i lib/Basic/CMakeLists.txt
     sed 's|sys::path::parent_path(BundlerExecutable)|StringRef("${llvm}/bin")|' -i tools/clang-offload-bundler/ClangOffloadBundler.cpp
+
+    sed 's|\([[:space:]]*std::string Linker = \)getToolChain().GetProgramPath(getShortName())|\1"${lld}/bin/ld.lld"|' -i lib/Driver/ToolChains/AMDGPU.cpp
+    substituteInPlace lib/Driver/ToolChains/AMDGPU.h --replace ld.lld ${lld}/bin/ld.lld
   '';
   postConfigure = ''
     mkdir -p lib/Basic
