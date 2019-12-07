@@ -13,6 +13,7 @@
 , mesa_noglu
 , python2
 , libX11
+, libGLU
 }:
 
 stdenv.mkDerivation rec {
@@ -93,7 +94,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
   buildInputs = [ cmake rocr roct rocm-llvm rocm-lld rocm-device-libs
                   rocm-clang rocm-clang-unwrapped rocm-opencl-driver
-                  mesa_noglu python2 libX11 ];
+                  mesa_noglu python2 libX11 libGLU ];
 
   dontStrip = true;
 
