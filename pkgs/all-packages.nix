@@ -71,15 +71,17 @@ with pkgs;
 
   # Userspace ROC stack
   roct = callPackage ./development/libraries/roct.nix {};
-  rocr = callPackage ./development/libraries/rocr {};
+  rocr = callPackage ./development/libraries/rocr { inherit (self) roct; };
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
+    inherit (self) rocm-cmake rocr;
     defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
 
   # OpenCL stack
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
+    inherit (self) rocr;
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
     llvm = self.rocm-llvm;
     clang = self.rocm-clang;
@@ -89,13 +91,16 @@ with pkgs;
   };
   rocm-opencl-driver = callPackage ./development/libraries/rocm-opencl-driver {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
-    inherit (self) rocm-llvm rocm-clang-unwrapped;
+    inherit (self) rocm-lld rocm-llvm rocm-clang-unwrapped;
   };
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
-    inherit (self) roct rocm-clang rocm-clang-unwrapped;
+    inherit (self) roct rocm-clang rocm-clang-unwrapped rocm-device-libs;
+    inherit (self) rocm-lld rocm-llvm rocm-opencl-driver rocr;
   };
-  rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {};
+  rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {
+    inherit (self) rocm-opencl-runtime;
+  };
 
   # HCC
 
@@ -118,7 +123,7 @@ with pkgs;
     inherit (self) hcc-llvm;
   };
   hcc-clang-unwrapped = callPackage ./development/compilers/hcc-clang {
-    inherit (self) rocr hcc-llvm hcc-lld;
+    inherit (self) rocr rocminfo hcc-llvm hcc-lld;
   };
   hcc-clang = pkgs.wrapCCWith rec {
     cc = self.hcc-clang-unwrapped;
@@ -138,6 +143,7 @@ with pkgs;
     inherit (self) hcc-llvm;
   };
   hcc-device-libs = callPackage ./development/libraries/rocm-device-libs {
+    inherit (self) rocr;
     stdenv = pkgs.overrideCC stdenv self.hcc-clang;
     llvm = self.hcc-llvm;
     clang = self.hcc-clang;
@@ -283,6 +289,7 @@ with pkgs;
   };
 
   amd-device-libs = (callPackage ./development/libraries/rocm-device-libs {
+    inherit (self) rocr;
     stdenv = pkgs.overrideCC stdenv self.amd-clang;
     llvm = self.amd-llvm;
     clang = self.amd-clang;
@@ -320,7 +327,8 @@ with pkgs;
   };
 
   clang-ocl = callPackage ./development/compilers/clang-ocl {
-    inherit (self) rocm-cmake rocm-opencl-runtime hcc;
+    inherit (self) rocm-cmake rocm-device-libs rocm-lld rocm-llvm;
+    inherit (self) hcc hcc-clang-unwrapped rocm-opencl-runtime;
     inherit (self) amd-clang amd-clang-unwrapped;
   };
 
@@ -408,13 +416,14 @@ with pkgs;
   };
 
   rocprim = callPackage ./development/libraries/rocprim {
+    inherit (self) rocm-cmake rocr;
     stdenv = pkgs.overrideCC stdenv self.hcc;
     # hip = self.hip;
     hip = self.hip-clang;
   };
 
   hipcub = callPackage ./development/libraries/hipcub {
-    inherit (self) hcc rocprim;
+    inherit (self) hcc hip-clang rocm-cmake rocprim;
   };
 
   rocsparse = callPackage ./development/libraries/rocsparse {
@@ -439,7 +448,7 @@ with pkgs;
   };
 
   roctracer = callPackage ./development/tools/roctracer {
-    inherit (self) hcc-unwrapped;
+    inherit (self) hcc-unwrapped roct rocr;
     hip = self.hip-clang;
   };
 
@@ -448,8 +457,12 @@ with pkgs;
   };
 
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
-  amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {};
-  cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {};
+  amdtoswrappers = callPackage ./development/libraries/AMDTOSWrappers {
+    inherit (self) amdtbasetools;
+  };
+  cxlactivitylogger = callPackage ./development/libraries/cxlactivitylogger {
+    inherit (self) amdtbasetools amdtoswrappers;
+  };
 
   clpeak = pkgs.callPackage ./tools/clpeak {
     opencl = self.rocm-opencl-runtime;
@@ -469,7 +482,7 @@ with pkgs;
 
   pytorch-rocm = python37Packages.callPackage ./development/libraries/pytorch/default.nix {
     inherit (self) rocr miopengemm rocsparse hipsparse rocthrust
-      rccl rocrand rocblas rocfft rocprim hipcub roctracer;
+      rccl rocrand rocblas rocfft rocprim hipcub roctracer rocm-cmake;
     miopen = self.miopen-hip;
     hip = self.hip;
     comgr = self.hcc-comgr;
