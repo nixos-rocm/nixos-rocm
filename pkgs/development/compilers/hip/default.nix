@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
   # - fix path to rocm_agent_enumerator
   # - fix hcc path
   # - fix hcc version parsing
-  patchPhase = ''
+  postPatch = ''
     for f in $(find bin -type f); do
       sed -e 's,#!/usr/bin/perl,#!${perl}/bin/perl,' \
           -e 's,#!/bin/bash,#!${stdenv.shell},' \
