@@ -22,7 +22,7 @@ The named GPU targets are the common ones for RX480/RX580 GPUs, Vega 10, and Veg
 
 As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm stack.
 
-Add these lines to `configuration.nix` to enable the ROCm stack:
+Add these lines to `configuration.nix` to enable the ROCm stack (you might also use `pkgs.linuxPackages_5_4`):
 ```
   boot.kernelPackages = pkgs.linuxPackages_5_3;
   hardware.opengl.enable = true;
@@ -58,7 +58,7 @@ The `rocblas` and `rocfft` packages (and those that depend upon them) require a 
 
 ## Hardware support
 
-So far, this has been tested with a Radeon Vega Frontier Edition, an RX 580, and a Radeon VII.  Other cards supported by the upstream ROCm should also work, but have not been tested. Please let us know if we can expand the list of expected-to-work hardware!
+So far, this has been tested with Radeon Vega Frontier Edition, RX 580, and Radeon VII GPUs.  Other cards supported by the upstream ROCm should also work, but have not been tested. Please let us know if we can expand the list of expected-to-work hardware!
 
 Independent of NixOS, the ROCm software stack has a particular hardware requirement for gfx803 (aka Polaris, aka RX570/580/590 GPUs) that is not universally enjoyed: PCI Express 3.0 (PCIe 3.0) with PCIe atomics. This requires that both the CPU and motherboard support atomic operations all the way from the CPU to the GPU (including any PCIe risers or splitters in which the GPU is installed). See the [ROCm documentation](https://github.com/RadeonOpenCompute/ROCm#hardware-support) for more information.
 
