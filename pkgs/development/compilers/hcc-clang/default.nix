@@ -1,25 +1,20 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, python
-, rocr, hcc-llvm, hcc-lld, rocminfo }:
+, rocr, hcc-llvm, hcc-lld, rocminfo
+, version, src }:
 stdenv.mkDerivation rec {
   name = "hcc-clang-unwrapped";
-  version = "2.10.0";
-  src = fetchFromGitHub {
-    owner = "RadeonOpenCompute";
-    repo = "hcc-clang-upgrade";
-    rev = "roc-hcc-${version}";
-    sha256 = "1cllbhv1w0ms54a3jza2kznrgfc34gy13vlra3liaiv21wmpc0i0";
-  };
+  inherit version src;
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-llvm hcc-lld ];
   buildInputs = [ rocr ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-10-21" +%y%U%w
+  # day in the week: date -d "2019-12-06" +%y%U%w
   cmakeFlags = [
     "-DHCC_VERSION_STRING=${version}"
     "-DHCC_VERSION_MAJOR=${stdenv.lib.versions.major version}"
     "-DHCC_VERSION_MINOR=${stdenv.lib.versions.minor version}"
-    "-DHCC_VERSION_PATCH=19421"
+    "-DHCC_VERSION_PATCH=19485"
   ];
 
   # Rather than let cmake extract version information from LLVM or

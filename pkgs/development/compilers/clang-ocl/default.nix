@@ -3,12 +3,12 @@
 , hcc, hcc-clang-unwrapped, amd-clang, amd-clang-unwrapped }:
 stdenv.mkDerivation rec {
   name = "clang-ocl";
-  version = "2.10.0";
+  version = "3.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang-ocl";
     rev = "roc-${version}";
-    sha256 = "0498785cw8v68lamip4ly0c6pmadqr1m2hxl57la6p6lg80bf63v";
+    sha256 = "1majwzl3h9xx87rnk4bzl9vw0jf0fcwdknxvyk7snygaqyxjzqmj";
   };
   propagatedBuildInputs = [ rocm-lld ];
   nativeBuildInputs = [ cmake rocm-cmake rocm-opencl-runtime hcc ];

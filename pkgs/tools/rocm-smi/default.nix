@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, python3 }:
 stdenv.mkDerivation rec {
   name = "rocm-smi";
-  version = "2.10.0";
+  version = "3.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROC-smi";
     rev = "roc-${version}";
-    sha256 = "149a6gncdpfppmwi6xmk5gi8pprl393mcx39xbv1321r08lsbz8w";
+    sha256 = "10z18kqqrzrilbnb7sz4hskjjhgfw26wh5qmsbkmh76pnb9nhnmn";
   };
 
   patchPhase = "sed 's,#!/usr/bin/env python,#!${python3}/bin/python3,' -i rocm-smi";

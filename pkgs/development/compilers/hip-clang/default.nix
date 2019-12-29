@@ -3,12 +3,12 @@
 , llvm, clang, clang-unwrapped, device-libs, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr}:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "2.10.0";
+  version = "3.0.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "1nyan3ivf6c86qh3di6zb7xq0v8yky0s6g1x7vzn71k32xsiphaw";
+    sha256 = "146blnbwc0a8b7d9lgx7hfqm08nb4vjf7la43yd4z1bqrwa7p3cp";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ clang roct rocminfo device-libs rocr comgr ];
@@ -21,8 +21,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-11-14" +%y%U%w
-  workweek = "19454";
+  # day in the week: date -d "2019-12-11" +%y%U%w
+  workweek = "19493";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"

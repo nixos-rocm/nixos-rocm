@@ -9,7 +9,8 @@
 , rocm-device-libs
 , rocm-clang
 , rocm-clang-unwrapped
-, rocm-opencl-driver
+, rocm-cmake
+, comgr
 , mesa_noglu
 , python2
 , libX11
@@ -17,7 +18,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  version = "2.10.0";
+  version = "3.0.0";
   tag = "roc-${version}";
   name = "rocm-opencl-runtime-${version}";
   srcs =
@@ -25,18 +26,15 @@ stdenv.mkDerivation rec {
         owner = "RadeonOpenCompute";
         repo = "ROCm-OpenCL-Runtime";
         rev = tag;
-        sha256 = "12kbzkdzp514qacx873rgb612g18aymnv06zpxwb1zbkrj6w89ra";
+        sha256 = "16g0srj5ncrz8ip8by2gg3s3zmwhwyvl5h6g9cz47644qacswj7l";
         name = "ROCm-OpenCL-Runtime-${tag}-src";
       })
       (fetchFromGitHub {
         owner = "KhronosGroup";
         repo = "OpenCL-ICD-Loader";
-        # rev = "261c1288aadd9dcc4637aca08332f603e6c13715";
-        # sha256 = "1dg8qnsw5v96sz21xs6ayv5ih8zq5ng0l4mjcl1rm4cn75g0gz9k";
-        # name = "OpenCL-ICD-Loader-261c128-src";
-        rev = "978b4b3a29a3aebc86ce9315d5c5963e88722d03";
-        sha256 = "10l0fksxz50lg4vnmvvwzzabyxr8wk93aiw5jhxgavsxfjasmswk";
-        name = "OpenCL-ICD-Loader-978b4b3-src";
+        rev = "6c03f8b58fafd9dd693eaac826749a5cfad515f8";
+        sha256 = "00icrlc00dpc87prbd2j1350igi9pbgkz27hc3rf73s5994yn86a";
+        name = "OpenCL-ICD-Loader-6c03f8b-src";
       })
     ];
 
@@ -48,16 +46,14 @@ stdenv.mkDerivation rec {
   postUnpack = ''
     chmod --recursive +w .
     mkdir ROCm-OpenCL-Runtime-${tag}-src/library/
-    mv OpenCL-ICD-Loader-978b4b3-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
+    mv OpenCL-ICD-Loader-6c03f8b-src ROCm-OpenCL-Runtime-${tag}-src/api/opencl/khronos/icd
     cp -r ${rocm-device-libs.src} ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
     chmod --recursive +w ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
   '';
 
   # - let the rocm-device-libs build find our pre-built clang
   # - fix the ICD installation path for NixOS
-  # - skip building llvm and rocm-opencl-driver, but
-  #   lets this build find the private header files it needs from
-  #   those builds.
+  # - skip building llvm and rocm-opencl-driver
   # - fix a clang header path
   # - explicitly link libamdocl64.so to everything it
   #   needs from lld, llvm, and clang.
@@ -70,10 +66,10 @@ stdenv.mkDerivation rec {
     sed 's,ICD_VENDOR_PATH,"${addOpenGLRunpath.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/loader/linux/icd_linux.c
 
     sed -e 's|add_subdirectory(compiler/llvm EXCLUDE_FROM_ALL)|find_package(Clang REQUIRED CONFIG)|' \
-        -e 's|add_subdirectory(compiler/driver EXCLUDE_FROM_ALL)|include_directories(${rocm-opencl-driver.src}/src)|' \
         -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
         -e 's|include_directories(''${CMAKE_BINARY_DIR}/compiler/llvm/lib/Target/AMDGPU)||' \
         -e '/install(PROGRAMS $<TARGET_FILE:clang> $<TARGET_FILE:lld>/,/^[[:space:]]*COMPONENT DEV)/d' \
+        -e 's|add_subdirectory(compiler/driver EXCLUDE_FROM_ALL)||' \
         -i CMakeLists.txt
 
     sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/10.0.0/include/opencl-c.h|g' \
@@ -89,11 +85,15 @@ stdenv.mkDerivation rec {
     "-DLLVM_DIR=${rocm-llvm.out}/lib/cmake/llvm"
     "-DClang_DIR=${rocm-clang-unwrapped}/lib/cmake/clang"
     "-DAMDGPU_TARGET_TRIPLE='amdgcn-amd-amdhsa'"
+    "-DUSE_COMGR_LIBRARY='yes'"
+    "-DCLANG_OPTIONS_APPEND=-Wno-bitwise-conditional-parentheses"
   ];
 
   enableParallelBuilding = true;
-  buildInputs = [ cmake rocr roct rocm-llvm rocm-lld rocm-device-libs
-                  rocm-clang rocm-clang-unwrapped rocm-opencl-driver
+  nativeBuildInputs = [ cmake rocm-cmake ];
+  buildInputs = [ rocr roct rocm-llvm rocm-lld rocm-device-libs
+                  rocm-clang rocm-clang-unwrapped # rocm-opencl-driver
+                  comgr
                   mesa_noglu python2 libX11 libGLU ];
 
   dontStrip = true;
@@ -104,7 +104,4 @@ stdenv.mkDerivation rec {
     rm -f $out/lib/libOpenCL*
     ln -s $out/lib/x86_64/* $out/lib
   '';
-    # ln -s $out/lib/x86_64/libOpenCL.so.1.2 $out/lib/x86_64/libOpenCL.so.1
-    # ln -s $out/lib/x86_64/* $out/lib
-
 }
