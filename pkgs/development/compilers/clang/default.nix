@@ -31,6 +31,8 @@ stdenv.mkDerivation rec {
 
     sed 's|\([[:space:]]*std::string Linker = \)getToolChain().GetProgramPath(getShortName())|\1"${lld}/bin/ld.lld"|' -i lib/Driver/ToolChains/AMDGPU.cpp
     substituteInPlace lib/Driver/ToolChains/AMDGPU.h --replace ld.lld ${lld}/bin/ld.lld
+
+    sed 's|configure_file(AST/gen_ast_dump_json_test.py ''${LLVM_TOOLS_BINARY_DIR}/gen_ast_dump_json_test.py COPYONLY)||' -i test/CMakeLists.txt
   '';
   postConfigure = ''
     mkdir -p lib/Basic

@@ -1,18 +1,18 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig, half, openssl, boost# , clang-tools
+{ stdenv, fetchFromGitHub, cmake, pkgconfig, half, openssl, boost, sqlite, zlib
 , rocm-cmake, rocm-opencl-runtime, rocr, hcc, clang, clang-ocl, miopengemm, rocblas
 , comgr, useHip ? false, hip }:
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
-  version = "2.10.0";
+  version = "3.0.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpen";
     rev = "roc-${version}";
-    sha256 = "1jxil26cd74hd5s04wgrv3vrm1i36fkyq0ycmn26vcjg9r169fq3";
+    sha256 = "1f2p71g0c47g0vzlmfmhih13mj4gh26z80dn3a13kiqw6cqx3l7a";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
-  buildInputs = [ rocr half openssl boost rocblas miopengemm comgr ]
+  buildInputs = [ rocr half openssl boost rocblas miopengemm comgr sqlite zlib ]
     ++ (if useHip then [ hcc hip ] else [rocm-opencl-runtime clang-ocl hip hcc]);
 
   cmakeFlags = [

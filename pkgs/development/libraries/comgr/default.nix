@@ -1,12 +1,12 @@
 {stdenv, fetchFromGitHub, cmake, llvm, lld, clang, device-libs}:
 stdenv.mkDerivation rec {
   pname = "comgr";
-  version = "2.10.0";
+  version = "3.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-CompilerSupport";
     rev = "roc-${version}";
-    sha256 = "0bb38bgphybhsyyv5xzf3c1vccrqd871mq2jxpb5frxxicgwqaa4";
+    sha256 = "0gz4galcc01f7csi50x5hf1947nj0d5cd8c87p3fsmiq7bhlb53f";
   };
   sourceRoot = "source/lib/comgr";
   nativeBuildInputs = [ cmake ];
