@@ -21,6 +21,16 @@ with pkgs;
     });
   linuxPackages_rocm = recurseIntoAttrs (linuxPackagesFor self.linux_4_18_kfd);
 
+  # Userspace ROC stack
+  roct = callPackage ./development/libraries/roct.nix {};
+  rocr = callPackage ./development/libraries/rocr { inherit (self) roct; };
+  rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
+  rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
+  rocminfo = callPackage ./development/tools/rocminfo.nix {
+    inherit (self) rocm-cmake rocr;
+    defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
+  };
+
   # ROCm LLVM, LLD, and Clang
   rocm-llvm = callPackage ./development/compilers/llvm rec {
     version = "2.10.0";
@@ -67,16 +77,6 @@ with pkgs;
       rm $out/nix-support/add-hardening.sh
       touch $out/nix-support/add-hardening.sh
     '';
-  };
-
-  # Userspace ROC stack
-  roct = callPackage ./development/libraries/roct.nix {};
-  rocr = callPackage ./development/libraries/rocr { inherit (self) roct; };
-  rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
-  rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
-  rocminfo = callPackage ./development/tools/rocminfo.nix {
-    inherit (self) rocm-cmake rocr;
-    defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
 
   # OpenCL stack
