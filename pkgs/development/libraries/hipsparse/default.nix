@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, cmake, rocsparse, hip, rocr, rocm-cmake, comgr, gtest
+{stdenv, fetchFromGitHub, cmake, rocsparse, hip, hcc, rocr, rocm-cmake, comgr, gtest
 
 # Tests are broken as they require downloading and pre-processing
 # several files
@@ -7,7 +7,7 @@
 let doCheck = false; in
 stdenv.mkDerivation rec {
   pname = "hipsparse";
-  version = "2.10";
+  version = "3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "hipSPARSE";
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ cmake rocm-cmake ] ++ stdenv.lib.optional doCheck gtest;
-  buildInputs = [ rocsparse hip rocr comgr ];
+  buildInputs = [ rocsparse hip hcc rocr comgr ];
   cmakeFlags = [
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
   ] ++ stdenv.lib.optional doCheck "-DBUILD_CLIENTS_TESTS=YES";
