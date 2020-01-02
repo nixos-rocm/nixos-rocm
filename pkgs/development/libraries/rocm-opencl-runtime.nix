@@ -51,6 +51,9 @@ stdenv.mkDerivation rec {
     chmod --recursive +w ROCm-OpenCL-Runtime-${tag}-src/library/amdgcn
   '';
 
+  # patches = [ ./libdebug.patch ];
+  patches = [ ./link-comgr.patch ];
+
   # - let the rocm-device-libs build find our pre-built clang
   # - fix the ICD installation path for NixOS
   # - skip building llvm and rocm-opencl-driver
@@ -60,7 +63,7 @@ stdenv.mkDerivation rec {
   # - give oclruntime a dependency on oclrocm. Without this, only
   #   parallel builds succeed because oclrocm coincidentally finishes
   #   building before the build of oclruntime starts.
-  patchPhase = ''
+  postPatch = ''
     sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
 
     sed 's,ICD_VENDOR_PATH,"${addOpenGLRunpath.driverLink}/etc/OpenCL/vendors/",g' -i api/opencl/khronos/icd/loader/linux/icd_linux.c
@@ -92,7 +95,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
   nativeBuildInputs = [ cmake rocm-cmake ];
   buildInputs = [ rocr roct rocm-llvm rocm-lld rocm-device-libs
-                  rocm-clang rocm-clang-unwrapped # rocm-opencl-driver
+                  rocm-clang rocm-clang-unwrapped
                   comgr
                   mesa_noglu python2 libX11 libGLU ];
 
