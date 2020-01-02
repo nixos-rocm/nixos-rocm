@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, pkgconfig
 , rocr, rocminfo, clang, hcc, hip, rocm-cmake, comgr
 , doCheck ? false
 , boost, gtest, fftw, fftwFloat }:
@@ -16,6 +16,12 @@ stdenv.mkDerivation rec {
   # processes use over 6GB of RAM.
   enableParallelBuilding = false;
   CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HIP__";
+
+  patches = [ (fetchpatch {
+    name = "massive-memory-use";
+    url = "https://patch-diff.githubusercontent.com/raw/ROCmSoftwarePlatform/rocFFT/pull/286.patch";
+    sha256 = "13avgd16vsqfsf6ghjqp18srn5vdl7s5hqxkk0kxjihaqpnrglw4";
+  })];
 
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig rocminfo ];
   buildInputs = [ hcc hip rocr boost comgr ]
