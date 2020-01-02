@@ -12,8 +12,8 @@ stdenv.mkDerivation rec {
   version = "3.0.0";
   name = "rocr-ext-${version}";
   src = fetchurl {
-    url = "http://repo.radeon.com/rocm/apt/3.0/pool/main/h/hsa-rocr-dev/hsa-rocr-dev_1.1.9.0-rocm-rel-3.0-6-7128d0d_amd64.deb";
-    sha256 = "1jmvrd93yfbj9vbsrsva7hmmx4g5ypkz304x922iya1farni5z5n";
+    url = "http://repo.radeon.com/rocm/apt/3.0/pool/main/h/hsa-ext-rocr-dev/hsa-ext-rocr-dev_1.1.9.0-rocm-rel-3.0-6-7128d0d_amd64.deb";
+    sha256 = "0pzzr8ai3fxpwxvj40v52ai09cp9sgx0z5q2y3xa4qjm8savi2rh";
   };
   builder = writeText "builder.sh" ''
     source $stdenv/setup
