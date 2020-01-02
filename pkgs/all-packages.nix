@@ -394,52 +394,46 @@ with pkgs;
 
   rocrand = callPackage ./development/libraries/rocrand {
     inherit (self) rocm-cmake rocminfo hcc rocr;
-    hip = self.hip-clang;
     comgr = self.amd-comgr;
-    # hip = self.hip;
-    # comgr = self.hcc-comgr;
+    hip = self.hip;
   };
   rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
     inherit (self) rocr rocrand;
     inherit (python3Packages) buildPythonPackage numpy;
-    hip = self.hip-clang;
+    hip = self.hip;
   };
 
   rocprim = callPackage ./development/libraries/rocprim {
     inherit (self) rocm-cmake rocr;
     stdenv = pkgs.overrideCC stdenv self.hcc;
-    # hip = self.hip;
-    hip = self.hip-clang;
+    hip = self.hip;
   };
 
   hipcub = callPackage ./development/libraries/hipcub {
-    inherit (self) hcc hip-clang rocm-cmake rocprim;
+    inherit (self) hcc hip rocm-cmake rocprim;
   };
 
   rocsparse = callPackage ./development/libraries/rocsparse {
-    inherit (self) rocprim hipcub rocm-cmake;
-    # hip = self.hip;
-    hip = self.hip-clang;
+    inherit (self) rocprim hipcub rocm-cmake hcc;
+    hip = self.hip;
     comgr = self.amd-comgr;
   };
 
   hipsparse = callPackage ./development/libraries/hipsparse {
-    inherit (self) rocr rocsparse rocm-cmake;
-    # hip = self.hip;
-    hip = self.hip-clang;
+    inherit (self) rocr rocsparse rocm-cmake hcc;
+    hip = self.hip;
     comgr = self.amd-comgr;
   };
 
   rocthrust = callPackage ./development/libraries/rocthrust {
     inherit (self) rocm-cmake rocprim;
-    # hip = self.hip;
-    hip = self.hip-clang;
+    hip = self.hip;
     comgr = self.amd-comgr;
   };
 
   roctracer = callPackage ./development/tools/roctracer {
     inherit (self) hcc-unwrapped roct rocr;
-    hip = self.hip-clang;
+    hip = self.hip;
   };
 
   rocprofiler = callPackage ./development/tools/rocprofiler {
