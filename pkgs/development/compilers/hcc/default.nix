@@ -1,15 +1,18 @@
-{ stdenv, fetchFromGitHub, cmake, pkgconfig, writeText, python, perl
+{ stdenv, fetchFromGitHub, cmake, pkgconfig, writeText, python, perlPackages
 , device-libs, rocr, file, rocminfo, lld
 , llvm, clang, clang-unwrapped, compiler-rt
 }:
-stdenv.mkDerivation rec {
+let perlenv = perlPackages.perl.buildEnv.override({
+      extraLibs = [ perlPackages.FileWhich ];
+    });
+in stdenv.mkDerivation rec {
   name = "hcc";
-  version = "2.9.0";
+  version = "3.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     rev = "roc-hcc-${version}";
-    sha256 = "1dn2k537i0a9g4cfh8qblnr0zdf3nsg8vkbal4grmkbsjp4g16a0";
+    sha256 = "0zriynwcvhdzqpvc109lwq1r79gl167jhacr889afycbq6hik7g1";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
@@ -18,6 +21,7 @@ stdenv.mkDerivation rec {
     export LLVM_DIR=${llvm}/lib/cmake/llvm
     export CMAKE_PREFIX_PATH=${llvm}/lib/cmake/llvm:$CMAKE_PREFIX_PATH
   '';
+
   cmakeFlags = [
     "-DROCM_ROOT=${rocr}"
     "-DROCM_DEVICE_LIB_DIR=${device-libs}/lib"
@@ -37,7 +41,7 @@ stdenv.mkDerivation rec {
   prePatch = ''
     for f in $(find lib -name '*.in'); do
       sed -e 's_#!/bin/bash_#!${stdenv.shell}_' \
-          -e 's_#!/usr/bin/perl_#!${perl}/bin/perl_' \
+          -e 's_#!/usr/bin/perl_#!${perlenv}/bin/perl_' \
           -e 's|^CLANG=$BINDIR/hcc|CLANG=${clang}/bin/clang++|' \
           -e 's|^LLVM_LINK=.*|LLVM_LINK=${llvm}/bin/llvm-link|' \
           -e 's|^LINK=.*|LINK=${llvm}/bin/llvm-link|' \
@@ -62,34 +66,43 @@ stdenv.mkDerivation rec {
         -e 's|\(find_package(LLVM REQUIRED CONFIG PATHS \)''${CMAKE_BINARY_DIR}/compiler NO_DEFAULT_PATH)|\1${llvm})|' \
         -e '/add_subdirectory(cmake-tests)/d' \
         -e '/add_subdirectory(''${CLANG_SRC_DIR})/d' \
-        -e '/get_directory_property(CLANG_VERSION DIRECTORY clang DEFINITION CLANG_VERSION)/d' \
-        -e '/install(PROGRAMS $<TARGET_FILE:LLVMAMDGPUDesc>/,/^)$/d' \
-        -e '/install(PROGRAMS $<TARGET_FILE:llvm-as>/,/COMPONENT compiler)/d' \
-        -e '/install(FILES ''${CLANG_BIN_DIR}\/lib\/clang\/''${CLANG_VERSION}\/lib\/linux\/libclang_rt.builtins-''${RT_BUILTIN_SUFFIX}.a/,/COMPONENT compiler)/d' \
+        -e '/get_directory_property(CLANG_VERSION DIRECTORY llvm-project\/clang DEFINITION CLANG_VERSION)/d' \
+        -e '/install(PROGRAMS $<TARGET_FILE:llvm-as>/,/COMPONENT llvm-project\/llvm)/d' \
+        -e '/install(FILES ''${CLANG_BIN_DIR}\/lib\/clang\/''${CLANG_VERSION}\/lib\/linux\/libclang_rt.builtins-''${RT_BUILTIN_SUFFIX}.a/,/COMPONENT llvm-project\/llvm)/d' \
         -e '/install(PROGRAMS $<TARGET_FILE:LLVMSelectAcceleratorCode>/,/^)/d' \
         -i CMakeLists.txt
 
     sed 's,__hcc_backend__,HCC_BACKEND_AMDGPU,g' -i include/hc.hpp
 
-    sed 's|set(CMAKE_CXX_COMPILER "''${PROJECT_BINARY_DIR}/compiler/bin/clang++")|set(CMAKE_CXX_COMPILER ${clang}/bin/clang++)|' -i scripts/cmake/MCWAMP.cmake
+    sed 's|set(CMAKE_CXX_COMPILER "''${PROJECT_BINARY_DIR}/llvm-project/llvm/bin/clang++")|set(CMAKE_CXX_COMPILER ${clang}/bin/clang++)|' -i scripts/cmake/MCWAMP.cmake
     sed 's|CLANG=$BINDIR/hcc|CLANG=${clang}/bin/clang++|' -i lib/hc-host-assemble.in
     sed 's|LLVM_DIS=$BINDIR/llvm-dis|${llvm}/bin/llvm-dis|' -i lib/hc-kernel-assemble.in
 
     sed -e 's|\(my $llvm_objdump = \).*|\1"${llvm}/bin/llvm-objdump";|' \
         -e 's|\(my $clang_offload_bundler = \).*|\1"${clang-unwrapped}/bin/clang-offload-bundler";|' \
         -i lib/extractkernel.in
-  '';
-  patches = [ ./hcc-config-hsa.patch ./libmcwamp-out-path.patch ./no-hex-floats.patch ];
-  inherit rocr;
-  postPatch = ''
-    substituteInPlace lib/hcc-config.cmake.in --subst-var rocr
-    substituteInPlace lib/mcwamp.cpp --subst-var out
+
+    sed 's|llvm-project/llvm/bin/||'g -i lib/CMakeLists.txt
+
+    sed 's|llvm-project/llvm/bin/||'g -i tests/CMakeLists.txt
   '';
 
-  # Scripts like hc-host-assemble and hc-kernel-assemble are placed in
-  # compiler/bin and used during the build.
+  patches = [
+    ./hcc-config-path.patch
+    ./no-hex-floats.patch
+    ./extractkernel-paths.patch
+  ];
+
+  inherit llvm;
+  postPatch = ''
+    substituteInPlace hcc_config/hcc_config.cpp --subst-var out
+    substituteInPlace lib/extractkernel.in --subst-var llvm --subst-var-by clang-unwrapped ${clang-unwrapped}
+  '';
+
+  # Build artifacts are used during the build (e.g. hc-host-assemble
+  # and hc-kernel-assemble).
   postConfigure = ''
-    export PATH="$(pwd)/compiler/bin:$PATH"
+    export PATH=$PWD:$PATH
   '';
 
   # If we don't disable hardening, we get a compiler error mentioning

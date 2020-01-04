@@ -1,0 +1,37 @@
+diff --exclude '*~' -ruN A/hcc_config/hcc_config.cpp B/hcc_config/hcc_config.cpp
+--- A/hcc_config/hcc_config.cpp	2020-01-03 10:13:50.999645677 -0500
++++ B/hcc_config/hcc_config.cpp	2020-01-03 11:24:45.975820777 -0500
+@@ -43,17 +43,9 @@
+ };
+ 
+ std::string get_path(path_kind kind) {
+-    const char* proc_self_exe = "/proc/self/exe";
+     char path_buffer[PATH_MAX];
+     memset(path_buffer, 0, PATH_MAX);
+-    if (readlink(proc_self_exe, path_buffer, sizeof(path_buffer)) == -1) {
+-      std::cerr << "Error reading the hcc-config path!" << std::endl;
+-      exit(1);
+-    }
+-
+-    // strip the executable name
+-    dirname(path_buffer);
+-    std::string hcc_config_path(path_buffer);
++    std::string hcc_config_path("@out@/bin");
+ 
+     std::string return_path;
+     switch(kind) {
+@@ -66,12 +58,12 @@
+           std::string path = hcc_config_path + "/../";
+ 
+           if (kind == path_hcc_lib)
+-            path += CMAKE_INSTALL_LIB;
++            path += "lib";
+           else if (kind == path_hcc_include)
+             path += "include";
+ 
+           if (realpath(path.c_str(), path_buffer) == NULL) {
+-            std::cerr << "Error when creating canonical path!" << std::endl;
++            std::cerr << "Error when creating canonical path for " << path << std::endl;
+             exit(1);
+           }
+           return_path = std::string(path_buffer);
