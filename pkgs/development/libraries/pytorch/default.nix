@@ -1,17 +1,19 @@
-{ stdenv, fetchFromGitHub, cmake, symlinkJoin, utillinux, which, git, openssl
-, buildPythonPackage, python, numpy, pyyaml, cffi, numactl, opencv3, lmdb, pkg-config
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, symlinkJoin, utillinux, which, git
+, openssl, buildPythonPackage, python, numpy, pyyaml, cffi, numactl, opencv3
+, lmdb, pkg-config
 , rocr, hip, openmp, rocrand, rocblas, rocfft, rocm-cmake, rccl, rocprim, hipcub
 , miopen, miopengemm, rocsparse, hipsparse, rocthrust, comgr
 , hcc
 , roctracer }:
 buildPythonPackage rec {
-  version = "1.0.0";
+  # version = "1.0.0";
+  version = "2019-12-30";
   pname = "pytorch";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "pytorch";
-    rev = "0827395419a00f1ac815977671632b79723c0a45";
-    sha256 = "00rbiqkizqpa8y1ja8rzbrqzm9qjcxbgq0m3ccg4km1hz8js5ra6";
+    rev = "f3ad803a2bff367e4fa7b5a7a425205125943913";
+    sha256 = "17065aq6lrxylar3349cpia354pdi8jsmdpnpqqy6c8lmwgwwbcv";
     fetchSubmodules = true;
   };
 
@@ -71,13 +73,17 @@ buildPythonPackage rec {
   patches = [
     ./no-hex-float-lit.patch
     ./protobuf-cmake-install.patch
-    ./hip-version-torch.patch
     ./torch-python-lib-dirs.patch
     ./setup-lib-dirs.patch
     ./link-mcwamp.patch
     ./add-jit-srcs.patch
     ./hip-cmake.patch
     ./throw_nccl_error_api.patch
+    (fetchpatch {
+      name = "field-accessors.patch";
+      url = "https://github.com/pytorch/pytorch/commit/3a7ecd32eb7418e18146fe09dc9301076b5f0f17.patch";
+      sha256 = "13rwyq5m8aqgjjxp4cdyjbbnbcni9z44p8zwvh3h86f9jqk1c12b";
+    })
   ];
 
   postConfigure = ''
@@ -89,7 +95,7 @@ buildPythonPackage rec {
   # Override the (weirdly) wrong version set by default. See
   # https://github.com/NixOS/nixpkgs/pull/52437#issuecomment-449718038
   # https://github.com/pytorch/pytorch/blob/v1.0.0/setup.py#L267
-  PYTORCH_BUILD_VERSION = version;
+  # PYTORCH_BUILD_VERSION = "1.1.0";
   PYTORCH_BUILD_NUMBER = 0;
 
   preFixup = ''

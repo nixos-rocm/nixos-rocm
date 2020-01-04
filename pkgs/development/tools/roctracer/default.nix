@@ -1,5 +1,27 @@
-{stdenv, fetchFromGitHub, cmake, roct, rocr, hcc-unwrapped, hip, python}:
-stdenv.mkDerivation rec {
+{stdenv, fetchFromGitHub, cmake, roct, rocr, hcc-unwrapped, hip
+, python, buildPythonPackage, fetchPypi, ply}:
+let
+  CppHeaderParser = buildPythonPackage rec {
+    pname = "CppHeaderParser";
+    version = "2.7.4";
+
+    src = fetchPypi {
+      inherit pname version;
+      sha256 = "0hncwd9y5ayk8wa6bqhp551mcamcvh84h89ba3labc4mdm0k0arq";
+    };
+
+    doCheck = false;
+    propagatedBuildInputs = [ ply ];
+
+    meta = with stdenv.lib; {
+      homepage = http://senexcanis.com/open-source/cppheaderparser/;
+      description = "Parse C++ header files and generate a data structure representing the class";
+      license = licenses.bsd3;
+      maintainers = [];
+    };
+  };
+  pyenv = python.withPackages (ps: [CppHeaderParser]);
+in stdenv.mkDerivation rec {
   name = "roctracer";
   version = "3.0.0";
   src = fetchFromGitHub {
@@ -14,7 +36,7 @@ stdenv.mkDerivation rec {
     rev = "7defb6d9b40d20f6b085be3a5727d1b6bf601d14";
     sha256 = "0wbya4s7wbsxwg39lbz545c19qj17qc80ccs6gw8ypyal6yix6l5";
   };
-  nativeBuildInputs = [ cmake python ];
+  nativeBuildInputs = [ cmake pyenv ];
   buildInputs = [ roct rocr hcc-unwrapped hip ];
   preConfigure = ''
     export HCC_HOME=${hcc-unwrapped}
