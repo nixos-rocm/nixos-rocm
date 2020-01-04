@@ -1,0 +1,31 @@
+diff --exclude '*~' -ruN A/lib/extractkernel.in B/lib/extractkernel.in
+--- A/lib/extractkernel.in	2020-01-03 10:13:51.000645544 -0500
++++ B/lib/extractkernel.in	2020-01-03 13:08:22.327484994 -0500
+@@ -35,25 +35,8 @@
+ (-f $input_file) || die("can't find $input_file");
+ 
+ # look for llvm-objdump and clang-offload-bundler
+-my $tools_path_prefix;
+-my $llvm_objdump;
+-my $clang_offload_bundler;
+-
+-if (defined $ENV{'HCC_HOME'}) {
+-  $tools_path_prefix = File::Spec->catfile($ENV{'HCC_HOME'}, "bin");
+-  $llvm_objdump = File::Spec->catfile($tools_path_prefix, "llvm-objdump");
+-  $clang_offload_bundler = File::Spec->catfile($tools_path_prefix, "clang-offload-bundler");
+-}
+-else {
+-  $tools_path_prefix = dirname(realpath($0));
+-  $llvm_objdump = File::Spec->catfile($tools_path_prefix, "llvm-objdump");
+-  $clang_offload_bundler = File::Spec->catfile($tools_path_prefix, "clang-offload-bundler");
+-  if (!(-f $llvm_objdump)) {
+-    $tools_path_prefix = File::Spec->catfile($tools_path_prefix, "/../../hcc/bin");
+-    $llvm_objdump = File::Spec->catfile($tools_path_prefix, "llvm-objdump");
+-    $clang_offload_bundler = File::Spec->catfile($tools_path_prefix, "clang-offload-bundler");
+-  }
+-}
++my $llvm_objdump = "@llvm@/bin/llvm-objdump";
++my $clang_offload_bundler = "@clang-unwrapped@/bin/clang-offload-bundler";
+ 
+ if (!(-f $llvm_objdump)) {
+   $llvm_objdump = which("llvm-objdump");
