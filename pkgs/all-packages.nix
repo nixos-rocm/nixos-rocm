@@ -336,17 +336,9 @@ with pkgs;
   rocblas = callPackage ./development/libraries/rocblas {
     inherit (self) rocm-cmake hcc hcc-unwrapped rocr rocblas-tensile;
     hip = self.hip;
-    # comgr = self.hcc-comgr;
     clang = self.hcc-clang;
-    # llvm = self.hcc-llvm;
     openmp = self.hcc-openmp;
-
-    # hip = self.hip-clang;
     comgr = self.amd-comgr;
-    # clang = self.amd-clang;
-    # # llvm = self.amd-llvm;
-    # openmp = self.amd-openmp;
-
     llvm = pkgs.llvmPackages_6.llvm;
     inherit (python3Packages) python;
   };
@@ -361,13 +353,9 @@ with pkgs;
   miopen-cl = callPackage ./development/libraries/miopen {
     inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
                    clang-ocl miopengemm rocblas;
-    # comgr = self.hcc-comgr;
     hip = self.hip;
     clang = self.hcc-clang;
-
-    # hip = self.hip-clang;
     comgr = self.amd-comgr;
-    # clang = self.amd-clang;
   };
 
   miopen-hip = self.miopen-cl.override {
@@ -376,19 +364,14 @@ with pkgs;
 
   rocfft = callPackage ./development/libraries/rocfft {
     inherit (self) rocr rocminfo hcc rocm-cmake;
-    # hip = self.hip;
-    # comgr = self.hcc-comgr;
-    # clang = self.hcc-clang;
-    hip = self.hip-clang;
+    hip = self.hip;
+    clang = self.hcc-clang;
     comgr = self.amd-comgr;
-    clang = self.amd-clang;
   };
 
   rccl = callPackage ./development/libraries/rccl {
     inherit (self) rocm-cmake hcc;
-    # hip = self.hip;
-    # comgr = self.hcc-comgr;
-    hip = self.hip-clang;
+    hip = self.hip;
     comgr = self.amd-comgr;
   };
 
@@ -426,7 +409,7 @@ with pkgs;
   };
 
   rocthrust = callPackage ./development/libraries/rocthrust {
-    inherit (self) rocm-cmake rocprim;
+    inherit (self) rocm-cmake rocprim hcc;
     hip = self.hip;
     comgr = self.amd-comgr;
   };
@@ -434,6 +417,7 @@ with pkgs;
   roctracer = callPackage ./development/tools/roctracer {
     inherit (self) hcc-unwrapped roct rocr;
     hip = self.hip;
+    inherit (pkgs.pythonPackages) python buildPythonPackage fetchPypi ply;
   };
 
   rocprofiler = callPackage ./development/tools/rocprofiler {
@@ -469,13 +453,9 @@ with pkgs;
       rccl rocrand rocblas rocfft rocprim hipcub roctracer rocm-cmake;
     miopen = self.miopen-hip;
     hip = self.hip;
-    comgr = self.hcc-comgr;
+    comgr = self.amd-comgr;
     openmp = self.hcc-openmp;
     hcc = self.hcc-unwrapped;
-
-    # hip = self.hip-clang;
-    # comgr = self.amd-comgr;
-    # openmp = self.amd-openmp;
   };
 
   torchvision-rocm = python37Packages.torchvision.override {

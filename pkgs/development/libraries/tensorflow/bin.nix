@@ -94,12 +94,12 @@ let
   };
 in buildPythonPackage {
   pname = "tensorflow";
-  version = "1.14.4";
+  version = "1.14.5";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/42/c1/c53f96478c1e8b04b30faa96526edae01c2b35adf047ed19156ca392ce03/tensorflow_rocm-1.14.4-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "0ibsqfykwrxkqvsangj515zs7jd9lml86nsw4ak9vxldll4hq1b8";
+    url = "https://files.pythonhosted.org/packages/61/1c/f4be8af7b4961e96eb7064c85d6141a55b7b7fd44ec24162529398b0f8c9/tensorflow_rocm-1.14.5-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "0zr0dnnc1i3gz6ijf0mzcb7gdc3vd6cyqbm8kw3p6nn8f39x58ss";
   };
 
   propagatedBuildInputs = [

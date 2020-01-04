@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
   # Building this package is very RAM intensive: individual clang
   # processes use over 6GB of RAM.
   enableParallelBuilding = false;
-  CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HIP__";
+  # CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HIP__";
 
   patches = [ (fetchpatch {
     name = "massive-memory-use";
@@ -27,11 +27,12 @@ stdenv.mkDerivation rec {
   buildInputs = [ hcc hip rocr boost comgr ]
     ++ stdenv.lib.optionals doCheck [ gtest fftwFloat fftw ];
   cmakeFlags = [
-    "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+    # "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+    # "-DUSE_HIP_CLANG=YES"
+    "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
     "-DHSA_HEADER=${rocr}/include"
     "-DHSA_LIBRARY=${rocr}/lib/libhsa-runtime64.so"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
-    "-DUSE_HIP_CLANG=YES"
   ] ++ stdenv.lib.optionals doCheck [
     "-DBUILD_CLIENTS_TESTS=ON"
     "-DBUILD_CLIENTS_BENCHMARKS=ON"
