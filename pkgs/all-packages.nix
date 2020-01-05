@@ -207,7 +207,7 @@ with pkgs;
     comgr = self.amd-comgr;
   };
 
-  hcc-openmp = pkgs.llvmPackages_9.openmp.override {
+  hcc-openmp = pkgs.llvmPackages_latest.openmp.override {
     llvm = self.hcc-llvm;
   };
 
@@ -237,7 +237,7 @@ with pkgs;
     llvm = self.amd-llvm;
   };
 
-  amd-openmp = pkgs.llvmPackages_9.openmp.override {
+  amd-openmp = pkgs.llvmPackages_latest.openmp.override {
     llvm = self.amd-llvm;
   };
 
