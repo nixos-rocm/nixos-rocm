@@ -17,7 +17,6 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
     export DEVICE_LIB_PATH=${device-libs}/lib
-    export HIP_RUNTIME=VDI
   '';
 
   # The patch version is the last two digits of year + week number +
@@ -55,12 +54,11 @@ stdenv.mkDerivation rec {
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i hip_prof_gen.py
 
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
-        -e "s,^\(\$HIP_VDI_HOME=\).*$,\1\"$out\";," \
         -e "s,^\($HIP_LIB_PATH=\).*$,\1\"$out/lib\";," \
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
         -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${device-libs}/lib";,' \
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
-        -e 's,^\($HIP_RUNTIME=\).*$,\1"VDI";,' \
+        -e 's,^\($HIP_RUNTIME=\).*$,\1"HCC";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,'g \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
