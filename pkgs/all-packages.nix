@@ -256,6 +256,7 @@ with pkgs;
           -e 's,  SmallString<128> OptPath(C.getDriver().Dir);,  SmallString<128> OptPath("${self.amd-llvm}/bin");,' \
           -e 's,  SmallString<128> LlcPath(C.getDriver().Dir);,  SmallString<128> LlcPath("${self.amd-llvm}/bin");,' \
           -e 's,  SmallString<128> LldPath(C.getDriver().Dir);,  SmallString<128> LldPath("${self.amd-lld}/bin");,' \
+          -e "s,  SmallString<128> BundlerPath(C.getDriver().Dir);,  SmallString<128> BundlerPath(\"$out/bin\");," \
           -i lib/Driver/ToolChains/HIP.cpp
     '';
   });
@@ -274,7 +275,6 @@ with pkgs;
       echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
       rm $out/nix-support/add-hardening.sh
       touch $out/nix-support/add-hardening.sh
-      ln -s ${self.amd-llvm}/bin/llvm-link $out/bin/llvm-link
     '';
   };
 
