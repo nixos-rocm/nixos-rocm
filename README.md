@@ -1,14 +1,10 @@
-# Radeon Open Compute (2.10.0) packages for NixOS
-
-## 🚨 Installation Has Changed! 🚨
-
-As of ROCm 2.8, using the `rocm_agent_enumerator` program that is part of the `rocminfo` package no longer works for `nix` builds. Among other checks, the program must be run by a user in the `video` group. Rather than trying to make all `nixbld` users satisfy these requirements, the new arrangement is that we manually specify the GPU targets we are building for. This mechanism already exists as part of `rocm_agent_enumerator` to support CI configurations that may not have all the required hardware, and so probably also makes sense for `nix` builds. To this end, we now provide a list of GPU targets for the ROCm overlay in the `nixpkgs.config.rocmTargets` field. 
+# Radeon Open Compute (3.0.0) packages for NixOS
 
 ## Installation
 
 This overlay should work with the latest nixos-unstable channel. To use these
 packages, clone this repo somewhere and then add `(import /path/to/this/repo)`
-to `nixpkgs.overlays` in `configuration.nix`, or in `~/.config/nixpkgs/overlays.nix` (see [the manual](https://nixos.org/nixpkgs/manual/#chap-overlays) for more information on overlays). To specify GPU compilation targets, your `~/.config/nixpkgs/config.nix` can include a `rocmTargets` field that lists GPU targets. An example fragment is shown here; the essential line is the definition of the `rocmTarget` field. The list shown here is the default list of targets used if you do not include this definition in your `config.nix`.
+to `nixpkgs.overlays` in `configuration.nix`, or in `~/.config/nixpkgs/overlays.nix` (see [the manual](https://nixos.org/nixpkgs/manual/#chap-overlays) for more information on overlays). To specify GPU compilation targets, your `~/.config/nixpkgs/config.nix` can include a `rocmTargets` field that lists GPU targets. An example fragment is shown here; the essential line is the definition of the `rocmTargets` field. The list shown here is the default list of targets used if you do not include this definition in your `config.nix`.
 
 ```
 {
@@ -22,9 +18,9 @@ The named GPU targets are the common ones for RX480/RX580 GPUs, Vega 10, and Veg
 
 As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm stack.
 
-Add these lines to `configuration.nix` to enable the ROCm stack (you might also use `pkgs.linuxPackages_5_4`):
+Add these lines to `configuration.nix` to enable the ROCm stack:
 ```
-  boot.kernelPackages = pkgs.linuxPackages_5_3;
+  boot.kernelPackages = pkgs.linuxPackages_5_4;
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
 ```
@@ -55,6 +51,10 @@ The `rocblas` and `rocfft` packages (and those that depend upon them) require a 
   ];
 
 ```
+
+### GPU Target Customization
+
+As of ROCm 2.8, using the `rocm_agent_enumerator` program that is part of the `rocminfo` package no longer works for `nix` builds. Among other checks, the program must be run by a user in the `video` group. Rather than trying to make all `nixbld` users satisfy these requirements, the new arrangement is that we manually specify the GPU targets we are building for. This mechanism already exists as part of `rocm_agent_enumerator` to support CI configurations that may not have all the required hardware, and so probably also makes sense for `nix` builds. To this end, we now provide a list of GPU targets for the ROCm overlay in the `nixpkgs.config.rocmTargets` field. 
 
 ## Hardware support
 
