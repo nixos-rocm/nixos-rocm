@@ -101,8 +101,8 @@ with pkgs;
 
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
-    inherit (self) roct rocm-clang rocm-clang-unwrapped rocm-device-libs;
-    inherit (self) rocm-lld rocm-llvm rocr;
+    inherit (self) roct rocm-clang rocm-clang-unwrapped rocm-cmake;
+    inherit (self) rocm-device-libs rocm-lld rocm-llvm rocr;
     comgr = self.rocm-ocl-comgr;
   };
   rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {
