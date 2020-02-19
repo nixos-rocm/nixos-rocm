@@ -9,6 +9,7 @@ stdenv.mkDerivation rec {
     "-DLLVM_CMAKE_PATH=${llvm}/lib/cmake/llvm"
     "-DLLVM_MAIN_SRC_DIR=${llvm.src}"
     "-DCLANG_SOURCE_DIR=${src}"
+    "-DLLVM_ENABLE_RTTI=ON"
   ];
   VCSVersion = ''
     #undef LLVM_REVISION
