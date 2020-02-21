@@ -30,6 +30,7 @@ stdenv.mkDerivation rec {
     "-DHIP_VERSION_GITDATE=${workweek}"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
+    "-DLLVM_ENABLE_RTTI=ON"
   ];
 
   # - fix bash paths

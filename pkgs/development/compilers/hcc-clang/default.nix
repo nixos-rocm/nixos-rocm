@@ -15,6 +15,7 @@ stdenv.mkDerivation rec {
     "-DHCC_VERSION_MAJOR=${stdenv.lib.versions.major version}"
     "-DHCC_VERSION_MINOR=${stdenv.lib.versions.minor version}"
     "-DHCC_VERSION_PATCH=19485"
+    "-DLLVM_ENABLE_RTTI=ON"
   ];
 
   # Rather than let cmake extract version information from LLVM or
