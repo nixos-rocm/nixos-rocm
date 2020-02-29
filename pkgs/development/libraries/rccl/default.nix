@@ -3,22 +3,23 @@
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
-  version = "3.0.0";
+  version = "3.1.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rccl";
     rev = version;
-    sha256 = "1mxmn0zsijvgk1mkfvsqji0czqlc4p9x45p31i8xiahhc59qq68w";
+    sha256 = "0inmg6vvxmsrgjx6rakq24kganwyfdbvrqg199rrxmiy55aip9ja";
   };
   nativeBuildInputs = [ cmake pkgconfig ];
   buildInputs = [ hcc hip numactl comgr ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+    # "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DROCM_DIR=${rocm-cmake}/share/rocm/cmake"
-    "-DBUILD_DOC=OFF"
   ];
   inherit doCheck;
+  NIX_CFLAGS_COMPILE="-D__HIP_VDI__";
 
   # Revert a patch that removed gfx803 as a GPU target
   patches = [ (fetchpatch {

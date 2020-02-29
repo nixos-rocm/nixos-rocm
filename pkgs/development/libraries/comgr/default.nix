@@ -1,12 +1,12 @@
 {stdenv, fetchFromGitHub, cmake, llvm, lld, clang, device-libs}:
 stdenv.mkDerivation rec {
   pname = "comgr";
-  version = "3.0.0";
+  version = "3.1.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCm-CompilerSupport";
     rev = "roc-${version}";
-    sha256 = "0gz4galcc01f7csi50x5hf1947nj0d5cd8c87p3fsmiq7bhlb53f";
+    sha256 = "116jqn7gvcscim4xgdp4mgdqgs5cl6slhdyr4z06djlsvq714m8s";
   };
   sourceRoot = "source/lib/comgr";
   nativeBuildInputs = [ cmake ];
@@ -28,7 +28,6 @@ stdenv.mkDerivation rec {
   # removes the static library linking.
   patchPhase = ''
     sed -e '/^llvm_map_components_to_libnames/,/[[:space:]]*Symbolize)/d' \
-        -e 's/CXX_STANDARD 11/CXX_STANDARD 14/' \
         -i CMakeLists.txt
   '';
 }

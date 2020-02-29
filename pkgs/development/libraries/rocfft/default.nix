@@ -4,24 +4,18 @@
 , boost, gtest, fftw, fftwFloat }:
 stdenv.mkDerivation rec {
   name = "rocFFT";
-  version = "3.0";
+  version = "3.1";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocFFT";
     rev = "rocm-${version}";
-    sha256 = "1ihrnc9sprw8fa9vfs1hylq83rw7akvr2lymvq9l48rb30fhp1fb";
+    sha256 = "1xqqlqqg5irpcfb8rx5yhgmlv0j30jxk6i0xq692fr04c81yd1y8";
   };
 
   # Building this package is very RAM intensive: individual clang
   # processes use over 6GB of RAM.
   enableParallelBuilding = false;
   # CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HIP__";
-
-  patches = [ (fetchpatch {
-    name = "massive-memory-use";
-    url = "https://patch-diff.githubusercontent.com/raw/ROCmSoftwarePlatform/rocFFT/pull/286.patch";
-    sha256 = "13avgd16vsqfsf6ghjqp18srn5vdl7s5hqxkk0kxjihaqpnrglw4";
-  })];
 
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig rocminfo ];
   buildInputs = [ hcc hip rocr boost comgr ]

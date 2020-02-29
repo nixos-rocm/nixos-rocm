@@ -7,12 +7,12 @@ let perlenv = perlPackages.perl.buildEnv.override({
     });
 in stdenv.mkDerivation rec {
   name = "hcc";
-  version = "3.0.0";
+  version = "3.1.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "hcc";
     rev = "roc-hcc-${version}";
-    sha256 = "0zriynwcvhdzqpvc109lwq1r79gl167jhacr889afycbq6hik7g1";
+    sha256 = "1m0jah0rlb4wihxpbm49hc03ynr1gvgnraqafcpkqpaqfgwhcs1k";
   };
   propagatedBuildInputs = [ file rocr rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];

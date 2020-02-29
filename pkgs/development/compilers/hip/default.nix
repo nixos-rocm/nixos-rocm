@@ -3,23 +3,25 @@
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.0.0";
+  version = "3.1.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "146blnbwc0a8b7d9lgx7hfqm08nb4vjf7la43yd4z1bqrwa7p3cp";
+    sha256 = "0jzg4lb3wd549pnbjb6snc9jdv48ai3dj06smzz0fkni0ms8iy8d";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc comgr ];
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-12-11" +%y%U%w
+  # day in the week: date -d "2020-02-14" +%y%U%w
+  workweek = "20065";
+
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
-    "-DHIP_VERSION_GITDATE=19493"
+    "-DHIP_VERSION_GITDATE=${workweek}"
     "-DCMAKE_C_COMPILER=${hcc}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${hcc}/bin/clang++"
     "-DCMAKE_BUILD_TYPE=Release"
@@ -38,7 +40,7 @@ stdenv.mkDerivation rec {
 
     for f in $(find . -regex '.*\.cpp\|.*\.h\(pp\)?'); do
       if grep -q __hcc_workweek__ "$f" ; then
-        substituteInPlace "$f" --replace '__hcc_workweek__' '19454'
+        substituteInPlace "$f" --replace '__hcc_workweek__' '${workweek}'
       fi
     done
 
