@@ -9,16 +9,16 @@
 # package is a also a dependency of your derivation.
 { stdenv, fetchurl, writeText, dpkg }:
 stdenv.mkDerivation rec {
-  version = "3.0.0";
+  version = "3.1.0";
   name = "rocr-ext-${version}";
   src = fetchurl {
-    url = "http://repo.radeon.com/rocm/apt/3.0/pool/main/h/hsa-ext-rocr-dev/hsa-ext-rocr-dev_1.1.9.0-rocm-rel-3.0-6-7128d0d_amd64.deb";
-    sha256 = "0pzzr8ai3fxpwxvj40v52ai09cp9sgx0z5q2y3xa4qjm8savi2rh";
+    url = "http://repo.radeon.com/rocm/apt/3.1/pool/main/h/hsa-ext-rocr-dev/hsa-ext-rocr-dev_1.1.30100.0-rocm-rel-3.1-35-ecafeba1_amd64.deb";
+    sha256 = "0vwcgvgc45z1i5j2ilwzp42h5d29bm7cf8ky6jwa1s201zmxgh3z";
   };
   builder = writeText "builder.sh" ''
     source $stdenv/setup
     ${dpkg}/bin/dpkg-deb -R $src tmp
-    cp -R tmp/opt/rocm/hsa/ $out
+    cp -R tmp/opt/rocm-${version}/hsa/ $out
     mkdir -p $out/nix-support
     echo "export ROCR_EXT_DIR=$out/lib" > $out/nix-support/setup-hook
   '';

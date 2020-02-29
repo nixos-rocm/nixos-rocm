@@ -1,7 +1,7 @@
 { stdenv, rocm-opencl-runtime, writeText }:
 
 stdenv.mkDerivation rec {
-  version = "3.0.0";
+  version = "3.1.0";
   name = "rocm-opencl-icd";
   src = writeText "amdocl64.icd" "${rocm-opencl-runtime}/lib/x86_64/libamdocl64.so";
   unpackPhase = ":";

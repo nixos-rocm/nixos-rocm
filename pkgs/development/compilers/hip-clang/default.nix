@@ -1,18 +1,19 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
-, llvm, clang, clang-unwrapped, device-libs, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr}:
+, llvm, clang, clang-unwrapped, lld
+, device-libs, roct, rocr, rocminfo, comgr, hcc
+}:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.0.0";
+  version = "3.1.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "146blnbwc0a8b7d9lgx7hfqm08nb4vjf7la43yd4z1bqrwa7p3cp";
+    sha256 = "0jzg4lb3wd549pnbjb6snc9jdv48ai3dj06smzz0fkni0ms8iy8d";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ clang roct rocminfo device-libs rocr comgr ];
-  buildInputs = [ clang device-libs rocr hcc ];
+  propagatedBuildInputs = [ llvm clang lld hcc roct rocminfo device-libs rocr comgr ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
@@ -20,8 +21,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2019-12-11" +%y%U%w
-  workweek = "19493";
+  # day in the week: date -d "2020-02-14" +%y%U%w
+  workweek = "20065";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
@@ -61,7 +62,6 @@ stdenv.mkDerivation rec {
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
         -e 's,^\($HIP_RUNTIME=\).*$,\1"HCC";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,'g \
-        -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
         -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
@@ -71,10 +71,10 @@ stdenv.mkDerivation rec {
         -e 's,`file,`${file}/bin/file,g' \
         -e 's,`readelf,`${binutils-unwrapped}/bin/readelf,' \
         -e 's, ar , ${binutils-unwrapped}/bin/ar ,g' \
-        -e 's,\(^[[:space:]]*$HIPLDFLAGS .= \)" -lhip_hcc";,\1" -lhip_hcc -L${rocr}/lib -L ${hcc-unwrapped}/lib -lhsa-runtime64 -lhc_am -lmcwamp",' \
+        -e 's,\(^[[:space:]]*$HIPLDFLAGS .= \)" -lhip_hcc";,\1" -lhip_hcc -lhsa-runtime64 -lhc_am -lmcwamp";,' \
         -i bin/hipcc
-    sed -e 's,\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
-        -e 's,$HCC_HOME/bin/llc,${llvm}/bin/llc,' \
+    sed -e 's,$HCC_HOME/bin/llc,${llvm}/bin/llc,' \
+        -e 's,^$HCC_HOME=.*,$HCC_HOME=\x27${hcc}\x27;,' \
         -i bin/hipconfig
 
     sed -e '/execute_process(COMMAND git show -s --format=@%ct/,/    OUTPUT_STRIP_TRAILING_WHITESPACE)/d' \

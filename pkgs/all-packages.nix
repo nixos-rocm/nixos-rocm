@@ -39,28 +39,29 @@ with pkgs;
   rocm-llvm-project = tag: sha256: fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "llvm-project";
-    rev = "roc-${tag}-3.0.0";
+    rev = "roc-${tag}-3.1.0";
     inherit sha256;
   };
 
-  rocm-llvm-project-ocl = self.rocm-llvm-project "ocl" "0hxdk8cwwzxw0vha65bsqsav98i2sspi0fk43jhvh27nl4lxdw33";
-  rocm-llvm-project-hcc = self.rocm-llvm-project "hcc" "1zxjdv526gf5wqynsixxnp3zpbbcdll7dhxp27mha8mq3jsnandh";
+  rocm-llvm-project-ocl = self.rocm-llvm-project "ocl" "05z3l14mxragd5idha75g4qpdb7pjpklzangvd3yizx36243wvzl";
+  rocm-llvm-project-hcc = self.rocm-llvm-project "hcc" "1vi7y0wxkx4q7ql2sv6qzpfip1gv6jks864b7wc7r8n96yh2wxfz";
 
   rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "3.0.0";
+    version = "3.1.0";
     src = "${self.rocm-llvm-project-ocl}/llvm";
   };
   rocm-lld = self.callPackage ./development/compilers/lld rec {
     name = "rocm-lld";
-    version = "3.0.0";
+    version = "3.1.0";
     src = "${self.rocm-llvm-project-ocl}/lld";
     llvm = self.rocm-llvm;
   };
   rocm-clang-unwrapped = callPackage ./development/compilers/clang rec {
     name = "clang-unwrapped";
-    version = "3.0.0";
+    version = "3.1.0";
     src = "${self.rocm-llvm-project-ocl}/clang";
     llvm = self.rocm-llvm;
+    lld = self.rocm-lld;
     inherit (self) rocr;
   };
   rocm-clang = pkgs.wrapCCWith rec {
@@ -69,7 +70,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/10.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/11.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
@@ -86,7 +87,7 @@ with pkgs;
     clang = self.rocm-clang;
     lld = self.rocm-lld;
     tagPrefix = "roc-ocl";
-    sha256 = "07xhywpdd6d073q1px81cl2zf0cyll37air2dj1h8s9kbm48wc0q";
+    sha256 = "0c5a3ag763jr1nyvf9s3xlnf0hgx2i4hls2ab95kg65mkx7cyr02";
   };
   # rocm-opencl-driver = callPackage ./development/libraries/rocm-opencl-driver {
   #   stdenv = pkgs.overrideCC stdenv self.rocm-clang;
@@ -118,18 +119,18 @@ with pkgs;
   # hcc tools are built using that compiler.
   hcc-llvm = callPackage ./development/compilers/llvm rec {
     name = "hcc-llvm";
-    version = "3.0.0";
+    version = "3.1.0";
     src = "${self.rocm-llvm-project-hcc}/llvm";
   };
   hcc-lld = callPackage ./development/compilers/lld {
     name = "hcc-lld";
-    version = "3.0.0";
+    version = "3.1.0";
     src = "${self.rocm-llvm-project-hcc}/lld";
     llvm = self.hcc-llvm;
   };
   hcc-clang-unwrapped = callPackage ./development/compilers/hcc-clang {
     inherit (self) rocr rocminfo hcc-llvm hcc-lld;
-    version = "3.0.0";
+    version = "3.1.0";
     src = "${self.rocm-llvm-project-hcc}/clang";
   };
   hcc-clang = pkgs.wrapCCWith rec {
@@ -194,58 +195,50 @@ with pkgs;
 
   # HIP
 
-  hcc-comgr = (callPackage ./development/libraries/comgr {
-    llvm = self.hcc-llvm;
-    lld = self.hcc-lld;
-    clang = self.hcc-clang;
-    device-libs = self.hcc-device-libs;
-  });
-
   hip = callPackage ./development/compilers/hip {
     inherit (self) roct rocr rocminfo hcc hcc-unwrapped;
     # comgr = self.hcc-comgr;
     comgr = self.amd-comgr;
   };
 
-  hcc-openmp = pkgs.llvmPackages_9.openmp.override {
+  hcc-openmp = pkgs.llvmPackages_latest.openmp.override {
     llvm = self.hcc-llvm;
   };
 
   # HIP's clang backend requires the `amd-common` branches of the
   # LLVM, LLD, and Clang forks.
 
-  rocm-llvm-project-amd = fetchFromGitHub {
-    owner = "RadeonOpenCompute";
+  # hip-clang's build instructions do not pin a revision, and imply
+  # that one ought to pull from the master branch of the upstream LLVM
+  # project.
+  amd-llvm-project = fetchFromGitHub {
+    owner = "llvm";
     repo = "llvm-project";
-    # 2019-12-30
-    rev = "0b668a1616cb52927f46587d057029d0a73255c8";
-    sha256 = "1q0g2g7f15h7xzkawqkzbypicvicb52vxrkdlqhypirwck4glh5g";
+    rev = "e63a3b445ac032d0b6fe7d3d1e1d8be7f9cb310b";
+    sha256 = "1vh0sm2j5qxwk661j6vljp9j2n0hr8qr8nhs25m17pq0v1gkcghy";
   };
 
-  # The amd-common branch of the llvm fork
   amd-llvm = callPackage ./development/compilers/llvm rec {
     name = "amd-llvm";
-    version = "20191230";
-    src = "${self.rocm-llvm-project-amd}/llvm";
+    version = "20200228";
+    src = "${self.amd-llvm-project}/llvm";
   };
 
-  # The amd-common branch of the lld fork
   amd-lld = callPackage ./development/compilers/lld {
     name = "amd-lld";
-    version = "20191230";
-    src = "${self.rocm-llvm-project-amd}/lld";
+    version = self.amd-llvm.version;
+    src = "${self.amd-llvm-project}/lld";
     llvm = self.amd-llvm;
   };
 
-  amd-openmp = pkgs.llvmPackages_9.openmp.override {
+  amd-openmp = pkgs.llvmPackages_latest.openmp.override {
     llvm = self.amd-llvm;
   };
 
-  # The amd-common branch of the clang fork
   amd-clang-unwrapped = (callPackage ./development/compilers/clang {
     name = "amd-clang";
-    version = "20191230";
-    src = "${self.rocm-llvm-project-amd}/clang";
+    version = self.amd-llvm.version;
+    src = "${self.amd-llvm-project}/clang";
     inherit (self) rocr;
     llvm = self.amd-llvm;
     lld = self.amd-lld;
@@ -269,7 +262,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/10.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/11.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
@@ -278,7 +271,7 @@ with pkgs;
     '';
   };
 
-  amd-device-libs = (callPackage ./development/libraries/rocm-device-libs {
+  amd-device-libs = callPackage ./development/libraries/rocm-device-libs {
     inherit (self) rocr;
     stdenv = pkgs.overrideCC stdenv self.amd-clang;
     llvm = self.amd-llvm;
@@ -287,39 +280,42 @@ with pkgs;
     source = pkgs.fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "ROCm-Device-Libs";
-      rev = "628eea44063452c5c7fcea6432d35efd8d302548";
-      sha256 = "07xhywpdd6d073q1px81cl2zf0cyll37air2dj1h8s9kbm48wc0q";
+      rev = "c214a58482cab30fd3cdf9cc6fda5bd432aa2f9e";
+      sha256 = "19g5w5l3yizli0zk26gpl5i798n6zaj95hsczspm9432w01lxsgw";
     };
-  }).overrideAttrs (_: {
-    cmakeFlags = [
-      "-DCMAKE_C_COMPILER=${self.amd-clang}/bin/clang"
-      "-DCMAKE_CXX_COMPILER=${self.amd-clang}/bin/clang++"
-      "-DLLVM_DIR=${self.amd-llvm}"
-      "-DCLANG_OPTIONS_APPEND=-Wno-unused-command-line-argument"
-    ];
-  });
+  };
 
   amd-comgr = (callPackage ./development/libraries/comgr {
     llvm = self.amd-llvm;
     lld = self.amd-lld;
     clang = self.amd-clang;
     device-libs = self.amd-device-libs;
+  }).overrideAttrs (old: {
+    src = pkgs.fetchFromGitHub {
+      # We need a version newer than 3.1.0 for compatibility with the
+      # newer amd-llvm
+      owner = "RadeonOpenCompute";
+      repo = "ROCm-CompilerSupport";
+      rev = "7ac2e34f13eb3fc7bdf5211a487726084eb4e906";
+      sha256 = "03i21jiqykxnkwbqkcb2ay2ss94qm6bk1x42ngha5v7827h1wdzc";
+    };
   });
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
-    inherit (self) roct rocr rocminfo hcc hcc-unwrapped;
+    inherit (self) roct rocr rocminfo hcc;
     llvm = self.amd-llvm;
     clang-unwrapped = self.amd-clang-unwrapped;
     clang = self.amd-clang;
-    comgr = self.amd-comgr;
     device-libs = self.amd-device-libs;
+    comgr = self.amd-comgr;
   };
 
   clang-ocl = callPackage ./development/compilers/clang-ocl {
     inherit (self) rocm-cmake rocm-device-libs rocm-lld rocm-llvm;
-    inherit (self) hcc hcc-clang-unwrapped rocm-opencl-runtime;
-    inherit (self) amd-clang amd-clang-unwrapped;
+    inherit (self) hcc rocm-opencl-runtime;
+    # inherit (self) amd-clang amd-clang-unwrapped;
+    inherit (pkgs.llvmPackages_10) clang clang-unwrapped;
   };
 
   rocm-smi = callPackage ./tools/rocm-smi { };
@@ -371,7 +367,7 @@ with pkgs;
 
   rccl = callPackage ./development/libraries/rccl {
     inherit (self) rocm-cmake hcc;
-    hip = self.hip;
+    hip = self.hip-clang;
     comgr = self.amd-comgr;
   };
 

@@ -6,14 +6,16 @@
 , hcc
 , roctracer }:
 buildPythonPackage rec {
-  # version = "1.0.0";
-  version = "2019-12-30";
+  version = "1.4.0";
   pname = "pytorch";
   src = fetchFromGitHub {
-    owner = "ROCmSoftwarePlatform";
+    # owner = "ROCmSoftwarePlatform";
+    owner = "pytorch";
     repo = "pytorch";
-    rev = "f3ad803a2bff367e4fa7b5a7a425205125943913";
-    sha256 = "17065aq6lrxylar3349cpia354pdi8jsmdpnpqqy6c8lmwgwwbcv";
+
+    rev = "v${version}";
+    sha256 = "1gdglwrky4zq7w2zp9srrdqz8x2j89sv4n91x2m4c6b4fbj52gsr";
+
     fetchSubmodules = true;
   };
 

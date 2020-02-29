@@ -1,4 +1,4 @@
-# Radeon Open Compute (3.0.0) packages for NixOS
+# Radeon Open Compute (3.1.0) packages for NixOS
 
 ## Installation
 
