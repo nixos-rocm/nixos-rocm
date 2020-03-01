@@ -86,6 +86,19 @@ buildPythonPackage rec {
       url = "https://github.com/pytorch/pytorch/commit/3a7ecd32eb7418e18146fe09dc9301076b5f0f17.patch";
       sha256 = "13rwyq5m8aqgjjxp4cdyjbbnbcni9z44p8zwvh3h86f9jqk1c12b";
     })
+
+    # The next two patches are needed to build pytorch-1.4.0 with gcc-9.2.0
+    # See https://github.com/pytorch/pytorch/issues/32277
+    (fetchpatch {
+      name = "KernelTable-array.patch";
+      url = "https://patch-diff.githubusercontent.com/raw/pytorch/pytorch/pull/30332.patch";
+      sha256 = "1v9dwbhz3rdxcx6sz8y8j9n3bj6nqs78b1r8yg89yc15n6l4cqx2";
+    })
+    (fetchpatch {
+      name = "remove-LeftRight.patch";
+      url = "https://patch-diff.githubusercontent.com/raw/pytorch/pytorch/pull/30333.patch";
+      sha256 = "139413fl37h2fnil0cv99a67mqqnsh02k74b92by1qyr6pcfyg3q";
+    })
   ];
 
   postConfigure = ''

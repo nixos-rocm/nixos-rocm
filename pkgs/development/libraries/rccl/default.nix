@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
     "-DROCM_DIR=${rocm-cmake}/share/rocm/cmake"
   ];
   inherit doCheck;
-  NIX_CFLAGS_COMPILE="-D__HIP_VDI__";
+  # NIX_CFLAGS_COMPILE="-D__HIP_VDI__";
 
   # Revert a patch that removed gfx803 as a GPU target
   patches = [ (fetchpatch {
