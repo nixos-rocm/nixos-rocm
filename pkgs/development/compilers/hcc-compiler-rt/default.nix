@@ -1,8 +1,8 @@
-{ stdenv, fetchFromGitHub, cmake, python, hcc-llvm, src }:
+{ stdenv, fetchFromGitHub, cmake, python, llvm, src, namePrefix }:
 stdenv.mkDerivation rec {
-  name = "hcc-compiler-rt";
+  name = "${namePrefix}-compiler-rt";
   version = "3.1.0";
   inherit src;
   nativeBuildInputs = [ cmake python ];
-  buildInputs = [ hcc-llvm ];
+  buildInputs = [ llvm ];
 }

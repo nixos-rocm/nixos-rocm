@@ -44,7 +44,17 @@ with pkgs;
   };
 
   rocm-llvm-project-ocl = self.rocm-llvm-project "ocl" "05z3l14mxragd5idha75g4qpdb7pjpklzangvd3yizx36243wvzl";
-  rocm-llvm-project-hcc = self.rocm-llvm-project "hcc" "1vi7y0wxkx4q7ql2sv6qzpfip1gv6jks864b7wc7r8n96yh2wxfz";
+  # rocm-llvm-project-hcc = self.rocm-llvm-project "hcc" "1vi7y0wxkx4q7ql2sv6qzpfip1gv6jks864b7wc7r8n96yh2wxfz";
+  rocm-llvm-project-hcc = fetchFromGitHub {
+    owner = "RadeonOpenCompute";
+    repo = "llvm-project";
+    # The roc-hcc-3.1.0 tagged revision of llvm-projects produces an
+    # hcc that produces a hip that can not build rccl. This is a newer
+    # revision of llvm-project that was the submodule of the hcc
+    # development branch as of 20202902.
+    rev = "e8173c23afae5686ccb3bf92ccc8f16c7f47023f";
+    sha256 = "1nqpvvqs8cm8ihfmd4653zdp607lbzfsbbg5xnvni8pykmrfc9rd";
+  };
 
   rocm-llvm = callPackage ./development/compilers/llvm rec {
     version = "3.1.0";
@@ -139,7 +149,7 @@ with pkgs;
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/10.0.0/include" "$rsrc"
+      ln -s "${cc}/lib/clang/11.0.0/include" "$rsrc"
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
       rm $out/nix-support/add-hardening.sh
@@ -149,7 +159,8 @@ with pkgs;
 
   hcc-compiler-rt = callPackage ./development/compilers/hcc-compiler-rt {
     src = "${self.rocm-llvm-project-hcc}/compiler-rt";
-    inherit (self) hcc-llvm;
+    llvm = self.hcc-llvm;
+    namePrefix = "hcc";
   };
   hcc-device-libs = callPackage ./development/libraries/rocm-device-libs {
     inherit (self) rocr;
@@ -193,12 +204,27 @@ with pkgs;
     '';
   };
 
+  hcc-comgr = (callPackage ./development/libraries/comgr {
+    llvm = self.hcc-llvm;
+    lld = self.hcc-lld;
+    clang = self.hcc-clang;
+    device-libs = self.hcc-device-libs;
+  }).overrideAttrs (old: {
+    src = pkgs.fetchFromGitHub {
+      # We need a version newer than 3.1.0 for compatibility with a
+      # newer llvm
+      owner = "RadeonOpenCompute";
+      repo = "ROCm-CompilerSupport";
+      rev = "7ac2e34f13eb3fc7bdf5211a487726084eb4e906";
+      sha256 = "03i21jiqykxnkwbqkcb2ay2ss94qm6bk1x42ngha5v7827h1wdzc";
+    };
+  });
+
   # HIP
 
   hip = callPackage ./development/compilers/hip {
     inherit (self) roct rocr rocminfo hcc hcc-unwrapped;
-    # comgr = self.hcc-comgr;
-    comgr = self.amd-comgr;
+    comgr = self.hcc-comgr;
   };
 
   hcc-openmp = pkgs.llvmPackages_latest.openmp.override {
@@ -233,6 +259,12 @@ with pkgs;
 
   amd-openmp = pkgs.llvmPackages_latest.openmp.override {
     llvm = self.amd-llvm;
+  };
+
+  amd-compiler-rt = callPackage ./development/compilers/hcc-compiler-rt {
+    src = "${self.amd-llvm-project}/compiler-rt";
+    llvm = self.amd-llvm;
+    namePrefix = "amd";
   };
 
   amd-clang-unwrapped = (callPackage ./development/compilers/clang {
@@ -367,7 +399,7 @@ with pkgs;
 
   rccl = callPackage ./development/libraries/rccl {
     inherit (self) rocm-cmake hcc;
-    hip = self.hip-clang;
+    hip = self.hip;
     comgr = self.amd-comgr;
   };
 
