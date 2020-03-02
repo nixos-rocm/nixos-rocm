@@ -470,7 +470,24 @@ with pkgs;
     hip = self.hip;
   };
 
-  tensorflow2-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin2.nix {
+  tf2PyPackages = python37.override {
+    packageOverrides = self: super: {
+      protobuf = super.buildPythonPackage {
+        pname = "protobuf";
+        version = "3.11.3";
+        format = "wheel";
+        src = fetchurl {
+          url = "https://files.pythonhosted.org/packages/ff/f1/8dcd4219bbae8aa44fe8871a89f05eca2dca9c04f8dbfed8a82b7be97a88/protobuf-3.11.3-cp37-cp37m-manylinux1_x86_64.whl";
+          sha256 = "01zwn19vl2iccjg7rrk950wcqwwvkyxa0dnyv50z215rk0vwkfcf";
+        };
+        propagatedBuildInputs = [ 
+          self.six
+        ];
+      };
+    };
+  };
+
+  tensorflow2-rocm = self.tf2PyPackages.pkgs.callPackage ./development/libraries/tensorflow/bin2.nix {
     inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
                    rocfft rocblas rocr rccl cxlactivitylogger;
     hip = self.hip;

@@ -23,7 +23,7 @@
 , grpcio
 , google-pasta
 , markdown
-, mock
+, opt-einsum
 , backports_weakref
 , enum34
 , werkzeug
@@ -66,40 +66,40 @@ let
     };
     propagatedBuildInputs = [ astunparse ];
   };
-  tensorboard_1_14_0 = buildPythonPackage rec {
-    pname = "tensorflow-tensorboard";
-    version = "1.14.0";
-    format = "wheel";
-    src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/91/2d/2ed263449a078cd9c8a9ba50ebd50123adf1f8cfbea1492f9084169b89d9/tensorboard-1.14.0-py3-none-any.whl";
-      sha256 = "1z631614jk5zgasgmwfr33gz8bwv11p9f5llzlwvx3a8rnyv3q2h";
-    };
-    propagatedBuildInputs = [
-      numpy
-      werkzeug
-      protobuf
-      markdown
-      grpcio absl-py
-      wheel
-    ];
-  };
-  tensorflow-estimator_1_14_0 = buildPythonPackage rec {
-    pname = "tensorflow-estimator";
-    version = "1.14.0";
-    format = "wheel";
-    src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/3c/d5/21860a5b11caf0678fbc8319341b0ae21a07156911132e0e71bffed0510d/tensorflow_estimator-1.14.0-py2.py3-none-any.whl";
-      sha256 = "14irpsyj14vn2dpwr601f54058wywci1pv0hss8s01rl0rk3y1ya";
-    };
-  };
+  # tensorboard_1_15_0 = buildPythonPackage rec {
+  #   pname = "tensorflow-tensorboard";
+  #   version = "1.15.0";
+  #   format = "wheel";
+  #   src = fetchurl {
+  #     url = "https://files.pythonhosted.org/packages/1e/e9/d3d747a97f7188f48aa5eda486907f3b345cd409f0a0850468ba867db246/tensorboard-1.15.0-py3-none-any.whl";
+  #     sha256 = "1g62i3nrgp8q9wfsyqqjkkfnsz7x2k018c26kdh527h1yrjjrbac";
+  #   };
+  #   propagatedBuildInputs = [
+  #     numpy
+  #     werkzeug
+  #     protobuf
+  #     markdown
+  #     grpcio absl-py
+  #     wheel
+  #   ];
+  # };
+  # tensorflow-estimator_1_15_2 = buildPythonPackage rec {
+  #   pname = "tensorflow-estimator";
+  #   version = "1.15.2";
+  #   format = "wheel";
+  #   src = fetchurl {
+  #     url = "https://files.pythonhosted.org/packages/72/33/f678e8c2a14a139aec1c376f2e8cbb11abececf656c40addc94a3d1d020d/tensorflow_estimator-1.15.2-py2.py3-none-any.whl";
+  #     sha256 = "0px0gp068akw22ibmzfijfk6qh93865k6k650vazm1xfs5hgpb4s";
+  #   };
+  # };
 in buildPythonPackage {
   pname = "tensorflow";
-  version = "1.14.5";
+  version = "1.15.2";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/61/1c/f4be8af7b4961e96eb7064c85d6141a55b7b7fd44ec24162529398b0f8c9/tensorflow_rocm-1.14.5-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "0zr0dnnc1i3gz6ijf0mzcb7gdc3vd6cyqbm8kw3p6nn8f39x58ss";
+    url = "https://files.pythonhosted.org/packages/e8/3f/f514bb6ef96e41ecf40cf28903ec2fbe4c236ead430d5783f86262070a2f/tensorflow_rocm-1.15.2-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "07j0ciaajgwn154cdr6z7bcjg25jx35aaadxaxrl7l3dbwyfr1ln";
   };
 
   propagatedBuildInputs = [
@@ -112,11 +112,10 @@ in buildPythonPackage {
     absl-py
     gast_0_2_2
     google-pasta
+    opt-einsum
     wrapt
-    # tensorflow-estimator
-    # tensorflow-tensorboard
-    tensorflow-estimator_1_14_0
-    tensorboard_1_14_0
+    tensorflow-estimator
+    tensorflow-tensorboard
     keras-applications
     keras-preprocessing
   ];
@@ -145,8 +144,8 @@ in buildPythonPackage {
               [ stdenv.cc.cc.lib zlib rocmtoolkit_joined ];
   in
   lib.optionalString (stdenv.isLinux) ''
-    rrPath="$out/${python.sitePackages}/tensorflow/:$out/${python.sitePackages}/tensorflow/contrib/tensor_forest/:${rpath}"
-    internalLibPath="$out/${python.sitePackages}/tensorflow/python/_pywrap_tensorflow_internal.so"
+    rrPath="$out/${python.sitePackages}/tensorflow_core/:$out/${python.sitePackages}/tensorflow_core/contrib/tensor_forest/:${rpath}"
+    internalLibPath="$out/${python.sitePackages}/tensorflow_core/python/_pywrap_tensorflow_internal.so"
     find $out -type f \( -name '*.so' -or -name '*.so.*' \) | while read lib; do
       patchelf --set-rpath "$rrPath" "$lib"
       addOpenGLRunpath "$lib"

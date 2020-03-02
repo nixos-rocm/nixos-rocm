@@ -18,6 +18,7 @@
 , astunparse
 , grpcio
 , google-pasta
+, google-auth-oauthlib
 , mock
 , backports_weakref
 , enum34
@@ -66,44 +67,45 @@ let
     };
     propagatedBuildInputs = [ astunparse ];
   };
-  tensorboard_2_0_0 = buildPythonPackage rec {
+  tensorboard_2_1_0 = buildPythonPackage rec {
     pname = "tensorflow-tensorboard";
-    version = "2.0.0";
+    version = "2.1.0";
     format = "wheel";
     # src = fetchPypi {
     #   inherit pname version;
     #   sha256 = "1w5dzdb3gpcfmd2s0b93d8gff40a1s41rvggg58z14inb3s9v4zy";
     # };
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/9b/a6/e8ffa4e2ddb216449d34cfcb825ebb38206bee5c4553d69e7bc8bc2c5d64/tensorboard-2.0.0-py3-none-any.whl";
-      sha256 = "0hz9nn4bbr1k5iwdrsrcdvkg36qswqdzbgsrlbkp53ddrhb9cmfk";
+      url = "https://files.pythonhosted.org/packages/40/23/53ffe290341cd0855d595b0a2e7485932f473798af173bbe3a584b99bb06/tensorboard-2.1.0-py3-none-any.whl";
+      sha256 = "1wpjdzhjpcdkyaahzd4bl71k4l30z5c55280ndiwj32hw70lxrp6";
     };
     propagatedBuildInputs = [
       numpy
       werkzeug
       protobuf
       markdown
+      google-auth-oauthlib
       grpcio absl-py
       wheel
     ];
   };
-  tensorflow-estimator_2_0_0 = buildPythonPackage rec {
+  tensorflow-estimator_2_1_0 = buildPythonPackage rec {
     pname = "tensorflow-estimator";
-    version = "2.0.0";
+    version = "2.1.0";
     format = "wheel";
     src = fetchurl {
-      url = "https://files.pythonhosted.org/packages/95/00/5e6cdf86190a70d7382d320b2b04e4ff0f8191a37d90a422a2f8ff0705bb/tensorflow_estimator-2.0.0-py2.py3-none-any.whl";
-      sha256 = "1nkjlwlnpr1avwdl3kmj5h25gg9vsk729mf6kdbjfinm2a3zxzal";
+      url = "https://files.pythonhosted.org/packages/18/90/b77c328a1304437ab1310b463e533fa7689f4bfc41549593056d812fab8e/tensorflow_estimator-2.1.0-py2.py3-none-any.whl";
+      sha256 = "0wk9viil54ms1s2ir7zxygqa425i69hx8zngwhdqvw9nlr4gdig5";
     };
   };
 in buildPythonPackage {
   pname = "tensorflow";
-  version = "2.0.2";
+  version = "2.1.0";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/42/d7/0437a3da0437f03331af9ba4e8fb7481aca872790d423710474410b69c26/tensorflow_rocm-2.0.2-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "182xn4775psz6z744wqplsqdi69yh8qrj8ypggk47n4c6h134w2c";
+    url = "https://files.pythonhosted.org/packages/0c/38/a7218b24a1000a9f03438c43df463a31b763dfcf2fe552230fd9d0171123/tensorflow_rocm-2.1.0-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "1rg2c6nc2mj5ppd321v2nb2kz3wamf9k8glif4ana645bayp09gj";
   };
 
   propagatedBuildInputs = [
@@ -117,8 +119,8 @@ in buildPythonPackage {
     gast_0_2_2
     google-pasta
     wrapt
-    tensorflow-estimator_2_0_0
-    tensorboard_2_0_0
+    tensorflow-estimator_2_1_0
+    tensorboard_2_1_0
     keras-applications
     keras-preprocessing
     opt-einsum

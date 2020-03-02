@@ -70,7 +70,7 @@ Libraries and compilers for:
 * [HCC](https://github.com/RadeonOpenCompute/hcc)
 * [HIP](https://github.com/ROCm-Developer-Tools/HIP)
 * [pytorch](https://github.com/ROCmSoftwarePlatform/pytorch) (Note that AMD's ROCm port of pytorch does not support current pytorch extension mechanisms for C++ or CUDA plugins, so many libraries that depend upon pytorch will not work.)
-* [TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream)
+* ~~[TensorFlow](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream)~~ [Not yet reliable with ROCm 3.1](https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md)
 
 ## Miscellaneous Notes and Workarounds
 
