@@ -3,12 +3,12 @@
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.1.0";
+  version = "3.1.1";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "roc-${version}";
-    sha256 = "0jzg4lb3wd549pnbjb6snc9jdv48ai3dj06smzz0fkni0ms8iy8d";
+    sha256 = "0zj3vnlnh2dhns9fzsmzscx39wxwjlkjg6mg76xyj1nfga5rl6gj";
   };
   nativeBuildInputs = [ cmake python ];
   buildInputs = [ hcc comgr ];
