@@ -3,12 +3,12 @@
 , gtest, doCheck ? false }:
 stdenv.mkDerivation rec {
   name = "rocthrust";
-  version = "3.1.0";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocThrust";
-    rev = version;
-    sha256 = "0bzypsm9lnsw424iqmfxv3l6854fnl7whj5gfzkpvdasgrfl5zd3";
+    rev = "rocm-${version}";
+    sha256 = "1varxwhfkg5c10hysdk7ky7bmpinkg433nl0fdipqarvdvphixl7";
   };
 
   postPatch = ''

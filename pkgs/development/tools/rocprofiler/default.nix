@@ -2,12 +2,12 @@
 let pyenv = python.withPackages (ps: [ps.sqlite3dbm]); in
 stdenv.mkDerivation rec {
   name = "rocprofiler";
-  version = "3.1.0";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "rocprofiler";
     rev = "roc-${version}";
-    sha256 = "0rsmcahnhx3q5q5d26inskqvcxybg4z547k930knl7w4r94wnnwg";
+    sha256 = "1b50n86dyj1zw5xhbw1xq0l327av36z6pxmc6h35fck88h72k22f";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ rocr roct pyenv ];

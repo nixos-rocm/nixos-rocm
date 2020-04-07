@@ -10,13 +10,12 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "3.1.0";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
-    rev = with stdenv.lib.versions;
-      "rocm-${stdenv.lib.concatStringsSep "." [(major version) (minor version)]}";
-    sha256 = "0353p36v2ba7sg0c5svxd7vx77h3yy3ia5fgscly2sj43s2r8i35";
+    rev = "rocm-${version}";
+    sha256 = "1rjwx14zq9b31n58fdfarw2ray0i51vmawvl15ciiggpk24w2gfz";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 
