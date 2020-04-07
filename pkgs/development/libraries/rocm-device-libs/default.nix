@@ -5,7 +5,7 @@
 , sha256 ? null }:
 # Caller *must* provide either source or both tagPrefix and sha256
 assert (isNull source) -> !(isNull tagPrefix || isNull sha256);
-let version = "3.1.0";
+let version = "3.3.0";
     srcTmp = if isNull source then fetchFromGitHub {
       owner = "RadeonOpenCompute";
       repo = "ROCm-Device-Libs";

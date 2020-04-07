@@ -23,12 +23,12 @@ let
   pyenv = python.withPackages (ps: [CppHeaderParser]);
 in stdenv.mkDerivation rec {
   name = "roctracer";
-  version = "3.1.0";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "roctracer";
     rev = "roc-${version}";
-    sha256 = "1p9acwlfn8m2fyrslk3y6gfk5516516mx5fd846c2sgcbm9fg0n7";
+    sha256 = "00iwah3x1cm5ghhrwcp0njiy5vvwnh4wcpcfs8k6zacn9fd2dh8l";
   };
   src2 = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";

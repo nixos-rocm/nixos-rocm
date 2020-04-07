@@ -7,12 +7,12 @@
 let doCheck = false; in
 stdenv.mkDerivation rec {
   pname = "hipsparse";
-  version = "3.1";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "hipSPARSE";
     rev = "rocm-${version}";
-    sha256 = "0x904z7d8lmk4d1h3cx8y8vw2fky9z81nw2bhvc0gn83j9gfxb4z";
+    sha256 = "1hasarrh0lxm2bcbpnyk33vg5kdnmbj9bb6gs1wp3pi6s1c148c3";
   };
 
   nativeBuildInputs = [ cmake rocm-cmake ] ++ stdenv.lib.optional doCheck gtest;

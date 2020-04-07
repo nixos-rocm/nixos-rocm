@@ -4,12 +4,12 @@
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
   name = "miopen";
-  version = "3.1.0";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "MIOpen";
     rev = "roc-${version}";
-    sha256 = "0j6dnp6nnd7y423l34abj4x415l8j939s9ygq0s1ampr5i7xpl4i";
+    sha256 = "07p4wk9csg24xwm5k2k12lk0hsmwy0g8xafr0b745djyywgjk7mg";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
   buildInputs = [ rocr half openssl boost rocblas miopengemm comgr sqlite zlib ]
@@ -46,5 +46,7 @@ stdenv.mkDerivation rec {
       sed '/^[[:space:]]*clang_tidy_check(.*/d' -i "$f"
     done
     sed '/add_dependencies(tidy miopen_tidy_inlining)/d' -i src/CMakeLists.txt
+    sed -e 's/clang_tidy_check.*//' \
+        -i speedtests/CMakeLists.txt
   '';
 }

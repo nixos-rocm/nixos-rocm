@@ -5,12 +5,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.1.1";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
-    rev = "roc-${version}";
-    sha256 = "0zj3vnlnh2dhns9fzsmzscx39wxwjlkjg6mg76xyj1nfga5rl6gj";
+    rev = "rocm-${version}";
+    sha256 = "038qb1ammhg0di32pvbb9j1yq0mxrpd9iyhy159x9gk1vjm1rvxc";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ llvm clang lld hcc roct rocminfo device-libs rocr comgr ];
@@ -21,8 +21,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2020-02-14" +%y%U%w
-  workweek = "20065";
+  # day in the week: date -d "2020-03-28" +%y%U%w
+  workweek = "20126";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
@@ -33,6 +33,13 @@ stdenv.mkDerivation rec {
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
     "-DLLVM_ENABLE_RTTI=ON"
   ];
+
+  patches = [(fetchpatch {
+    # See https://github.com/ROCm-Developer-Tools/HIP/pull/2005
+    name = "hiprtc-fix-PR2005";
+    url = "https://patch-diff.githubusercontent.com/raw/ROCm-Developer-Tools/HIP/pull/2005.patch";
+    sha256 = "1w35s2xpxny4j5llpaz912g1br9735vdfdld1nhqdvrdax2vxlc7";
+  })];
 
   # - fix bash paths
   # - fix path to rocm_agent_enumerator

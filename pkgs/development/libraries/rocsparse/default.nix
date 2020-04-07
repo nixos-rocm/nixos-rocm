@@ -1,14 +1,12 @@
 {stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-cmake, hip, hcc, rocprim, hipcub, comgr}:
 stdenv.mkDerivation rec {
   name = "rocsparse";
-  version = "3.1.0";
+  version = "3.3.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocSPARSE";
-    rev = with stdenv.lib.versions;
-          "rocm-${stdenv.lib.concatStringsSep
-                    "." [(major version) (minor version)]}";
-    sha256 = "0rkjgjn1ma1h3rdkdl345phw5czf6h3zyy75pq8j754jvcn71qg5";
+    rev = "rocm-${version}";
+    sha256 = "1csmd89s03xs3c93x8jh9sb99ap63cx6d2mdl8h4f6rdj52viqa6";
   };
 
   postPatch = ''
