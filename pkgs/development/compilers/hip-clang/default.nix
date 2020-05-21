@@ -1,19 +1,19 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, lld
-, device-libs, roct, rocr, rocminfo, comgr, hcc
+, device-libs, roct, rocr, rocminfo, comgr, rocclr
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.3.0";
+  version = "3.5.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "038qb1ammhg0di32pvbb9j1yq0mxrpd9iyhy159x9gk1vjm1rvxc";
+    sha256 = "1xhw9sy9gln5mai8w8mrbiz1ik8m0lnk5g4p2gwa4f3mv96adlhd";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ llvm clang lld hcc roct rocminfo device-libs rocr comgr ];
+  propagatedBuildInputs = [ llvm clang lld roct rocminfo device-libs rocr comgr rocclr ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
@@ -21,25 +21,28 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2020-03-28" +%y%U%w
-  workweek = "20126";
+  # day in the week: date -d "2020-05-29" +%y%U%w
+  workweek = "20215";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocr}"
-    "-DHCC_HOME=${hcc}"
     "-DHIP_COMPILER=clang"
+    "-DHIP_PLATFORM=rocclr"
     "-DHIP_VERSION_GITDATE=${workweek}"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
     "-DLLVM_ENABLE_RTTI=ON"
+    "-DLIBROCclr_STATIC_DIR=${rocclr}/lib/cmake"
+    "-DROCclr_DIR=${rocclr}"
+    "-DHIP_CLANG_ROOT=${clang-unwrapped}"
   ];
 
-  patches = [(fetchpatch {
-    # See https://github.com/ROCm-Developer-Tools/HIP/pull/2005
-    name = "hiprtc-fix-PR2005";
-    url = "https://patch-diff.githubusercontent.com/raw/ROCm-Developer-Tools/HIP/pull/2005.patch";
-    sha256 = "1w35s2xpxny4j5llpaz912g1br9735vdfdld1nhqdvrdax2vxlc7";
-  })];
+  # patches = [(fetchpatch {
+  #   # See https://github.com/ROCm-Developer-Tools/HIP/pull/2005
+  #   name = "hiprtc-fix-PR2005";
+  #   url = "https://patch-diff.githubusercontent.com/raw/ROCm-Developer-Tools/HIP/pull/2005.patch";
+  #   sha256 = "1w35s2xpxny4j5llpaz912g1br9735vdfdld1nhqdvrdax2vxlc7";
+  # })];
 
   # - fix bash paths
   # - fix path to rocm_agent_enumerator
@@ -67,7 +70,7 @@ stdenv.mkDerivation rec {
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
         -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${device-libs}/lib";,' \
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
-        -e 's,^\($HIP_RUNTIME=\).*$,\1"HCC";,' \
+        -e 's,^\($HIP_RUNTIME=\).*$,\1"ROCclr";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,'g \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
@@ -78,22 +81,37 @@ stdenv.mkDerivation rec {
         -e 's,`file,`${file}/bin/file,g' \
         -e 's,`readelf,`${binutils-unwrapped}/bin/readelf,' \
         -e 's, ar , ${binutils-unwrapped}/bin/ar ,g' \
-        -e 's,\(^[[:space:]]*$HIPLDFLAGS .= \)" -lhip_hcc";,\1" -lhip_hcc -lhsa-runtime64 -lhc_am -lmcwamp";,' \
         -i bin/hipcc
-    sed -e 's,$HCC_HOME/bin/llc,${llvm}/bin/llc,' \
-        -e 's,^$HCC_HOME=.*,$HCC_HOME=\x27${hcc}\x27;,' \
+
+    sed -e 's,^\($HSA_PATH=\).*$,\1"${rocr}";,' \
+        -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
+        -e 's,^\($HIP_PLATFORM=\).*$,\1"hcc";,' \
+        -e 's,$HIP_CLANG_PATH/llc,${llvm}/bin/llc,' \
+        -e 's, abs_path, Cwd::abs_path,' \
         -i bin/hipconfig
 
     sed -e '/execute_process(COMMAND git show -s --format=@%ct/,/    OUTPUT_STRIP_TRAILING_WHITESPACE)/d' \
         -e '/string(REGEX REPLACE ".*based on HCC " "" HCC_VERSION ''${HCC_VERSION})/,/string(REGEX REPLACE " .*" "" HCC_VERSION ''${HCC_VERSION})/d' \
         -e 's/\(message(STATUS "Looking for HCC in: " ''${HCC_HOME} ". Found version: " ''${HCC_VERSION})\)/string(REGEX REPLACE ".*based on HCC[ ]*(LLVM)?[ ]*([^)\\r\\n ]*).*" "\\\\2" HCC_VERSION ''${HCC_VERSION})\n\1/' \
         -i CMakeLists.txt
+
+    sed -e 's|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/src)|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/include)|' \
+        -i lpl_ca/CMakeLists.txt
+
+    sed -e 's|_IMPORT_PREFIX}/../include|_IMPORT_PREFIX}/include|g' \
+        -e 's|''${HIP_CLANG_ROOT}/lib/clang/\*/include|${clang-unwrapped}/lib/clang/*/include|' \
+        -i hip-config.cmake.in
   '';
 
   preInstall = ''
     mkdir -p $out/lib/cmake
   '';
 
+  # The upstream ROCclr setup wants everything built into the same
+  # ROCclr output directory. We copy things into the HIP output
+  # directory, since it is downstream of ROCclr in terms of dependency
+  # direction. Thus we have device-libs and rocclr pieces in the HIP
+  # output directory.
   postInstall = ''
     mkdir -p $out/share
     mv $out/lib/cmake $out/share/
@@ -101,7 +119,9 @@ stdenv.mkDerivation rec {
     mkdir -p $out/lib
     ln -s ${device-libs}/lib $out/lib/bitcode
     mkdir -p $out/include
-    ln -s ${clang-unwrapped}/lib/clang/10.0.0/include $out/include/clang
+    ln -s ${clang-unwrapped}/lib/clang/11.0.0/include $out/include/clang
+    ln -s ${rocclr}/lib/*.* $out/lib
+    ln -s ${rocclr}/include/* $out/include
   '';
 
   setupHook = writeText "setupHook.sh" ''

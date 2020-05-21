@@ -1,5 +1,5 @@
 # Adpated from the nixpkgs expression for llvm 6
-{ stdenv, fetchFromGitHub, cmake, python
+{ stdenv, fetchFromGitHub, cmake, python3
 , libxml2, libffi, libbfd, ncurses, zlib
 , debugVersion ? false
 , enableManpages ? false
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" "python" ]
     ++ stdenv.lib.optional enableSharedLibraries "lib";
-  nativeBuildInputs = [ cmake python ];
+  nativeBuildInputs = [ cmake python3 ];
   buildInputs = [ libxml2 libffi ];
   propagatedBuildInputs = [ ncurses zlib ];
 

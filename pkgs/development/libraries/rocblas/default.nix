@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
-, rocr, hcc, hcc-unwrapped, hip, rocm-cmake, comgr, clang
+, rocr, hip-clang, rocm-cmake, comgr, clang
 , llvm, openmp
 , doCheck ? false
 # Tensile slows the build a lot, but can produce a faster rocBLAS
@@ -10,24 +10,25 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "3.3.0";
+  version = "3.5.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
     rev = "rocm-${version}";
-    sha256 = "1rjwx14zq9b31n58fdfarw2ray0i51vmawvl15ciiggpk24w2gfz";
+    sha256 = "13rbdd49byrddmahn4ac90nw0anpbgj547y651zf8hdpnhh4n7wp";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 
-  buildInputs = [ libunwind pyenv hip rocr comgr llvm openmp hcc ]
+  buildInputs = [ libunwind pyenv rocr comgr llvm openmp hip-clang ]
                 ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack ];
 
   CXXFLAGS = "-D__HIP_PLATFORM_HCC__";
   cmakeFlags = [
-    "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
+    "-DCMAKE_CXX_COMPILER=${hip-clang}/bin/hipcc"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_WITH_TENSILE=${if useTensile then "ON" else "OFF"}"
+    "-DTensile_COMPILER=hipcc"
     ''-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}''
   ] ++ stdenv.lib.optionals doCheck [
     "-DBUILD_CLIENTS_SAMPLES=YES"
@@ -45,7 +46,6 @@ stdenv.mkDerivation rec {
     patchShebangs ./header_compilation_tests.sh
     sed -e '/include(virtualenv)/d' \
         -e '/virtualenv_install.*/d' \
-        -e '/list( APPEND CMAKE_PREFIX_PATH \/opt\/rocm\/hcc \/opt\/rocm\/hip )/d' \
         -i CMakeLists.txt
     sed '/add_custom_command(/,/^ )/d' -i library/src/CMakeLists.txt
   '';

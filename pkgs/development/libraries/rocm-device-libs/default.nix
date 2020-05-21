@@ -1,31 +1,23 @@
-{ stdenv, fetchFromGitHub, cmake
-, llvm, lld, clang, rocr
+{ stdenv, fetchFromGitHub, runCommand, cmake
+, llvm, lld, clang, clang-unwrapped, rocr
 , source ? null
 , tagPrefix ? null
 , sha256 ? null }:
-# Caller *must* provide either source or both tagPrefix and sha256
-assert (isNull source) -> !(isNull tagPrefix || isNull sha256);
-let version = "3.3.0";
-    srcTmp = if isNull source then fetchFromGitHub {
-      owner = "RadeonOpenCompute";
-      repo = "ROCm-Device-Libs";
-      rev = "${tagPrefix}-${version}";
-      inherit sha256;
-    } else source;
-in
 stdenv.mkDerivation rec {
   name = "rocm-device-libs";
-  inherit version;
-  src = srcTmp;
+  version = "3.5.0";
+  src = fetchFromGitHub {
+    owner = "RadeonOpenCompute";
+    repo = "ROCm-Device-Libs";
+    rev = "rocm-${version}";
+    sha256 = "0n160jwbh7jnqckz5bn979ll8afh2a97lf962xh9xv3cx025vnrn";
+  };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ llvm lld clang rocr ];
   cmakeBuildType = "Release";
   cmakeFlags = [
+    "-DCMAKE_PREFIX_PATH=${llvm}/lib/cmake/llvm;${clang-unwrapped}/lib/cmake/clang"
     "-DLLVM_TARGETS_TO_BUILD='AMDGPU;X86'"
-    "-DLLVM_DIR=${llvm}/lib/cmake/llvm"
-    "-DCLANG_OPTIONS_APPEND='-Wno-unused-command-line-argument;-Wno-bitwise-conditional-parentheses'"
+    "-DCLANG=${clang}/bin/clang"
   ];
-  patchPhase = ''
-  sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${clang}/bin/clang")|' -i OCL.cmake
-  '';
 }
