@@ -504,6 +504,14 @@ with pkgs;
     '';
   });
 
+  hashcat-rocm = pkgs.hashcat.overrideAttrs (old: {
+    preFixup = (old.preFixup or "") + ''
+      for f in $(find $out/share/hashcat/OpenCL -name '*.cl'); do
+        sed "s|#include \"\(.*\)\"|#include \"$out/share/hashcat/OpenCL/\1\"|g" -i "$f"
+      done
+    '';
+  });
+
   rocm-llvm-project-aomp = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "llvm-project";
