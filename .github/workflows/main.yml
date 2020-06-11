@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ master ]
+
+  push:
+    branches: [ master ]
+
+  schedule:
+    - cron: "* 23 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+
+    # The job is split into multiple steps solely so it is easier to
+    # track progress, and see what takes time.
+
+    - name: rocminfo
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocminfo
+
+    - name: rocm-llvm
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-llvm
+
+    - name: rocm-clang
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-clang
+
+    - name: rocm-opencl-icd
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
+
+    - name: rocm-smi
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-smi
+
+    - name: rocblas
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocblas
