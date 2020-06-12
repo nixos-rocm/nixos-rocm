@@ -10,8 +10,11 @@ on:
   schedule:
     - cron: "* 23 * * *"
 
+# The jobs are split into multiple steps solely so it is easier to
+# track progress, and see what takes time.
+
 jobs:
-  build:
+  build-tools:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,11 +25,24 @@ jobs:
       with:
         nix_path: nixpkgs=channel:nixos-unstable
 
-    # The job is split into multiple steps solely so it is easier to
-    # track progress, and see what takes time.
-
     - name: rocminfo
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocminfo
+
+    - name: rocm-smi
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-smi
+
+  build-opencl:
+    runs-on: ubuntu-latest
+
+    needs: build-tools
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
 
     - name: rocm-llvm
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-llvm
@@ -37,8 +53,24 @@ jobs:
     - name: rocm-opencl-icd
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
 
-    - name: rocm-smi
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-smi
+  build-ml:
+    runs-on: ubuntu-latest
+
+    needs: build-opencl
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+
+    - name: hccn
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hcc
+
+    - name: hip
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip
 
     - name: rocblas
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocblas
