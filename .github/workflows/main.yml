@@ -2,10 +2,10 @@ name: CI
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ 3.5.x ]
 
   push:
-    branches: [ master ]
+    branches: [ 3.5.x ]
 
   schedule:
     - cron: "0 23 * * *"
@@ -50,7 +50,7 @@ jobs:
     - name: rocm-clang
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-clang
 
-    - name: rocm-opencl-icd
+    - name: rocm-opencl-runtime
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
 
   build-ml:
@@ -66,11 +66,8 @@ jobs:
       with:
         nix_path: nixpkgs=channel:nixos-unstable
 
-    - name: hccn
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hcc
-
     - name: hip
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip-clang
 
     - name: rocblas
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocblas
