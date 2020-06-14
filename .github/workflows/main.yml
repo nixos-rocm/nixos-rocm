@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
   schedule:
-    - cron: "* 23 * * *"
+    - cron: "0 23 * * *"
 
 # The jobs are split into multiple steps solely so it is easier to
 # track progress, and see what takes time.
