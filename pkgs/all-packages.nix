@@ -129,6 +129,9 @@ with pkgs;
     comgr = self.rocm-comgr;
   };
 
+  # `hip` is an alias for `hip-clang`
+  hip = hip-clang;
+
   clang-ocl = callPackage ./development/compilers/clang-ocl {
     inherit (self) rocm-cmake rocm-device-libs rocm-opencl-runtime;
     lld = self.rocm-lld;
@@ -166,30 +169,30 @@ with pkgs;
 
   # MIOpen
 
-  # miopengemm = callPackage ./development/libraries/miopengemm {
-  #   inherit (self) rocm-cmake rocm-opencl-runtime hcc;
-  # };
+  miopengemm = callPackage ./development/libraries/miopengemm {
+    inherit (self) rocm-cmake rocm-opencl-runtime;
+    clang = self.rocm-clang;
+  };
 
   # # Currently broken
-  # miopen-cl = callPackage ./development/libraries/miopen {
-  #   inherit (self) rocm-cmake rocm-opencl-runtime rocr hcc
-  #                  clang-ocl miopengemm rocblas;
-  #   hip = self.hip;
-  #   clang = self.hcc-clang;
-  #   # comgr = self.amd-comgr;
-  #   comgr = self.hcc-comgr;
-  # };
+  miopen-cl = callPackage ./development/libraries/miopen {
+    inherit (self) rocm-cmake rocm-opencl-runtime rocr
+                   clang-ocl miopengemm rocblas;
+    hip = self.hip-clang;
+    clang = self.rocm-clang;
+    comgr = self.rocm-comgr;
+  };
 
-  # miopen-hip = self.miopen-cl.override {
-  #   useHip = true;
-  # };
+  miopen-hip = self.miopen-cl.override {
+    useHip = true;
+  };
 
-  # rocfft = callPackage ./development/libraries/rocfft {
-  #   inherit (self) rocr rocminfo hcc rocm-cmake;
-  #   hip = self.hip;
-  #   clang = self.hcc-clang;
-  #   comgr = self.hcc-comgr;
-  # };
+  rocfft = callPackage ./development/libraries/rocfft {
+    inherit (self) rocr rocminfo rocm-cmake;
+    hip = self.hip-clang;
+    clang = self.rocm-clang;
+    comgr = self.rocm-comgr;
+  };
 
   # rccl = callPackage ./development/libraries/rccl {
   #   inherit (self) rocm-cmake hcc;
