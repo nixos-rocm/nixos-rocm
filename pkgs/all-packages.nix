@@ -142,11 +142,11 @@ with pkgs;
     comgr = self.rocm-comgr;
   };
 
-  # rccl = callPackage ./development/libraries/rccl {
-  #   inherit (self) rocm-cmake hcc;
-  #   hip = self.hip;
-  #   comgr = self.hcc-comgr;
-  # };
+  rccl = callPackage ./development/libraries/rccl {
+    inherit (self) rocm-cmake;
+    hip = self.hip-clang;
+    comgr = self.rocm-comgr;
+  };
 
   # rocrand = callPackage ./development/libraries/rocrand {
   #   inherit (self) rocm-cmake rocminfo hcc rocm-runtime;

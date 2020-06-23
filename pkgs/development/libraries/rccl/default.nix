@@ -1,32 +1,24 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, pkgconfig, numactl
-, rocm-cmake, hcc, hip, comgr
+, rocm-cmake, hip, comgr
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
   name = "rccl";
-  version = "3.3.0";
+  version = "3.5.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rccl";
-    rev = version;
-    sha256 = "1zffkrwcii78f0v7qwwnn8pfkd3lzx8grprlsbp2p42myc8mw7fs";
+    rev = "rocm-${version}";
+    sha256 = "1bba586dfbfs8rmciqlnp4g6v26ijz5mxyby0m3rdwg8np5ri3fp";
   };
   nativeBuildInputs = [ cmake pkgconfig ];
-  buildInputs = [ hcc hip numactl comgr ];
+  buildInputs = [ hip numactl comgr ];
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
-    # "-DCMAKE_CXX_COMPILER=${hcc}/bin/hcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DROCM_DIR=${rocm-cmake}/share/rocm/cmake"
   ];
   inherit doCheck;
   # NIX_CFLAGS_COMPILE="-D__HIP_VDI__";
-
-  # Revert a patch that removed gfx803 as a GPU target
-  patches = [ (fetchpatch {
-    url = "https://github.com/ROCmSoftwarePlatform/rccl/commit/58a6e535f6bf62742e1f2431f77ad2e34114d51a.patch";
-    sha256 = "02n8pk998gvn7ivkk36l3pnsraxgjc09bfbifydizpj1qka5kwg5";
-    revert = true;
-  })];
 
   # NOTE: This works in a nix-shell, but not with nix-build due to user groups
   checkPhase = stdenv.lib.optionalString doCheck ''
@@ -35,7 +27,7 @@ stdenv.mkDerivation rec {
     export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
     mkdir tests
     cd tests
-    cmake ../../tests -DCMAKE_CXX_COMPILER=${hcc}/bin/hcc -DCMAKE_C_COMPILER=${hcc}/bin/clang -DROCM_DIR=${rocm-cmake}/share/rocm/cmake -DGOOGLETEST_DIR=${gtest} -DRCCL_DIR=$(dirname $(dirname `pwd`))
+    cmake ../../tests -DCMAKE_CXX_COMPILER=${hip}/bin/hipcc -DCMAKE_C_COMPILER=${hip}/bin/hipcc -DROCM_DIR=${rocm-cmake}/share/rocm/cmake -DGOOGLETEST_DIR=${gtest} -DRCCL_DIR=$(dirname $(dirname `pwd`))
     make -j $NIX_BUILD_CORES
     make test
   '';
