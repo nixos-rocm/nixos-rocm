@@ -82,7 +82,7 @@ with pkgs;
   };
 
   # `hip` is an alias for `hip-clang`
-  hip = hip-clang;
+  hip = self.hip-clang;
 
   clang-ocl = callPackage ./development/compilers/clang-ocl {
     inherit (self) rocm-cmake rocm-device-libs rocm-opencl-runtime;
