@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, half, openssl, boost, sqlite, bzip2
-, rocm-cmake, rocm-opencl-runtime, rocm-runtime, clang, clang-ocl, miopengemm, rocblas
+, rocm-cmake, rocm-opencl-runtime, rocm-runtime, clang, clang-unwrapped, clang-ocl, miopengemm, rocblas
 , comgr, useHip ? false, hip }:
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
@@ -21,11 +21,16 @@ stdenv.mkDerivation rec {
     "-DMIOPEN_USE_ROCBLAS=ON"
     "-DBoost_USE_STATIC_LIBS=OFF"
     "-DMIOPEN_USE_MIOPENGEMM=ON"
+    "-DMIOPEN_AMDGCN_ASSEMBLER_PATH=${clang}/bin"
+    "-DMIOPEN_OFFLOADBUNDLER_BIN=${clang-unwrapped}/bin/clang-offload-bundler"
   ] ++ (if useHip
-        then [ "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
-               "-DCMAKE_C_COMPILER=${clang}/bin/clang"
+        then [ # "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
+               # "-DCMAKE_C_COMPILER=${clang}/bin/clang"
+               "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
+               "-DCMAKE_C_COMPILER=${hip}/bin/hipcc"
                "-DMIOPEN_BACKEND=HIP"
-               "-DENABLE_HIP_WORKAROUNDS=YES" ]
+               # "-DENABLE_HIP_WORKAROUNDS=YES"
+        ]
         else [ "-DMIOPEN_BACKEND=OpenCL"
                "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
                "-DCMAKE_C_COMPILER=${clang}/bin/clang"

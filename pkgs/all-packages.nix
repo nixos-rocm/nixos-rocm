@@ -128,6 +128,8 @@ with pkgs;
                    clang-ocl miopengemm rocblas;
     inherit (self.llvmPackages_rocm) clang;
     hip = self.hip-clang;
+    clang = self.rocm-clang;
+    clang-unwrapped = self.rocm-clang-unwrapped;
     comgr = self.rocm-comgr;
   };
 
