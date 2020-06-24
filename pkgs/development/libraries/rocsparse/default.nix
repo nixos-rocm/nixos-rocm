@@ -1,12 +1,12 @@
-{stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-cmake, hip, hcc, rocprim, hipcub, comgr}:
+{stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-cmake, hip, rocprim, hipcub, comgr}:
 stdenv.mkDerivation rec {
   name = "rocsparse";
-  version = "3.3.0";
+  version = "3.5.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocSPARSE";
     rev = "rocm-${version}";
-    sha256 = "1csmd89s03xs3c93x8jh9sb99ap63cx6d2mdl8h4f6rdj52viqa6";
+    sha256 = "0k86x6jvnn7yi5cg12cc00liwhbg2zrr6axvcrjhg2k83vn6mhjz";
   };
 
   postPatch = ''
@@ -16,19 +16,15 @@ stdenv.mkDerivation rec {
         -i cmake/Dependencies.cmake
     sed '/project(rocsparse LANGUAGES CXX)/d' -i CMakeLists.txt
     sed 's/\(cmake_minimum_required.*\)$/\1\nproject(rocsparse LANGUAGES CXX)/' -i CMakeLists.txt
-    sed 's|#include <rocprim/rocprim_hip.hpp>|#include <rocprim/rocprim.hpp>|' -i library/src/conversion/rocsparse_coosort.cpp
-    sed 's|#include <rocprim/rocprim_hip.hpp>|#include <rocprim/rocprim.hpp>|' -i library/src/conversion/rocsparse_csrsort.cpp
   '';
 
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=hipcc"
-    "-DHIP_COMPILER=clang"
-    "-DHIP_PLATFORM=hcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_TEST=NO"
     "-DCMAKE_PREFIX_PATH=${rocm-cmake}/share/rocm/cmake"
   ];
   nativeBuildInputs = [ cmake rocm-cmake ];
-  buildInputs = [ hip hcc rocprim hipcub comgr ];
+  buildInputs = [ hip rocprim hipcub comgr ];
 
 }

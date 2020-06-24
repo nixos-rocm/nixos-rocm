@@ -39,7 +39,6 @@
 , addOpenGLRunpath
 
 # ROCm components
-, hcc, hcc-unwrapped
 , hip, miopen-hip, miopengemm, rocrand, rocfft, rocblas
 , rocm-runtime, rccl, cxlactivitylogger
 }:
@@ -52,8 +51,7 @@ assert python.pythonVersion == "3.7";
 let
   rocmtoolkit_joined = symlinkJoin {
     name = "unsplit_rocmtoolkit";
-    paths = [ hcc hcc-unwrapped
-              hip miopen-hip miopengemm
+    paths = [ hip miopen-hip miopengemm
               rocrand rocfft rocblas rocm-runtime rccl cxlactivitylogger ];
   };
 
@@ -94,12 +92,12 @@ let
   };
 in buildPythonPackage {
   pname = "tensorflow";
-  version = "1.15.3";
+  version = "1.15.4";
   format = "wheel";
 
   src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/71/cf/d9d1a3351608ca9b272cde9c79b59370b041146bf1af44762e143a1bda77/tensorflow_rocm-1.15.3-cp37-cp37m-manylinux1_x86_64.whl";
-    sha256 = "0l3dyy763lx40k8ww89rkkwf4v23vs8cs5r9kj1diyynspw0dn8a";
+    url = "https://files.pythonhosted.org/packages/22/6f/19cd992fd9784ceb45af0f0a42a8135a51bd111a6cf89fdf512d7064cf74/tensorflow_rocm-1.15.4-cp37-cp37m-manylinux1_x86_64.whl";
+    sha256 = "1fbvz9yzbg3zq0il7hhwkvpgiq1hmvcp252knyy0brmpd83c11h0";
   };
 
   propagatedBuildInputs = [

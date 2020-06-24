@@ -5,18 +5,17 @@
 }:
 stdenv.mkDerivation rec {
   name = "rocprim";
-  version = "3.3.0";
+  version = "3.5.1";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocPRIM";
     rev = "rocm-${version}";
-    sha256 = "1cmh85hnv1zd7644hg07cp7v10m1f8drnc2rc8mz7640958128m6";
+    sha256 = "0057i6ww9wgf8z1hvdqnw4fh9qjc3pzx2bzf0ai6qw4ljazabklq";
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig ]
     ++ stdenv.lib.optional doCheck gtest;
   buildInputs = [ rocm-runtime hip ];
   cmakeFlags = [
-    # "-DHIP_PLATFORM=clang"
     "-DCMAKE_CXX_COMPILER=hipcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_TEST=${if doCheck then "YES" else "NO"}"

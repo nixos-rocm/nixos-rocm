@@ -148,44 +148,46 @@ with pkgs;
     comgr = self.rocm-comgr;
   };
 
-  # rocrand = callPackage ./development/libraries/rocrand {
-  #   inherit (self) rocm-cmake rocminfo hcc rocm-runtime;
-  #   comgr = self.hcc-comgr;
-  #   hip = self.hip;
-  # };
-  # rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
-  #   inherit (self) rocm-runtime rocrand;
-  #   inherit (python3Packages) buildPythonPackage numpy;
-  #   hip = self.hip;
-  # };
+  rocrand = callPackage ./development/libraries/rocrand {
+    inherit (self) rocm-cmake rocminfo rocm-runtime;
+    comgr = self.rocm-comgr;
+    hip = self.hip-clang;
+    defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
+  };
+  rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
+    inherit (self) rocm-runtime rocrand;
+    inherit (python3Packages) buildPythonPackage numpy;
+    hip = self.hip-clang;
+  };
 
-  # rocprim = callPackage ./development/libraries/rocprim {
-  #   inherit (self) rocm-cmake rocm-runtime;
-  #   stdenv = pkgs.overrideCC stdenv self.hcc;
-  #   hip = self.hip;
-  # };
+  rocprim = callPackage ./development/libraries/rocprim {
+    inherit (self) rocm-cmake rocm-runtime;
+    # stdenv = pkgs.overrideCC stdenv;
+    hip = self.hip-clang;
+  };
 
-  # hipcub = callPackage ./development/libraries/hipcub {
-  #   inherit (self) hcc hip rocm-cmake rocprim;
-  # };
+  hipcub = callPackage ./development/libraries/hipcub {
+    inherit (self) rocm-cmake rocprim;
+    hip = self.hip-clang;
+  };
 
-  # rocsparse = callPackage ./development/libraries/rocsparse {
-  #   inherit (self) rocprim hipcub rocm-cmake hcc;
-  #   hip = self.hip;
-  #   comgr = self.hcc-comgr;
-  # };
+  rocsparse = callPackage ./development/libraries/rocsparse {
+    inherit (self) rocprim hipcub rocm-cmake;
+    hip = self.hip-clang;
+    comgr = self.rocm-comgr;
+  };
 
-  # hipsparse = callPackage ./development/libraries/hipsparse {
-  #   inherit (self) rocm-runtime rocsparse rocm-cmake hcc;
-  #   hip = self.hip;
-  #   comgr = self.hcc-comgr;
-  # };
+  hipsparse = callPackage ./development/libraries/hipsparse {
+    inherit (self) rocm-runtime rocsparse rocm-cmake;
+    hip = self.hip-clang;
+    comgr = self.rocm-comgr;
+  };
 
-  # rocthrust = callPackage ./development/libraries/rocthrust {
-  #   inherit (self) rocm-cmake rocprim hcc;
-  #   hip = self.hip;
-  #   comgr = self.hcc-comgr;
-  # };
+  rocthrust = callPackage ./development/libraries/rocthrust {
+    inherit (self) rocm-cmake rocprim;
+    hip = self.hip-clang;
+    comgr = self.rocm-comgr;
+  };
 
   # roctracer = callPackage ./development/tools/roctracer {
   #   inherit (self) hcc-unwrapped rocm-thunk rocm-runtime;
@@ -209,11 +211,11 @@ with pkgs;
     opencl = self.rocm-opencl-runtime;
   };
 
-  # tensorflow-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin.nix {
-  #   inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
-  #                  rocfft rocblas rocm-runtime rccl cxlactivitylogger;
-  #   hip = self.hip;
-  # };
+  tensorflow-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin.nix {
+    inherit (self) miopen-hip miopengemm rocrand
+                   rocfft rocblas rocm-runtime rccl cxlactivitylogger;
+    hip = self.hip-clang;
+  };
 
   # tf2PyPackages = python37.override {
   #   packageOverrides = self: super: {

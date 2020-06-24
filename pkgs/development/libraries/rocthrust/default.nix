@@ -1,14 +1,13 @@
 {stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-cmake, hip, rocprim, comgr
-, hcc
 , gtest, doCheck ? false }:
 stdenv.mkDerivation rec {
   name = "rocthrust";
-  version = "3.3.0";
+  version = "3.5.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocThrust";
     rev = "rocm-${version}";
-    sha256 = "1varxwhfkg5c10hysdk7ky7bmpinkg433nl0fdipqarvdvphixl7";
+    sha256 = "0fiwg0ncnj48vqi5b16n9jf6bkk0xlji4hyk55hzswr6n1lzg9pr";
   };
 
   postPatch = ''
@@ -27,6 +26,5 @@ stdenv.mkDerivation rec {
     "-DBUILD_TEST=${if doCheck then "YES" else "NO"}"
   ];
   nativeBuildInputs = [ cmake rocm-cmake ];
-  buildInputs = [ hcc hip rocprim comgr ] ++ stdenv.lib.optionals doCheck [ gtest ];
-
+  buildInputs = [ hip rocprim comgr ] ++ stdenv.lib.optionals doCheck [ gtest ];
 }
