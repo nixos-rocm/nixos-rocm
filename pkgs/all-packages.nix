@@ -72,7 +72,6 @@ with pkgs;
   };
   rocm-clang = pkgs.wrapCCWith rec {
     cc = self.rocm-clang-unwrapped;
-    extraPackages = [ libstdcxxHook ];
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
@@ -141,7 +140,6 @@ with pkgs;
   };
   hcc-clang = pkgs.wrapCCWith rec {
     cc = self.hcc-clang-unwrapped;
-    extraPackages = [ libstdcxxHook ];
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
@@ -182,7 +180,7 @@ with pkgs;
   hcc = pkgs.wrapCCWith rec {
     isClang = true;
     cc = self.hcc-clang-unwrapped;
-    extraPackages = [ libstdcxxHook self.hcc-unwrapped ];
+    extraPackages = [ self.hcc-unwrapped ];
     extraBuildCommands = ''
       echo "-resource-dir=${self.hcc-clang}/resource-root" >> $out/nix-support/cc-cflags
       echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
@@ -278,7 +276,7 @@ with pkgs;
   amd-clang = pkgs.wrapCCWith rec {
     isClang = true;
     cc = self.amd-clang-unwrapped;
-    extraPackages = [ libstdcxxHook self.amd-clang-unwrapped ];
+    extraPackages = [ self.amd-clang-unwrapped ];
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
