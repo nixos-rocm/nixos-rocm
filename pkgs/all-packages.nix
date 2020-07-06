@@ -126,10 +126,8 @@ with pkgs;
   miopen-cl = callPackage ./development/libraries/miopen {
     inherit (self) rocm-cmake rocm-opencl-runtime rocm-runtime
                    clang-ocl miopengemm rocblas;
-    inherit (self.llvmPackages_rocm) clang;
+    inherit (self.llvmPackages_rocm) clang clang-unwrapped;
     hip = self.hip-clang;
-    clang = self.rocm-clang;
-    clang-unwrapped = self.rocm-clang-unwrapped;
     comgr = self.rocm-comgr;
   };
 
@@ -275,13 +273,6 @@ with pkgs;
       done
     '';
   });
-
-  # rocm-llvm-project-aomp = fetchFromGitHub {
-  #   owner = "ROCm-Developer-Tools";
-  #   repo = "llvm-project";
-  #   rev = "roc-aomp-3.0.0";
-  #   sha256 = "00cw8azj2jh7zs79klk6zcrw76dkiplrignazl9lavyr9qcbiy7v";
-  # };
 
   # Deprecated names
   rocm-clang = builtins.trace "'rocm-clang' was renamed to 'llvmPackages_rocm.clang'" self.llvmPackages_rocm.clang;
