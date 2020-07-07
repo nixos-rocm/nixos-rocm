@@ -353,6 +353,17 @@ with pkgs;
     inherit (python3Packages) python;
   };
 
+  rocblas-test = callPackage ./development/libraries/rocblas {
+    inherit (self) rocm-cmake hcc hcc-unwrapped rocr rocblas-tensile;
+    hip = self.hip;
+    clang = self.hcc-clang;
+    openmp = self.hcc-openmp;
+    comgr = self.amd-comgr;
+    llvm = pkgs.llvmPackages_7.llvm;
+    inherit (python3Packages) python;
+    doCheck = true;
+  };
+
   # MIOpen
 
   miopengemm = callPackage ./development/libraries/miopengemm {
