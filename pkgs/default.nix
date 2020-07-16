@@ -6,6 +6,6 @@
 
 let
   pkgs = import <nixpkgs> {};
-  self = import ./all-packages.nix self;
+  self = (import ./all-packages.nix) (pkgs // self) pkgs;
 in
-  self pkgs
+  self
