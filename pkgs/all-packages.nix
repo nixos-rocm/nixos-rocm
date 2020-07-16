@@ -22,8 +22,8 @@ with pkgs;
   linuxPackages_rocm = recurseIntoAttrs (linuxPackagesFor self.linux_4_18_kfd);
 
   # Userspace ROC stack
-  roct = callPackage ./development/libraries/roct.nix {};
-  rocr = callPackage ./development/libraries/rocr { inherit (self) roct; };
+  rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
+  rocr = callPackage ./development/libraries/rocr { inherit (self) rocm-thunk; };
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
@@ -107,7 +107,7 @@ with pkgs;
 
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
-    inherit (self) roct rocm-clang rocm-clang-unwrapped rocm-cmake;
+    inherit (self) rocm-thunk rocm-clang rocm-clang-unwrapped rocm-cmake;
     inherit (self) rocm-device-libs rocm-lld rocm-llvm rocr rocclr;
     comgr = self.rocm-comgr;
     src = self.rocm-opencl-src;
@@ -121,7 +121,7 @@ with pkgs;
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
-    inherit (self) roct rocr rocminfo rocclr;
+    inherit (self) rocm-thunk rocr rocminfo rocclr;
     llvm = self.rocm-llvm;
     clang-unwrapped = self.rocm-clang-unwrapped;
     clang = self.rocm-clang;
@@ -145,7 +145,7 @@ with pkgs;
   rocm-smi = callPackage ./tools/rocm-smi { };
 
   rocm-bandwidth = callPackage ./tools/rocm-bandwidth {
-    inherit (self) roct rocr;
+    inherit (self) rocm-thunk rocr;
   };
 
   rocm-openmp = pkgs.llvmPackages_latest.openmp.override {
@@ -240,13 +240,13 @@ with pkgs;
   # };
 
   # roctracer = callPackage ./development/tools/roctracer {
-  #   inherit (self) hcc-unwrapped roct rocr;
+  #   inherit (self) hcc-unwrapped rocm-thunk rocr;
   #   hip = self.hip;
   #   inherit (pkgs.pythonPackages) python buildPythonPackage fetchPypi ply;
   # };
 
   # rocprofiler = callPackage ./development/tools/rocprofiler {
-  #   inherit (self) rocr roct roctracer hcc-unwrapped;
+  #   inherit (self) rocr rocm-thunk roctracer hcc-unwrapped;
   # };
 
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
@@ -330,4 +330,7 @@ with pkgs;
   #   rev = "roc-aomp-3.0.0";
   #   sha256 = "00cw8azj2jh7zs79klk6zcrw76dkiplrignazl9lavyr9qcbiy7v";
   # };
+
+  # Deprecated names
+  roct = builtins.trace "'roct' was renamed to 'rocm-thunk'" self.rocm-thunk;
 }

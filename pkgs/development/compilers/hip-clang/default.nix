@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, lld
-, device-libs, roct, rocr, rocminfo, comgr, rocclr
+, device-libs, rocm-thunk, rocr, rocminfo, comgr, rocclr
 }:
 stdenv.mkDerivation rec {
   name = "hip";
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     sha256 = "1xhw9sy9gln5mai8w8mrbiz1ik8m0lnk5g4p2gwa4f3mv96adlhd";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ llvm clang lld roct rocminfo device-libs rocr comgr rocclr ];
+  propagatedBuildInputs = [ llvm clang lld rocm-thunk rocminfo device-libs rocr comgr rocclr ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin

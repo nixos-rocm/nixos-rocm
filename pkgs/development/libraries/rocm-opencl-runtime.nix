@@ -4,7 +4,7 @@
 , addOpenGLRunpath
 , cmake
 , rocr
-, roct
+, rocm-thunk
 , rocm-llvm
 , rocm-lld
 , rocm-device-libs
@@ -107,7 +107,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
   nativeBuildInputs = [ cmake rocm-cmake ];
-  buildInputs = [ rocr roct rocclr rocm-llvm rocm-lld rocm-device-libs
+  buildInputs = [ rocr rocm-thunk rocclr rocm-llvm rocm-lld rocm-device-libs
                   rocm-clang rocm-clang-unwrapped
                   comgr
                   mesa_noglu python2 libX11 libGLU ];

@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, cmake, rocr, roct, roctracer, hcc-unwrapped, python}:
+{stdenv, fetchFromGitHub, cmake, rocr, rocm-thunk, roctracer, hcc-unwrapped, python}:
 let pyenv = python.withPackages (ps: [ps.sqlite3dbm]); in
 stdenv.mkDerivation rec {
   name = "rocprofiler";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
     sha256 = "1b50n86dyj1zw5xhbw1xq0l327av36z6pxmc6h35fck88h72k22f";
   };
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ rocr roct pyenv ];
+  buildInputs = [ rocr rocm-thunk pyenv ];
   propagatedBuildInputs = [ roctracer ];
   patchPhase = ''
     patchShebangs test/run.sh

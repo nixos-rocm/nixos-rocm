@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, rocr, roct }:
+{ stdenv, fetchFromGitHub, cmake, rocr, rocm-thunk }:
 stdenv.mkDerivation rec {
   name = "rocm-bandwidth";
   version = "3.5.0";
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     sha256 = "0bnms7h1qdvfkjiy537snjgjv96g4bjwqbxr9298hswdhk17pd3f";
   };
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ rocr roct ];
+  buildInputs = [ rocr rocm-thunk ];
   cmakeFlags = [
     "-DROCR_INC_DIR=${rocr}/include"
     "-DROCR_LIB_DIR=${rocr}/lib"
