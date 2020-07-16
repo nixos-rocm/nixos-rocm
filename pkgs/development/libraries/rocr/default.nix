@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, elfutils, roct }:
+{ stdenv, fetchFromGitHub, cmake, elfutils, rocm-thunk }:
 
 stdenv.mkDerivation rec {
   version = "3.5.0";
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
   buildInputs = [ cmake elfutils ];
-  cmakeFlags = [ "-DCMAKE_PREFIX_PATH=${roct}" ];
+  cmakeFlags = [ "-DCMAKE_PREFIX_PATH=${rocm-thunk}" ];
 
   fixupPhase = ''
     rm -r $out/lib $out/include

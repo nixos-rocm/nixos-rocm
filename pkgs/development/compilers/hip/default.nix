@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, perl, python, writeText
-, hcc, hcc-unwrapped, roct, rocr, rocminfo, comgr
+, hcc, hcc-unwrapped, rocr, rocminfo, comgr
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";

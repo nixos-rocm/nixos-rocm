@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, cmake, roct, rocr, hcc-unwrapped, hip
+{stdenv, fetchFromGitHub, cmake, rocm-thunk, rocr, hcc-unwrapped, hip
 , python, buildPythonPackage, fetchPypi, ply}:
 let
   CppHeaderParser = buildPythonPackage rec {
@@ -37,7 +37,7 @@ in stdenv.mkDerivation rec {
     sha256 = "0wbya4s7wbsxwg39lbz545c19qj17qc80ccs6gw8ypyal6yix6l5";
   };
   nativeBuildInputs = [ cmake pyenv ];
-  buildInputs = [ roct rocr hcc-unwrapped hip ];
+  buildInputs = [ rocm-thunk rocr hcc-unwrapped hip ];
   preConfigure = ''
     export HCC_HOME=${hcc-unwrapped}
     export HIP_PATH=${hip}
