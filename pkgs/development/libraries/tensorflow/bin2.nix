@@ -42,7 +42,7 @@
 # ROCm components
 , hcc, hcc-unwrapped
 , hip, miopen-hip, miopengemm, rocrand, rocfft, rocblas
-, rocr, rccl, cxlactivitylogger
+, rocm-runtime, rccl, cxlactivitylogger
 }:
 assert python.pythonVersion == "3.7";
 
@@ -55,7 +55,7 @@ let
     name = "unsplit_rocmtoolkit";
     paths = [ hcc hcc-unwrapped
               hip miopen-hip miopengemm
-              rocrand rocfft rocblas rocr rccl cxlactivitylogger ];
+              rocrand rocfft rocblas rocm-runtime rccl cxlactivitylogger ];
   };
 
   gast_0_2_2 = buildPythonPackage rec {

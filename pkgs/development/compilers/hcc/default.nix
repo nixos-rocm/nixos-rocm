@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, writeText, python, perlPackages
-, device-libs, rocr, file, rocminfo, lld
+, device-libs, rocm-runtime, file, rocminfo, lld
 , llvm, clang, clang-unwrapped, compiler-rt
 }:
 let perlenv = perlPackages.perl.buildEnv.override({
@@ -14,16 +14,16 @@ in stdenv.mkDerivation rec {
     rev = "rocm-${version}";
     sha256 = "0xgan96adz0z82qlljs1fdncj1m1w5cnkwzwzykzb62akvsf6m65";
   };
-  propagatedBuildInputs = [ file rocr rocminfo ];
+  propagatedBuildInputs = [ file rocm-runtime rocminfo ];
   nativeBuildInputs = [ cmake pkgconfig python ];
-  buildInputs = [ rocr ];
+  buildInputs = [ rocm-runtime ];
   preConfigure = ''
     export LLVM_DIR=${llvm}/lib/cmake/llvm
     export CMAKE_PREFIX_PATH=${llvm}/lib/cmake/llvm:$CMAKE_PREFIX_PATH
   '';
 
   cmakeFlags = [
-    "-DROCM_ROOT=${rocr}"
+    "-DROCM_ROOT=${rocm-runtime}"
     "-DROCM_DEVICE_LIB_DIR=${device-libs}/lib"
     "-DCLANG_BIN_DIR=${clang-unwrapped}"
     "-DHCC_INTEGRATE_ROCDL=OFF"

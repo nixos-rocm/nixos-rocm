@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, perl, python, writeText
-, hcc, hcc-unwrapped, rocr, rocminfo, comgr
+, hcc, hcc-unwrapped, rocm-runtime, rocminfo, comgr
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
   name = "hip";
@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
   workweek = "20126";
 
   cmakeFlags = [
-    "-DHSA_PATH=${rocr}"
+    "-DHSA_PATH=${rocm-runtime}"
     "-DHCC_HOME=${hcc}"
     "-DHIP_PLATFORM='hcc'"
     "-DHIP_VERSION_GITDATE=${workweek}"
@@ -47,7 +47,7 @@ stdenv.mkDerivation rec {
     sed 's,#!/usr/bin/python,#!${python}/bin/python,' -i hip_prof_gen.py
 
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
-        -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,' \
+        -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocm-runtime}";,' \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \

@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, lld
-, device-libs, rocm-thunk, rocr, rocminfo, comgr, rocclr
+, device-libs, rocm-thunk, rocm-runtime, rocminfo, comgr, rocclr
 }:
 stdenv.mkDerivation rec {
   name = "hip";
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     sha256 = "1xhw9sy9gln5mai8w8mrbiz1ik8m0lnk5g4p2gwa4f3mv96adlhd";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ llvm clang lld rocm-thunk rocminfo device-libs rocr comgr rocclr ];
+  propagatedBuildInputs = [ llvm clang lld rocm-thunk rocminfo device-libs rocm-runtime comgr rocclr ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
   workweek = "20215";
 
   cmakeFlags = [
-    "-DHSA_PATH=${rocr}"
+    "-DHSA_PATH=${rocm-runtime}"
     "-DHIP_COMPILER=clang"
     "-DHIP_PLATFORM=rocclr"
     "-DHIP_VERSION_GITDATE=${workweek}"
@@ -71,11 +71,11 @@ stdenv.mkDerivation rec {
         -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${device-libs}/lib";,' \
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
         -e 's,^\($HIP_RUNTIME=\).*$,\1"ROCclr";,' \
-        -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocr}";,'g \
+        -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocm-runtime}";,'g \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
         -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
-        -e 's,^\([[:space:]]*$HIPCXXFLAGS .= " -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocr}/include";,' \
+        -e 's,^\([[:space:]]*$HIPCXXFLAGS .= " -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocm-runtime}/include";,' \
         -e "s,\$HIP_PATH/\(bin\|lib\),$out/\1,g" \
         -e "s,^\$HIP_LIB_PATH=\$ENV{'HIP_LIB_PATH'};,\$HIP_LIB_PATH=\"$out/lib\";," \
         -e 's,`file,`${file}/bin/file,g' \
@@ -83,7 +83,7 @@ stdenv.mkDerivation rec {
         -e 's, ar , ${binutils-unwrapped}/bin/ar ,g' \
         -i bin/hipcc
 
-    sed -e 's,^\($HSA_PATH=\).*$,\1"${rocr}";,' \
+    sed -e 's,^\($HSA_PATH=\).*$,\1"${rocm-runtime}";,' \
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
         -e 's,^\($HIP_PLATFORM=\).*$,\1"hcc";,' \
         -e 's,$HIP_CLANG_PATH/llc,${llvm}/bin/llc,' \
@@ -126,6 +126,6 @@ stdenv.mkDerivation rec {
 
   setupHook = writeText "setupHook.sh" ''
     export HIP_PATH="@out@"
-    export HSA_PATH="${rocr}"
+    export HSA_PATH="${rocm-runtime}"
   '';
 }

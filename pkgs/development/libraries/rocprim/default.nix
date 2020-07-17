@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, cmake, pkgconfig, gtest, rocm-cmake, rocr, hip
+{stdenv, fetchFromGitHub, cmake, pkgconfig, gtest, rocm-cmake, rocm-runtime, hip
 
 # The test suite takes a long time to build
 , doCheck ? false
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig ]
     ++ stdenv.lib.optional doCheck gtest;
-  buildInputs = [ rocr hip ];
+  buildInputs = [ rocm-runtime hip ];
   cmakeFlags = [
     # "-DHIP_PLATFORM=clang"
     "-DCMAKE_CXX_COMPILER=hipcc"

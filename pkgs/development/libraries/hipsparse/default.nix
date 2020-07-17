@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, cmake, rocsparse, hip, hcc, rocr, rocm-cmake, comgr, gtest
+{stdenv, fetchFromGitHub, cmake, rocsparse, hip, hcc, rocm-runtime, rocm-cmake, comgr, gtest
 
 # Tests are broken as they require downloading and pre-processing
 # several files
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ cmake rocm-cmake ] ++ stdenv.lib.optional doCheck gtest;
-  buildInputs = [ rocsparse hip hcc rocr comgr ];
+  buildInputs = [ rocsparse hip hcc rocm-runtime comgr ];
   cmakeFlags = [
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
