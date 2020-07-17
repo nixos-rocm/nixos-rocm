@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, pkgconfig, half, openssl, boost, sqlite, bzip2
-, rocm-cmake, rocm-opencl-runtime, rocr, clang, clang-ocl, miopengemm, rocblas
+, rocm-cmake, rocm-opencl-runtime, rocm-runtime, clang, clang-ocl, miopengemm, rocblas
 , comgr, useHip ? false, hip }:
 assert useHip -> hip != null;
 stdenv.mkDerivation rec {
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     sha256 = "1qs4zxqza4bg1055fnbyhrvyskbg8f4nc6adlrn6yqq2xin50jsz";
   };
   nativeBuildInputs = [ cmake pkgconfig rocm-cmake ];
-  buildInputs = [ rocr half openssl boost rocblas miopengemm comgr sqlite bzip2 ]
+  buildInputs = [ rocm-runtime half openssl boost rocblas miopengemm comgr sqlite bzip2 ]
     ++ (if useHip then [ hip ] else [rocm-opencl-runtime clang-ocl hip]);
 
   cmakeFlags = [

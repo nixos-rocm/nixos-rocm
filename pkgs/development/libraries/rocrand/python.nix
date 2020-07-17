@@ -1,4 +1,4 @@
-{ buildPythonPackage, numpy, rocr, hip, rocrand }:
+{ buildPythonPackage, numpy, rocm-runtime, hip, rocrand }:
 {
   rocrand-python = buildPythonPackage {
     pname = "rocrand-python";
@@ -9,7 +9,7 @@
     patchPhase = ''
       sed -e 's|os.getenv("ROCRAND_PATH")|"${rocrand}/rocrand"|' \
           -i rocrand/rocrand.py
-      sed -e 's|os.getenv("ROCM_PATH")|"${rocr}"|' \
+      sed -e 's|os.getenv("ROCM_PATH")|"${rocm-runtime}"|' \
           -e 's|os.getenv("HIP_PATH")|"${hip}"|' \
           -i rocrand/hip.py
     '';
@@ -24,7 +24,7 @@
       sed -e 's|os.getenv("HIPRAND_PATH")|"${rocrand}/hiprand"|' \
           -e 's|os.getenv("ROCRAND_PATH")|"${rocrand}/rocrand"|' \
           -i hiprand/hiprand.py
-      sed -e 's|os.getenv("ROCM_PATH")|"${rocr}"|' \
+      sed -e 's|os.getenv("ROCM_PATH")|"${rocm-runtime}"|' \
           -e 's|os.getenv("HIP_PATH")|"${hip}"|' \
           -i hiprand/hip.py
     '';

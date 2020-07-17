@@ -22,12 +22,14 @@ with pkgs;
   linuxPackages_rocm = recurseIntoAttrs (linuxPackagesFor self.linux_4_18_kfd);
 
   # Userspace ROC stack
+  rocm-runtime = callPackage ./development/libraries/rocm-runtime {
+    inherit (self) rocm-thunk;
+  };
   rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
-  rocr = callPackage ./development/libraries/rocr { inherit (self) rocm-thunk; };
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
-    inherit (self) rocm-cmake rocr;
+    inherit (self) rocm-cmake rocm-runtime;
     defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
 
@@ -55,7 +57,7 @@ with pkgs;
     src = "${self.rocm-llvm-project}/clang";
     llvm = self.rocm-llvm;
     lld = self.rocm-lld;
-    inherit (self) rocr;
+    inherit (self) rocm-runtime;
   };
   rocm-clang = pkgs.wrapCCWith rec {
     cc = self.rocm-clang-unwrapped;
@@ -73,7 +75,7 @@ with pkgs;
   };
 
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
-    inherit (self) rocr;
+    inherit (self) rocm-runtime;
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
     llvm = self.rocm-llvm;
     clang-unwrapped = self.rocm-clang-unwrapped;
@@ -108,7 +110,7 @@ with pkgs;
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
     stdenv = pkgs.overrideCC stdenv self.rocm-clang;
     inherit (self) rocm-thunk rocm-clang rocm-clang-unwrapped rocm-cmake;
-    inherit (self) rocm-device-libs rocm-lld rocm-llvm rocr rocclr;
+    inherit (self) rocm-device-libs rocm-lld rocm-llvm rocm-runtime rocclr;
     comgr = self.rocm-comgr;
     src = self.rocm-opencl-src;
   };
@@ -121,7 +123,7 @@ with pkgs;
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
-    inherit (self) rocm-thunk rocr rocminfo rocclr;
+    inherit (self) rocm-thunk rocm-runtime rocminfo rocclr;
     llvm = self.rocm-llvm;
     clang-unwrapped = self.rocm-clang-unwrapped;
     clang = self.rocm-clang;
@@ -145,7 +147,7 @@ with pkgs;
   rocm-smi = callPackage ./tools/rocm-smi { };
 
   rocm-bandwidth = callPackage ./tools/rocm-bandwidth {
-    inherit (self) rocm-thunk rocr;
+    inherit (self) rocm-thunk rocm-runtime;
   };
 
   rocm-openmp = pkgs.llvmPackages_latest.openmp.override {
@@ -158,7 +160,7 @@ with pkgs;
   };
 
   rocblas = callPackage ./development/libraries/rocblas {
-    inherit (self) rocm-cmake rocr rocblas-tensile hip-clang;
+    inherit (self) rocm-cmake rocm-runtime rocblas-tensile hip-clang;
     clang = self.rocm-clang;
     openmp = self.rocm-openmp;
     comgr = self.rocm-comgr;
@@ -176,7 +178,7 @@ with pkgs;
 
   # # Currently broken
   miopen-cl = callPackage ./development/libraries/miopen {
-    inherit (self) rocm-cmake rocm-opencl-runtime rocr
+    inherit (self) rocm-cmake rocm-opencl-runtime rocm-runtime
                    clang-ocl miopengemm rocblas;
     hip = self.hip-clang;
     clang = self.rocm-clang;
@@ -188,7 +190,7 @@ with pkgs;
   };
 
   rocfft = callPackage ./development/libraries/rocfft {
-    inherit (self) rocr rocminfo rocm-cmake;
+    inherit (self) rocm-runtime rocminfo rocm-cmake;
     hip = self.hip-clang;
     clang = self.rocm-clang;
     comgr = self.rocm-comgr;
@@ -201,18 +203,18 @@ with pkgs;
   # };
 
   # rocrand = callPackage ./development/libraries/rocrand {
-  #   inherit (self) rocm-cmake rocminfo hcc rocr;
+  #   inherit (self) rocm-cmake rocminfo hcc rocm-runtime;
   #   comgr = self.hcc-comgr;
   #   hip = self.hip;
   # };
   # rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
-  #   inherit (self) rocr rocrand;
+  #   inherit (self) rocm-runtime rocrand;
   #   inherit (python3Packages) buildPythonPackage numpy;
   #   hip = self.hip;
   # };
 
   # rocprim = callPackage ./development/libraries/rocprim {
-  #   inherit (self) rocm-cmake rocr;
+  #   inherit (self) rocm-cmake rocm-runtime;
   #   stdenv = pkgs.overrideCC stdenv self.hcc;
   #   hip = self.hip;
   # };
@@ -228,7 +230,7 @@ with pkgs;
   # };
 
   # hipsparse = callPackage ./development/libraries/hipsparse {
-  #   inherit (self) rocr rocsparse rocm-cmake hcc;
+  #   inherit (self) rocm-runtime rocsparse rocm-cmake hcc;
   #   hip = self.hip;
   #   comgr = self.hcc-comgr;
   # };
@@ -240,13 +242,13 @@ with pkgs;
   # };
 
   # roctracer = callPackage ./development/tools/roctracer {
-  #   inherit (self) hcc-unwrapped rocm-thunk rocr;
+  #   inherit (self) hcc-unwrapped rocm-thunk rocm-runtime;
   #   hip = self.hip;
   #   inherit (pkgs.pythonPackages) python buildPythonPackage fetchPypi ply;
   # };
 
   # rocprofiler = callPackage ./development/tools/rocprofiler {
-  #   inherit (self) rocr rocm-thunk roctracer hcc-unwrapped;
+  #   inherit (self) rocm-runtime rocm-thunk roctracer hcc-unwrapped;
   # };
 
   amdtbasetools = callPackage ./development/libraries/AMDTBaseTools {};
@@ -263,7 +265,7 @@ with pkgs;
 
   # tensorflow-rocm = python37Packages.callPackage ./development/libraries/tensorflow/bin.nix {
   #   inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
-  #                  rocfft rocblas rocr rccl cxlactivitylogger;
+  #                  rocfft rocblas rocm-runtime rccl cxlactivitylogger;
   #   hip = self.hip;
   # };
 
@@ -286,12 +288,12 @@ with pkgs;
 
   # tensorflow2-rocm = self.tf2PyPackages.pkgs.callPackage ./development/libraries/tensorflow/bin2.nix {
   #   inherit (self) hcc hcc-unwrapped miopen-hip miopengemm rocrand
-  #                  rocfft rocblas rocr rccl cxlactivitylogger;
+  #                  rocfft rocblas rocm-runtime rccl cxlactivitylogger;
   #   hip = self.hip;
   # };
 
   # pytorch-rocm = python37Packages.callPackage ./development/libraries/pytorch/default.nix {
-  #   inherit (self) rocr miopengemm rocsparse hipsparse rocthrust
+  #   inherit (self) rocm-runtime miopengemm rocsparse hipsparse rocthrust
   #     rccl rocrand rocblas rocfft rocprim hipcub roctracer rocm-cmake;
   #   miopen = self.miopen-hip;
   #   hip = self.hip;
@@ -332,5 +334,6 @@ with pkgs;
   # };
 
   # Deprecated names
+  rocr = builtins.trace "'rocr' was renamed to 'rocm-runtime'" self.rocm-runtime;
   roct = builtins.trace "'roct' was renamed to 'rocm-thunk'" self.rocm-thunk;
 }

@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitHub, cmake, rocm-cmake
 , libglvnd, libX11, libelf
-, rocm-thunk, rocr, rocm-opencl-src, comgr, clang}:
+, rocm-thunk, rocm-runtime, rocm-opencl-src, comgr, clang}:
 stdenv.mkDerivation rec {
   pname = "rocclr";
   version = "3.5.0";
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
     sha256 = "0j70lxpwrdrb1v4lbcyzk7kilw62ip4py9fj149d8k3x5x6wkji1";
   };
   nativeBuildInputs = [ cmake rocm-cmake ];
-  buildInputs = [ rocm-thunk rocr comgr clang ];
+  buildInputs = [ rocm-thunk rocm-runtime comgr clang ];
   propagatedBuildInputs = [ libelf libglvnd libX11 ];
 
   prePatch = ''

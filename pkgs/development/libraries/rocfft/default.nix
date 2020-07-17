@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, pkgconfig
-, rocr, rocminfo, clang, hip, rocm-cmake, comgr
+, rocm-runtime, rocminfo, clang, hip, rocm-cmake, comgr
 , doCheck ? false
 , boost, gtest, fftw, fftwFloat }:
 stdenv.mkDerivation rec {
@@ -18,13 +18,13 @@ stdenv.mkDerivation rec {
   CXXFLAGS = "-D__HIP_PLATFORM_HCC__ -D__HIP__";
 
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig rocminfo ];
-  buildInputs = [ hip rocr boost comgr ]
+  buildInputs = [ hip rocm-runtime boost comgr ]
     ++ stdenv.lib.optionals doCheck [ gtest fftwFloat fftw ];
   cmakeFlags = [
     # "-DUSE_HIP_CLANG=YES"
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
-    # "-DHSA_HEADER=${rocr}/include"
-    # "-DHSA_LIBRARY=${rocr}/lib/libhsa-runtime64.so"
+    # "-DHSA_HEADER=${rocm-runtime}/include"
+    # "-DHSA_LIBRARY=${rocm-runtime}/lib/libhsa-runtime64.so"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
   ] ++ stdenv.lib.optionals doCheck [
     "-DBUILD_CLIENTS_TESTS=ON"

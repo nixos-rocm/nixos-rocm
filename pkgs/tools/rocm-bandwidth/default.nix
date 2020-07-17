@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, rocr, rocm-thunk }:
+{ stdenv, fetchFromGitHub, cmake, rocm-runtime, rocm-thunk }:
 stdenv.mkDerivation rec {
   name = "rocm-bandwidth";
   version = "3.5.0";
@@ -9,10 +9,10 @@ stdenv.mkDerivation rec {
     sha256 = "0bnms7h1qdvfkjiy537snjgjv96g4bjwqbxr9298hswdhk17pd3f";
   };
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ rocr rocm-thunk ];
+  buildInputs = [ rocm-runtime rocm-thunk ];
   cmakeFlags = [
-    "-DROCR_INC_DIR=${rocr}/include"
-    "-DROCR_LIB_DIR=${rocr}/lib"
+    "-DROCR_INC_DIR=${rocm-runtime}/include"
+    "-DROCR_LIB_DIR=${rocm-runtime}/lib"
   ];
   # A non-void function doesn't return on all paths, so building with
   # -Werror fails with some compilers (eg. gcc 7.4.0)

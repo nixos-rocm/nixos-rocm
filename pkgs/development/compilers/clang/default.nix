@@ -1,9 +1,9 @@
-{ stdenv, fetchFromGitHub, cmake, python, rocr, llvm, lld
+{ stdenv, fetchFromGitHub, cmake, python, rocm-runtime, llvm, lld
 , name, version, src, clang-tools-extra_src ? null}:
 stdenv.mkDerivation rec {
   inherit name version src;
   nativeBuildInputs = [ cmake python ];
-  buildInputs = [ llvm rocr ];
+  buildInputs = [ llvm rocm-runtime ];
   hardeningDisable = ["all"];
   cmakeFlags = [
     "-DLLVM_CMAKE_PATH=${llvm}/lib/cmake/llvm"

@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, rocr, python3, rocm-cmake, busybox, gnugrep
+{ stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-runtime, python3, rocm-cmake, busybox, gnugrep
   # rocminfo requires that the calling user have a password and be in
   # the video group. If we let rocm_agent_enumerator rely upon
   # rocminfo's output, then it, too, has those requirements. Instead,
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
   buildInputs = [ cmake rocm-cmake ];
   cmakeFlags = [
-    "-DROCM_DIR=${rocr}"
+    "-DROCM_DIR=${rocm-runtime}"
     "-DROCRTST_BLD_TYPE=Release"
   ];
 

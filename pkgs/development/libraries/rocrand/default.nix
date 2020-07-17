@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, cmake, ed, pkgconfig
-, libunwind, git, rocm-cmake, rocminfo, hcc, hip, rocr, comgr
+, libunwind, git, rocm-cmake, rocminfo, hcc, hip, rocm-runtime, comgr
 , doCheck ? false
 , gtest }:
 stdenv.mkDerivation rec {
@@ -12,12 +12,12 @@ stdenv.mkDerivation rec {
     sha256 = "0nbrzpjp87v6p91jzxgxr12q2zzqw33m6cmwhckwiv8c076cfkgy";
   };
   nativeBuildInputs = [ cmake ed git rocm-cmake pkgconfig ];
-  buildInputs = [ hcc hip rocminfo libunwind rocr comgr ]
+  buildInputs = [ hcc hip rocminfo libunwind rocm-runtime comgr ]
     ++ stdenv.lib.optionals doCheck [ gtest ];
 
   cmakeFlags = [
-    "-DHSA_HEADER=${rocr}/include"
-    "-DHSA_LIBRARY=${rocr}/lib/libhsa-runtime64.so"
+    "-DHSA_HEADER=${rocm-runtime}/include"
+    "-DHSA_LIBRARY=${rocm-runtime}/lib/libhsa-runtime64.so"
     "-DHIP_PLATFORM=hcc"
     "-DHIP_PATH=${hip}"
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"

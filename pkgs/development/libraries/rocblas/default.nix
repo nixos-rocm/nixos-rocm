@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
-, rocr, hip-clang, rocm-cmake, comgr, clang
+, rocm-runtime, hip-clang, rocm-cmake, comgr, clang
 , llvm, openmp
 , doCheck ? false
 # Tensile slows the build a lot, but can produce a faster rocBLAS
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   };
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 
-  buildInputs = [ libunwind pyenv rocr comgr llvm openmp hip-clang ]
+  buildInputs = [ libunwind pyenv rocm-runtime comgr llvm openmp hip-clang ]
                 ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack ];
 
   CXXFLAGS = "-D__HIP_PLATFORM_HCC__";

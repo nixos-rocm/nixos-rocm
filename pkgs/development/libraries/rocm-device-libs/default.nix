@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub, runCommand, cmake
-, llvm, lld, clang, clang-unwrapped, rocr
+, llvm, lld, clang, clang-unwrapped, rocm-runtime
 , source ? null
 , tagPrefix ? null
 , sha256 ? null }:
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     sha256 = "0n160jwbh7jnqckz5bn979ll8afh2a97lf962xh9xv3cx025vnrn";
   };
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ llvm lld clang rocr ];
+  buildInputs = [ llvm lld clang rocm-runtime ];
   cmakeBuildType = "Release";
   cmakeFlags = [
     "-DCMAKE_PREFIX_PATH=${llvm}/lib/cmake/llvm;${clang-unwrapped}/lib/cmake/clang"

@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, symlinkJoin, utillinux, which, git
 , openssl, buildPythonPackage, python, numpy, pyyaml, cffi, numactl, opencv3
 , lmdb, pkg-config
-, rocr, hip, openmp, rocrand, rocblas, rocfft, rocm-cmake, rccl, rocprim, hipcub
+, rocm-runtime, hip, openmp, rocrand, rocblas, rocfft, rocm-cmake, rccl, rocprim, hipcub
 , miopen, miopengemm, rocsparse, hipsparse, rocthrust, comgr
 , hcc
 , roctracer }:
@@ -29,7 +29,7 @@ buildPythonPackage rec {
     hcc
     hip
     openmp
-    rocr
+    rocm-runtime
     rccl
     miopen
     miopengemm

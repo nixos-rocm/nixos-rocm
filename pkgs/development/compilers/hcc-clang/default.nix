@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, python
-, rocr, hcc-llvm, hcc-lld, rocminfo
+, rocm-runtime, hcc-llvm, hcc-lld, rocminfo
 , version, src }:
 stdenv.mkDerivation rec {
   name = "hcc-clang-unwrapped";
   inherit version src;
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ hcc-llvm hcc-lld ];
-  buildInputs = [ rocr ];
+  buildInputs = [ rocm-runtime ];
 
   # The patch version is the last two digits of year + week number +
   # day in the week: date -d "2019-12-06" +%y%U%w
