@@ -2,14 +2,14 @@
 , fetchFromGitHub
 , src
 , addOpenGLRunpath
+, clang
+, clang-unwrapped
 , cmake
+, lld
+, llvm
 , rocm-runtime
 , rocm-thunk
-, rocm-llvm
-, rocm-lld
 , rocm-device-libs
-, rocm-clang
-, rocm-clang-unwrapped
 , rocm-cmake
 , comgr
 , rocclr
@@ -75,18 +75,18 @@ stdenv.mkDerivation rec {
   #   parallel builds succeed because oclrocm coincidentally finishes
   #   building before the build of oclruntime starts.
   postPatch = ''
-    # sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${rocm-clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
+    # sed 's|set(CLANG "''${LLVM_TOOLS_BINARY_DIR}/clang''${EXE_SUFFIX}")|set(CLANG "${clang}/bin/clang")|' -i library/amdgcn/OCL.cmake
 
     sed 's,ICD_VENDOR_PATH,"${addOpenGLRunpath.driverLink}/etc/OpenCL/vendors/",g' -i khronos/icd/loader/linux/icd_linux.c
 
     # sed -e 's|add_subdirectory(compiler/llvm EXCLUDE_FROM_ALL)|find_package(Clang REQUIRED CONFIG)|' \
-    #     -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${rocm-llvm.src}/lib/Target/AMDGPU)|' \
+    #     -e 's|include_directories(''${CMAKE_SOURCE_DIR}/compiler/llvm/lib/Target/AMDGPU)|include_directories(${llvm.src}/lib/Target/AMDGPU)|' \
     #     -e 's|include_directories(''${CMAKE_BINARY_DIR}/compiler/llvm/lib/Target/AMDGPU)||' \
     #     -e '/install(PROGRAMS $<TARGET_FILE:clang> $<TARGET_FILE:lld>/,/^[[:space:]]*COMPONENT DEV)/d' \
     #     -e 's|add_subdirectory(compiler/driver EXCLUDE_FROM_ALL)||' \
     #     -i CMakeLists.txt
 
-    # sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${rocm-clang-unwrapped}/lib/clang/11.0.0/include/opencl-c.h|g' \
+    # sed -e 's|''${CMAKE_SOURCE_DIR}/compiler/llvm/tools/clang/lib/Headers/opencl-c.h|${clang-unwrapped}/lib/clang/11.0.0/include/opencl-c.h|g' \
     #     -e 's|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"''${header}\"\n")|file(APPEND ''${CMAKE_CURRENT_BINARY_DIR}/libraries.amdgcn.inc "#include \"rocm/''${header}\"\n")|' \
     #     -i runtime/device/rocm/CMakeLists.txt
 
@@ -97,8 +97,8 @@ stdenv.mkDerivation rec {
   '';
 
   cmakeFlags = [
-    "-DLLVM_DIR=${rocm-llvm.out}/lib/cmake/llvm"
-    "-DClang_DIR=${rocm-clang-unwrapped}/lib/cmake/clang"
+    "-DLLVM_DIR=${llvm.out}/lib/cmake/llvm"
+    "-DClang_DIR=${clang-unwrapped}/lib/cmake/clang"
     "-DAMDGPU_TARGET_TRIPLE='amdgcn-amd-amdhsa'"
     "-DUSE_COMGR_LIBRARY='yes'"
     "-DCLANG_OPTIONS_APPEND=-Wno-bitwise-conditional-parentheses"
@@ -107,8 +107,8 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
   nativeBuildInputs = [ cmake rocm-cmake ];
-  buildInputs = [ rocm-runtime rocm-thunk rocclr rocm-llvm rocm-lld rocm-device-libs
-                  rocm-clang rocm-clang-unwrapped
+  buildInputs = [ rocm-runtime rocm-thunk rocclr llvm lld rocm-device-libs
+                  clang clang-unwrapped
                   comgr
                   mesa_noglu python2 libX11 libGLU ];
 
