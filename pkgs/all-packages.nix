@@ -22,6 +22,7 @@ with pkgs;
   linuxPackages_rocm = recurseIntoAttrs (linuxPackagesFor self.linux_4_18_kfd);
 
   # Userspace ROC stack
+  llvmPackages_rocm = callPackage ./development/compilers/llvm-rocm {};
   rocm-runtime = callPackage ./development/libraries/rocm-runtime {
     inherit (self) rocm-thunk;
   };
@@ -33,69 +34,23 @@ with pkgs;
     defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
 
-  # ROCm LLVM, LLD, and Clang
-  rocm-llvm-project = fetchFromGitHub {
-    owner = "RadeonOpenCompute";
-    repo = "llvm-project";
-    rev = "rocm-3.5.0";
-    sha256 = "0k1939yp8liblskx147n132ds21mmrgid2pd4kngs5rhjif8hfzj";
-  };
-
-  rocm-llvm = callPackage ./development/compilers/llvm rec {
-    version = "3.5.0";
-    src = "${self.rocm-llvm-project}/llvm";
-  };
-  rocm-lld = self.callPackage ./development/compilers/lld rec {
-    name = "rocm-lld";
-    version = "3.5.0";
-    src = "${self.rocm-llvm-project}/lld";
-    llvm = self.rocm-llvm;
-  };
-  rocm-clang-unwrapped = callPackage ./development/compilers/clang rec {
-    name = "clang-unwrapped";
-    version = "3.5.0";
-    src = "${self.rocm-llvm-project}/clang";
-    llvm = self.rocm-llvm;
-    lld = self.rocm-lld;
-    inherit (self) rocm-runtime;
-  };
-  rocm-clang = pkgs.wrapCCWith rec {
-    cc = self.rocm-clang-unwrapped;
-    extraPackages = [ libstdcxxHook ];
-    extraBuildCommands = ''
-      rsrc="$out/resource-root"
-      mkdir "$rsrc"
-      ln -s "${cc}/lib/clang/11.0.0/include" "$rsrc"
-      echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
-      echo "--gcc-toolchain=${stdenv.cc.cc}" >> $out/nix-support/cc-cflags
-      echo "-Wno-unused-command-line-argument" >> $out/nix-support/cc-cflags
-      rm $out/nix-support/add-hardening.sh
-      touch $out/nix-support/add-hardening.sh
-    '';
-  };
-
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
     inherit (self) rocm-runtime;
-    stdenv = pkgs.overrideCC stdenv self.rocm-clang;
-    llvm = self.rocm-llvm;
-    clang-unwrapped = self.rocm-clang-unwrapped;
-    clang = self.rocm-clang;
-    lld = self.rocm-lld;
+    inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
+    stdenv = pkgs.overrideCC stdenv self.llvmPackages_rocm.clang;
     tagPrefix = "rocm-ocl";
     sha256 = "0h4aggj2766gm3grz387nbw3bn0l461walgkzmmly9a5shfc36ah";
   };
 
   rocm-comgr = callPackage ./development/libraries/comgr {
-    llvm = self.rocm-llvm;
-    lld = self.rocm-lld;
-    clang = self.rocm-clang;
+    inherit (self.llvmPackages_rocm) clang lld llvm;
     device-libs = self.rocm-device-libs;
   };
 
   rocclr = callPackage ./development/libraries/rocclr {
-    comgr = self.rocm-comgr;
-    clang = self.rocm-clang;
     inherit (self) rocm-opencl-src;
+    inherit (self.llvmPackages_rocm) clang; 
+    comgr = self.rocm-comgr;
   };
 
   # OpenCL stack
@@ -108,9 +63,10 @@ with pkgs;
   };
 
   rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
-    stdenv = pkgs.overrideCC stdenv self.rocm-clang;
-    inherit (self) rocm-thunk rocm-clang rocm-clang-unwrapped rocm-cmake;
-    inherit (self) rocm-device-libs rocm-lld rocm-llvm rocm-runtime rocclr;
+    inherit (self) rocm-thunk rocm-cmake rocm-device-libs;
+    inherit (self) rocm-runtime rocclr;
+    inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
+    stdenv = pkgs.overrideCC stdenv self.llvmPackages_rocm.clang;
     comgr = self.rocm-comgr;
     src = self.rocm-opencl-src;
   };
@@ -124,9 +80,7 @@ with pkgs;
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
     inherit (self) rocm-thunk rocm-runtime rocminfo rocclr;
-    llvm = self.rocm-llvm;
-    clang-unwrapped = self.rocm-clang-unwrapped;
-    clang = self.rocm-clang;
+    inherit (self.llvmPackages_rocm) clang clang-unwrapped llvm;
     device-libs = self.rocm-device-libs;
     comgr = self.rocm-comgr;
   };
@@ -136,10 +90,7 @@ with pkgs;
 
   clang-ocl = callPackage ./development/compilers/clang-ocl {
     inherit (self) rocm-cmake rocm-device-libs rocm-opencl-runtime;
-    lld = self.rocm-lld;
-    llvm = self.rocm-llvm;
-    clang = self.rocm-clang;
-    clang-unwrapped = self.rocm-clang-unwrapped;
+    inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
     # inherit (self) amd-clang amd-clang-unwrapped;
     # inherit (pkgs.llvmPackages_10) clang clang-unwrapped;
   };
@@ -151,7 +102,7 @@ with pkgs;
   };
 
   rocm-openmp = pkgs.llvmPackages_latest.openmp.override {
-    llvm = self.rocm-llvm;
+    inherit (self.llvmPackages_rocm) llvm;
   };
 
   rocblas-tensile = callPackage ./development/libraries/rocblas/tensile.nix {
@@ -161,11 +112,10 @@ with pkgs;
 
   rocblas = callPackage ./development/libraries/rocblas {
     inherit (self) rocm-cmake rocm-runtime rocblas-tensile hip-clang;
-    clang = self.rocm-clang;
+    inherit (self.llvmPackages_rocm) clang llvm;
     openmp = self.rocm-openmp;
     comgr = self.rocm-comgr;
     # llvm = pkgs.llvmPackages_7.llvm;
-    llvm = self.rocm-llvm;
     inherit (python3Packages) python;
   };
 
@@ -173,15 +123,15 @@ with pkgs;
 
   miopengemm = callPackage ./development/libraries/miopengemm {
     inherit (self) rocm-cmake rocm-opencl-runtime;
-    clang = self.rocm-clang;
+    inherit (self.llvmPackages_rocm) clang;
   };
 
   # # Currently broken
   miopen-cl = callPackage ./development/libraries/miopen {
     inherit (self) rocm-cmake rocm-opencl-runtime rocm-runtime
                    clang-ocl miopengemm rocblas;
+    inherit (self.llvmPackages_rocm) clang;
     hip = self.hip-clang;
-    clang = self.rocm-clang;
     comgr = self.rocm-comgr;
   };
 
@@ -191,8 +141,8 @@ with pkgs;
 
   rocfft = callPackage ./development/libraries/rocfft {
     inherit (self) rocm-runtime rocminfo rocm-cmake;
+    inherit (self.llvmPackages_rocm) clang;
     hip = self.hip-clang;
-    clang = self.rocm-clang;
     comgr = self.rocm-comgr;
   };
 
@@ -334,6 +284,10 @@ with pkgs;
   # };
 
   # Deprecated names
+  rocm-clang = builtins.trace "'rocm-clang' was renamed to 'llvmPackages_rocm.clang'" self.llvmPackages_rocm.clang;
+  rocm-clang-unwrapped = builtins.trace "'rocm-clang-unwrapped' was renamed to 'llvmPackages_rocm.clang-unwrapped'" self.llvmPackages_rocm.clang-unwrapped;
+  rocm-lld = builtins.trace "'rocm-lld' was renamed to 'llvmPackages_rocm.lld'" self.llvmPackages_rocm.lld;
+  rocm-llvm = builtins.trace "'rocm-llvm' was renamed to 'llvmPackages_rocm.llvm'" self.llvmPackages_rocm.llvm;
   rocr = builtins.trace "'rocr' was renamed to 'rocm-runtime'" self.rocm-runtime;
   roct = builtins.trace "'roct' was renamed to 'rocm-thunk'" self.rocm-thunk;
 }
