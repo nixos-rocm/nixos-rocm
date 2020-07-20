@@ -37,9 +37,6 @@ with pkgs;
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
     inherit (self) rocm-runtime;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
-    stdenv = pkgs.overrideCC stdenv self.llvmPackages_rocm.clang;
-    tagPrefix = "rocm-ocl";
-    sha256 = "0h4aggj2766gm3grz387nbw3bn0l461walgkzmmly9a5shfc36ah";
   };
 
   rocm-comgr = callPackage ./development/libraries/comgr {
@@ -79,9 +76,8 @@ with pkgs;
 
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
-    inherit (self) rocm-thunk rocm-runtime rocminfo rocclr;
+    inherit (self) rocm-device-libs rocm-thunk rocm-runtime rocminfo rocclr;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped llvm;
-    device-libs = self.rocm-device-libs;
     comgr = self.rocm-comgr;
   };
 

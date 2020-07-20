@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, lld
-, device-libs, rocm-thunk, rocm-runtime, rocminfo, comgr, rocclr
+, rocm-device-libs, rocm-thunk, rocm-runtime, rocminfo, comgr, rocclr
 }:
 stdenv.mkDerivation rec {
   name = "hip";
@@ -13,11 +13,11 @@ stdenv.mkDerivation rec {
     sha256 = "1xhw9sy9gln5mai8w8mrbiz1ik8m0lnk5g4p2gwa4f3mv96adlhd";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ llvm clang lld rocm-thunk rocminfo device-libs rocm-runtime comgr rocclr ];
+  propagatedBuildInputs = [ llvm clang lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin
-    export DEVICE_LIB_PATH=${device-libs}/lib
+    export DEVICE_LIB_PATH=${rocm-device-libs}/lib
   '';
 
   # The patch version is the last two digits of year + week number +
@@ -68,7 +68,7 @@ stdenv.mkDerivation rec {
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
         -e "s,^\($HIP_LIB_PATH=\).*$,\1\"$out/lib\";," \
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
-        -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${device-libs}/lib";,' \
+        -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${rocm-device-libs}/lib";,' \
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
         -e 's,^\($HIP_RUNTIME=\).*$,\1"ROCclr";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocm-runtime}";,'g \
@@ -117,7 +117,7 @@ stdenv.mkDerivation rec {
     mv $out/lib/cmake $out/share/
     mv $out/cmake/* $out/share/cmake/hip
     mkdir -p $out/lib
-    ln -s ${device-libs}/lib $out/lib/bitcode
+    ln -s ${rocm-device-libs}/lib $out/lib/bitcode
     mkdir -p $out/include
     ln -s ${clang-unwrapped}/lib/clang/11.0.0/include $out/include/clang
     ln -s ${rocclr}/lib/*.* $out/lib
