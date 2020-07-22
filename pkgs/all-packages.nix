@@ -45,9 +45,8 @@ with pkgs;
   };
 
   rocclr = callPackage ./development/libraries/rocclr {
-    inherit (self) rocm-opencl-src;
+    inherit (self) rocm-comgr rocm-opencl-runtime rocm-runtime rocm-thunk;
     inherit (self.llvmPackages_rocm) clang; 
-    comgr = self.rocm-comgr;
   };
 
   # OpenCL stack
