@@ -49,22 +49,11 @@ with pkgs;
     inherit (self.llvmPackages_rocm) clang; 
   };
 
-  # OpenCL stack
-  rocm-opencl-src = fetchFromGitHub {
-    owner = "RadeonOpenCompute";
-    repo = "ROCm-OpenCL-Runtime";
-    rev = "roc-3.5.0";
-    sha256 = "1wrr6mmn4gf6i0vxp4yqk0ny2wglvj1jfj50il8czjwy0cwmhykk";
-    name = "ROCm-OpenCL-Runtime-src";
-  };
-
-  rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime.nix {
-    inherit (self) rocm-thunk rocm-cmake rocm-device-libs;
-    inherit (self) rocm-runtime rocclr;
+  rocm-opencl-runtime = callPackage ./development/libraries/rocm-opencl-runtime {
+    inherit (self) rocclr rocm-comgr rocm-device-libs rocm-runtime
+      rocm-thunk;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
     stdenv = pkgs.overrideCC stdenv self.llvmPackages_rocm.clang;
-    comgr = self.rocm-comgr;
-    src = self.rocm-opencl-src;
   };
 
   rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {
