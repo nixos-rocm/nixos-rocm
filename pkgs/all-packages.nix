@@ -39,7 +39,7 @@ with pkgs;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
   };
 
-  rocm-comgr = callPackage ./development/libraries/comgr {
+  rocm-comgr = callPackage ./development/libraries/rocm-comgr {
     inherit (self.llvmPackages_rocm) clang lld llvm;
     device-libs = self.rocm-device-libs;
   };
