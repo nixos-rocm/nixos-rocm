@@ -28,7 +28,7 @@ with pkgs;
   };
   rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
-  rocm-cmake = callPackage ./development/tools/rocm-cmake.nix {};
+  rocm-cmake = callPackage ./development/tools/rocm-cmake {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
     inherit (self) rocm-cmake rocm-runtime;
     defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
