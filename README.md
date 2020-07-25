@@ -9,7 +9,7 @@ This overlay should work with the latest nixos-unstable channel. To use these
 packages, clone this repo somewhere and then add `(import /path/to/this/repo)`
 to `nixpkgs.overlays` in `configuration.nix`, or in `~/.config/nixpkgs/overlays.nix` (see [the manual](https://nixos.org/nixpkgs/manual/#chap-overlays) for more information on overlays). To specify GPU compilation targets, your `~/.config/nixpkgs/config.nix` can include a `rocmTargets` field that lists GPU targets. An example fragment is shown here; the essential line is the definition of the `rocmTargets` field. The list shown here is the default list of targets used if you do not include this definition in your `config.nix`.
 
-```nix
+```
 {
   allowUnfree = true;
   rocmTargets = ["gfx803" "gfx900" "gfx906"];
@@ -22,10 +22,10 @@ The named GPU targets are the common ones for RX480/RX580 GPUs, Vega 10, and Veg
 As of ROCm 1.9.0, mainline kernels newer than 4.17 may be used with the ROCm stack.
 
 Add these lines to `configuration.nix` to enable the ROCm stack:
-```nix
+```
   boot.kernelPackages = pkgs.linuxPackages_5_4;
   hardware.opengl.enable = true;
-  hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ]
+  hardware.opengl.extraPackages = [ pkgs.rocm-opencl-icd ];
 ```
 
 After a `nixos-rebuild` and a reboot, both of these should work:
@@ -43,7 +43,7 @@ Using [cachix](https://cachix.org/) is highly recommended! See [https://app.cach
 ### OpenCL Image Support
 You may notice that `clinfo` reports a lack of `Image support`. This is because AMD has not open sourced this component of their OpenCL driver. You may make use of the closed-source component by bringing the `rocm-runtime-ext` package into scope. For example, you can change you `configuration.nix` to include the definition,
 
-```nix
+```
 hardware.opengl.extraPackages = [
   pkgs.rocm-opencl-icd
   pkgs.rocm-runtime-ext
@@ -57,7 +57,7 @@ nix-shell -p rocr-ext rocm-opencl-runtime --run clinfo
 ### `rocblas`, `rocfft`, and the Sandbox
 
 The `rocblas` and `rocfft` packages (and those that depend upon them) require a bit of additional configuration. The `nix` builder sandbox must be expanded to allow for build-time inspection of the current system for these packages to build. This may be achieved by adding the following lines to your `/etc/nix/configuration.nix` (with the caveat that your AMD GPU may not be at `/dev/dri/renderD128`):
-```nix
+```
   nix.sandboxPaths = [ 
     "/dev/kfd" 
     "/sys/devices/virtual/kfd" 
