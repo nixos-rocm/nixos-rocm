@@ -55,10 +55,10 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
     - name: rocm-llvm
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-llvm
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.llvm
 
     - name: rocm-clang
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-clang
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.clang
 
     - name: rocm-opencl-runtime
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
