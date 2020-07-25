@@ -37,6 +37,9 @@ After a `nixos-rebuild` and a reboot, both of these should work:
 OpenCL applications should work, and `glxinfo` should report that the Mesa
 stack is running hardware-accelerated on an AMD gpu.
 
+### Using the Cachix Binary Cache
+Using [cachix](https://cachix.org/) is highly recommended! See [https://app.cachix.org/cache/nixos-rocm](here) for complete instructions. The short and sweet is that, if you have `cachix` installed, you can just type `cachix use nixos-rocm` and you will download compiled ROCm components rather than have to build them yourself. The binary cache is built against `nixos-unstable` at least once every day.
+
 ### OpenCL Image Support
 You may notice that `clinfo` reports a lack of `Image support`. This is because AMD has not open sourced this component of their OpenCL driver. You may make use of the closed-source component by bringing the `rocm-runtime-ext` package into scope. For example, you can change you `configuration.nix` to include the definition,
 
