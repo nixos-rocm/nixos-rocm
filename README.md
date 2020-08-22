@@ -1,4 +1,4 @@
-# Radeon Open Compute (3.5.0) packages for NixOS
+# Radeon Open Compute (3.7.0) packages for NixOS
 
 ## Do I Need This Overlay?
 Parts of this overlay have been upstreamed into `nixpkgs`. If all you need is OpenCL support for AMD GPUs, you can follow the [instructions](https://hydra.nixos.org/build/124333142/download/2/nixos/index.html#sec-gpu-accel) in a new-enough version of the NixOS manual, and do not require this overlay. If you want to use the [HIP](https://github.com/ROCm-Developer-Tools/HIP) compiler for CUDA portability, any middleware libraries built atop that, or any of the broader ROCm ecosystem, you will need this overlay.
@@ -39,20 +39,6 @@ stack is running hardware-accelerated on an AMD gpu.
 
 ### Using the Cachix Binary Cache
 Using [cachix](https://cachix.org/) is highly recommended! See [here](https://app.cachix.org/cache/nixos-rocm) for complete instructions. The short and sweet is that, if you have `cachix` installed, you can just type `cachix use nixos-rocm` and you will download compiled ROCm components rather than have to build them yourself. The binary cache is built against `nixos-unstable` at least once every day.
-
-### OpenCL Image Support
-You may notice that `clinfo` reports a lack of `Image support`. This is because AMD has not open sourced this component of their OpenCL driver. You may make use of the closed-source component by bringing the `rocm-runtime-ext` package into scope. For example, you can change you `configuration.nix` to include the definition,
-
-```
-hardware.opengl.extraPackages = [
-  pkgs.rocm-opencl-icd
-  pkgs.rocm-runtime-ext
-];
-```
-
-```
-nix-shell -p rocr-ext rocm-opencl-runtime --run clinfo
-```
 
 ### `rocblas`, `rocfft`, and the Sandbox
 
