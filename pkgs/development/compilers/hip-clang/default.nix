@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
-, llvm, clang, clang-unwrapped, lld
+, llvm, clang, clang-unwrapped, lld, compiler-rt
 , rocm-device-libs, rocm-thunk, rocm-runtime, rocminfo, comgr, rocclr
 }:
 stdenv.mkDerivation rec {
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     sha256 = "18bffha1v0lwmdimhbgfziv1lxyj2mw4jh4xdxivnmdqw34milf3";
   };
   nativeBuildInputs = [ cmake python ];
-  propagatedBuildInputs = [ llvm clang lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
+  propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
 
   preConfigure = ''
     export HIP_CLANG_PATH=${clang}/bin

@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, callPackage, wrapCCWith }:
+{ stdenv, fetchFromGitHub, callPackage, wrapCCWith, overrideCC }:
 
 let
   version = "3.7.0";
@@ -37,5 +37,11 @@ in rec {
   llvm = callPackage ./llvm.nix {
     inherit version;
     src = "${src}/llvm";
+  };
+
+  compiler-rt = callPackage ./compiler-rt.nix {
+    inherit version llvm;
+    src = "${src}/compiler-rt";
+    stdenv = overrideCC stdenv clang;
   };
 }

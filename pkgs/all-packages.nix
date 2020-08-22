@@ -64,7 +64,7 @@ with pkgs;
   # A HIP compiler that does not go through hcc
   hip-clang = callPackage ./development/compilers/hip-clang {
     inherit (self) rocm-device-libs rocm-thunk rocm-runtime rocminfo rocclr;
-    inherit (self.llvmPackages_rocm) clang clang-unwrapped llvm;
+    inherit (self.llvmPackages_rocm) clang clang-unwrapped llvm compiler-rt;
     comgr = self.rocm-comgr;
   };
 
