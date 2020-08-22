@@ -3,12 +3,12 @@
 , clang, clang-unwrapped }:
 stdenv.mkDerivation rec {
   name = "clang-ocl";
-  version = "3.5.0";
+  version = "3.7.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang-ocl";
     rev = "rocm-${version}";
-    sha256 = "1majwzl3h9xx87rnk4bzl9vw0jf0fcwdknxvyk7snygaqyxjzqmj";
+    sha256 = "1dg5xxc36iaw6qkaxbll1yvqmyqqj0pw0093z1bfa6cxcxaz7kzi";
   };
   propagatedBuildInputs = [ lld ];
   nativeBuildInputs = [ cmake rocm-cmake rocm-opencl-runtime ];
@@ -17,8 +17,8 @@ stdenv.mkDerivation rec {
     "-DCLINFO=${rocm-opencl-runtime}/bin/clinfo"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
+    "-DAMD_DEVICE_LIBS_PREFIX=${rocm-device-libs}"
   ];
-  patches = [ ./no-hcc.patch ];
   postPatch = ''
     sed -e 's,^CLANG_BIN=.*$,CLANG_BIN=${clang}/bin,' \
         -e 's,^BITCODE_DIR=.*$,BITCODE_DIR=${rocm-device-libs}/lib,' \
