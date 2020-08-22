@@ -14,8 +14,32 @@ on:
 # track progress, and see what takes time.
 
 jobs:
+  build-llvm:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+
+    - uses: cachix/cachix-action@v6
+      with:
+        name: nixos-rocm
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+
+    - name: rocm-llvm
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.llvm
+
+    - name: rocm-clang
+      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.clang
+    
   build-tools:
     runs-on: ubuntu-latest
+
+    needs: build-llvm
 
     steps:
     - uses: actions/checkout@v2
@@ -53,12 +77,6 @@ jobs:
       with:
         name: nixos-rocm
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-
-    - name: rocm-llvm
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.llvm
-
-    - name: rocm-clang
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.clang
 
     - name: rocm-opencl-runtime
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
