@@ -22,7 +22,7 @@ with pkgs;
   linuxPackages_rocm = recurseIntoAttrs (linuxPackagesFor self.linux_4_18_kfd);
 
   # Userspace ROC stack
-  llvmPackages_rocm = callPackage ./development/compilers/llvm-rocm {};
+  llvmPackages_rocm = callPackage ./development/compilers/llvm/rocm {};
   rocm-runtime = callPackage ./development/libraries/rocm-runtime {
     inherit (self) rocm-thunk;
   };
