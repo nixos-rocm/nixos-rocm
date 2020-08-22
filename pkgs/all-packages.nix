@@ -35,7 +35,6 @@ with pkgs;
   };
 
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
-    inherit (self) rocm-runtime;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
   };
 
