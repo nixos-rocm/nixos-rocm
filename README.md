@@ -5,7 +5,7 @@ Parts of this overlay have been upstreamed into `nixpkgs`. If all you need is Op
 
 ## Installation
 
-This overlay should work with the latest nixos-unstable channel. To use these
+This overlay should work with the latest `nixos-unstable` channel. To use these
 packages, clone this repo somewhere and then add `(import /path/to/this/repo)`
 to `nixpkgs.overlays` in `configuration.nix`, or in `~/.config/nixpkgs/overlays.nix` (see [the manual](https://nixos.org/nixpkgs/manual/#chap-overlays) for more information on overlays). To specify GPU compilation targets, your `~/.config/nixpkgs/config.nix` can include a `rocmTargets` field that lists GPU targets. An example fragment is shown here; the essential line is the definition of the `rocmTargets` field. The list shown here is the default list of targets used if you do not include this definition in your `config.nix`.
 
