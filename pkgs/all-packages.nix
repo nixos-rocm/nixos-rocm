@@ -28,7 +28,6 @@ with pkgs;
     inherit (self.llvmPackages_rocm) clang-unwrapped llvm;
   };
   rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
-  rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
   rocm-cmake = callPackage ./development/tools/rocm-cmake {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
     inherit (self) rocm-cmake rocm-runtime;
@@ -281,4 +280,5 @@ with pkgs;
   rocm-llvm = builtins.trace "'rocm-llvm' was renamed to 'llvmPackages_rocm.llvm'" self.llvmPackages_rocm.llvm;
   rocr = builtins.trace "'rocr' was renamed to 'rocm-runtime'" self.rocm-runtime;
   roct = builtins.trace "'roct' was renamed to 'rocm-thunk'" self.rocm-thunk;
+  rocr-ext = throw "rocm-runtime-ext has been removed, since its functionality was added to rocm-runtime"; #added 2020-08-21
 }
