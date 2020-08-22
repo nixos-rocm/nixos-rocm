@@ -24,7 +24,8 @@ with pkgs;
   # Userspace ROC stack
   llvmPackages_rocm = callPackage ./development/compilers/llvm/rocm {};
   rocm-runtime = callPackage ./development/libraries/rocm-runtime {
-    inherit (self) rocm-thunk;
+    # inherit (self) rocm-thunk;
+    inherit (self.llvmPackages_rocm) clang-unwrapped llvm;
   };
   rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
   rocr-ext = callPackage ./development/libraries/rocr/rocr-ext.nix {};
