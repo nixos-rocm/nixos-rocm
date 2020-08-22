@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   };
 
   enableParallelBuilding = true;
-  buildInputs = [ cmake rocm-cmake ];
+  buildInputs = [ cmake rocm-cmake rocm-runtime ];
   cmakeFlags = [
     "-DROCM_DIR=${rocm-runtime}"
     "-DROCRTST_BLD_TYPE=Release"
