@@ -55,7 +55,7 @@ with pkgs;
     stdenv = pkgs.overrideCC stdenv self.llvmPackages_rocm.clang;
   };
 
-  rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd.nix {
+  rocm-opencl-icd = callPackage ./development/libraries/rocm-opencl-icd {
     inherit (self) rocm-opencl-runtime;
   };
 
