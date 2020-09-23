@@ -94,7 +94,7 @@ with pkgs;
   };
 
   rocblas = callPackage ./development/libraries/rocblas {
-    inherit (self) rocm-cmake rocm-runtime rocblas-tensile hip-clang;
+    inherit (self) rocm-cmake rocm-runtime rocblas-tensile hip;
     inherit (self.llvmPackages_rocm) clang llvm;
     openmp = self.rocm-openmp;
     comgr = self.rocm-comgr;
@@ -102,16 +102,16 @@ with pkgs;
     inherit (python3Packages) python;
   };
 
-  rocblas-test = callPackage ./development/libraries/rocblas {
-    inherit (self) rocm-cmake hcc hcc-unwrapped rocr rocblas-tensile;
-    hip = self.hip;
-    clang = self.hcc-clang;
-    openmp = self.hcc-openmp;
-    comgr = self.amd-comgr;
-    llvm = pkgs.llvmPackages_7.llvm;
-    inherit (python3Packages) python;
-    doCheck = true;
-  };
+  # rocblas-test = callPackage ./development/libraries/rocblas {
+  #   inherit (self) rocm-cmake hcc hcc-unwrapped rocr rocblas-tensile;
+  #   hip = self.hip;
+  #   clang = self.hcc-clang;
+  #   openmp = self.hcc-openmp;
+  #   comgr = self.amd-comgr;
+  #   llvm = pkgs.llvmPackages_7.llvm;
+  #   inherit (python3Packages) python;
+  #   doCheck = true;
+  # };
 
   # MIOpen
 
