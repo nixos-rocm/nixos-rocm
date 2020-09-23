@@ -78,7 +78,7 @@ with pkgs;
     # inherit (pkgs.llvmPackages_10) clang clang-unwrapped;
   };
 
-  rocm-smi = callPackage ./tools/system/rocm-smi { };
+  rocm-smi = python3Packages.callPackage ./tools/system/rocm-smi { };
 
   rocm-bandwidth = callPackage ./tools/rocm-bandwidth {
     inherit (self) rocm-thunk rocm-runtime;
