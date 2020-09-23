@@ -5,12 +5,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.7.0";
+  version = "3.8.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "18bffha1v0lwmdimhbgfziv1lxyj2mw4jh4xdxivnmdqw34milf3";
+    sha256 = "058nh1fyhp4qq2l9pzf9b6dblzh408zrs0bw5zbmhkn61kapmiic";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
@@ -21,8 +21,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2020-08-07" +%y%U%w
-  workweek = "20315";
+  # day in the week: date -d "2020-09-14" +%y%U%w
+  workweek = "20371";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocm-runtime}"
