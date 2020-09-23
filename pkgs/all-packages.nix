@@ -28,7 +28,7 @@ with pkgs;
     inherit (self.llvmPackages_rocm) clang-unwrapped llvm;
   };
   rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
-  rocm-cmake = callPackage ./development/tools/rocm-cmake {};
+  rocm-cmake = callPackage ./development/tools/build-managers/rocm-cmake {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
     inherit (self) rocm-cmake rocm-runtime;
     defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
