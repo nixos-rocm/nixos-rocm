@@ -88,14 +88,13 @@ with pkgs;
     inherit (self.llvmPackages_rocm) llvm;
   };
 
-  rocblas-tensile = callPackage ./development/libraries/rocblas/tensile.nix {
-    inherit (python3Packages) buildPythonPackage pyyaml pytest;
+  rocblas-tensile = python3Packages.callPackage ./development/libraries/rocblas/tensile.nix {
     inherit (self) rocminfo rocm-smi hip-clang;
   };
 
   rocblas = callPackage ./development/libraries/rocblas {
     inherit (self) rocm-cmake rocm-runtime rocblas-tensile hip;
-    inherit (self.llvmPackages_rocm) clang llvm;
+    inherit (self.llvmPackages_rocm) clang llvm compiler-rt;
     openmp = self.rocm-openmp;
     comgr = self.rocm-comgr;
     # llvm = pkgs.llvmPackages_7.llvm;

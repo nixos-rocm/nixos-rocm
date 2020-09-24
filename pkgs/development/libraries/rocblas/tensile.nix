@@ -1,15 +1,17 @@
-{ stdenv, fetchFromGitHub, buildPythonPackage, pyyaml, pytest, lib, config
+{ stdenv, lib, config, fetchFromGitHub
+, buildPythonPackage, pyyaml, pytest, msgpack
 , rocminfo, rocm-smi, hip-clang }:
 buildPythonPackage rec {
   pname = "Tensile";
-  version = "3.5.0";
+  version = "3.8.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "Tensile";
     rev = "rocm-${version}";
-    sha256 = "1pfkh64vrhykffv73p55kkiq9m2yqmi2i08bm0gzybbkny1aqpph";
+    sha256 = "0biildzqqfvsllr97h4mkf7qwvrjb1ij9rij5syv06ah0rrfm77p";
   };
   buildInputs = [ pyyaml pytest ];
+  propagatedBuildInputs = [ msgpack ];
 
   # The last patch restores compatibility with GCC 9.2's STL.
   # See: https://github.com/ROCmSoftwarePlatform/rocBLAS/issues/845
@@ -19,10 +21,6 @@ buildPythonPackage rec {
         -e 's|locateExe("/opt/rocm/bin", "rocm-smi")|locateExe("${rocm-smi}/bin", "rocm-smi")|' \
         -e 's|locateExe("/opt/rocm/bin", "extractkernel")|locateExe("${hip-clang}/bin", "extractkernel")|' \
         -i Tensile/Common.py
-    sed -e 's|inputOne(io, key, \*value);|inputOne(io, key.str(), *value);|' \
-        -i Tensile/Source/lib/include/Tensile/llvm/YAML.hpp
-  '' + lib.optionalString (stdenv.cc.isGNU && lib.versionAtLeast stdenv.cc.version "9.2") ''
-    sed 's|const Items empty;|const Items empty = {};|' -i Tensile/Source/lib/include/Tensile/EmbeddedData.hpp
   '';
 
   # We need patched source files in the output, so we can't symlink

@@ -1,6 +1,6 @@
 { stdenv, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
-, rocm-runtime, hip, rocm-cmake, comgr, clang
-, llvm, openmp, makeWrapper
+, rocm-runtime, hip, rocm-cmake, comgr, clang, compiler-rt
+, llvm, openmp, makeWrapper, msgpack
 , doCheck ? false
 # Tensile slows the build a lot, but can produce a faster rocBLAS
 , useTensile ? true, rocblas-tensile ? null
@@ -10,20 +10,21 @@ let pyenv = python.withPackages (ps:
 assert useTensile -> rocblas-tensile != null;
 stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "3.5.0";
+  version = "3.8.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
     rev = "rocm-${version}";
-    sha256 = "13rbdd49byrddmahn4ac90nw0anpbgj547y651zf8hdpnhh4n7wp";
+    sha256 = "1h7v509lq3ha2ai2gf2mrsbka4cv3ckd2jbc61b3x3sbv2n4iafa";
   };
 
   inherit doCheck;
 
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 
-  buildInputs = [ libunwind pyenv rocm-runtime comgr llvm openmp hip ]
-                ++ stdenv.lib.optionals doCheck [ gfortran boost gtest liblapack openblas makeWrapper ];
+  buildInputs = [ libunwind pyenv rocm-runtime comgr llvm compiler-rt openmp 
+                  hip gfortran msgpack ]
+                ++ stdenv.lib.optionals doCheck [ boost gtest liblapack openblas makeWrapper ];
 
   CXXFLAGS = "-D__HIP_PLATFORM_HCC__";
   cmakeFlags = [
@@ -44,6 +45,7 @@ stdenv.mkDerivation rec {
     "-DTensile_ROOT=${rocblas-tensile}"
     "-DCMAKE_POLICY_DEFAULT_CMP0074=NEW"
     "-DTensile_LOGIC=hip_lite"
+    "-DTensile_LIBRARY_FORMAT=msgpack"
   ];
 
   # sed '/add_custom_command(/,/^ )/d' -i library/src/CMakeLists.txt
