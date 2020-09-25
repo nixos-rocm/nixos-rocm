@@ -35,7 +35,6 @@ stdenv.mkDerivation rec {
     sed -e '/find_package(Git/,/endif()/d' \
         -e '/download_project(/,/^[[:space:]]*)/d' \
         -i cmake/Dependencies.cmake
-    #sed 's,include(cmake/VerifyCompiler.cmake),,' -i CMakeLists.txt
   '';
   
   checkPhase = ''
