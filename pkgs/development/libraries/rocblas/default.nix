@@ -1,14 +1,20 @@
 { stdenv, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
 , rocm-runtime, hip, rocm-cmake, comgr, clang, compiler-rt
 , llvm, openmp, makeWrapper, msgpack
-, doCheck ? false
+, doCheck ? false, gtest ? null
 # Tensile slows the build a lot, but can produce a faster rocBLAS
 , useTensile ? true, rocblas-tensile ? null
-, gfortran, liblapack, boost, gtest, openblas }:
-let pyenv = python.withPackages (ps:
-               with ps; [pyyaml pip wheel setuptools virtualenv]); in
+, gfortran, liblapack, boost, openblas 
+}:
+
+assert doCheck -> gtest != null;
 assert useTensile -> rocblas-tensile != null;
-stdenv.mkDerivation rec {
+
+let pyenv = python.withPackages (ps:
+        with ps; [pyyaml pip wheel setuptools virtualenv]
+  );
+
+in stdenv.mkDerivation rec {
   name = "rocblas";
   version = "3.8.0";
   src = fetchFromGitHub {
@@ -23,8 +29,9 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ cmake rocm-cmake pkgconfig python ];
 
   buildInputs = [ libunwind pyenv rocm-runtime comgr llvm compiler-rt openmp 
-                  hip gfortran msgpack ]
-                ++ stdenv.lib.optionals doCheck [ boost gtest liblapack openblas makeWrapper ];
+                  hip gfortran msgpack ];
+
+  checkInputs = [ boost gtest liblapack openblas makeWrapper ];
 
   CXXFLAGS = "-D__HIP_PLATFORM_HCC__";
   cmakeFlags = [
@@ -33,7 +40,7 @@ stdenv.mkDerivation rec {
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_WITH_TENSILE=${if useTensile then "ON" else "OFF"}"
     "-DTensile_COMPILER=hipcc"
-    ''-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}''
+    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}"
   ] ++ stdenv.lib.optionals doCheck [
     "-DBUILD_CLIENTS_SAMPLES=NO"
     "-DBUILD_CLIENTS_TESTS=YES"
@@ -44,8 +51,10 @@ stdenv.mkDerivation rec {
     "-DTensile_TEST_LOCAL_PATH=${rocblas-tensile}"
     "-DTensile_ROOT=${rocblas-tensile}"
     "-DCMAKE_POLICY_DEFAULT_CMP0074=NEW"
-    "-DTensile_LOGIC=hip_lite"
+    "-DTensile_LOGIC=asm_full"
     "-DTensile_LIBRARY_FORMAT=msgpack"
+    "-DTensile_ARCHITECTURE=${if (builtins.hasAttr "rocmTargets" config && builtins.length config.rocmTargets == 1) then builtins.elemAt config.rocmTargets 0 else "all"}"
+    "-DTensile_CODE_OBJECT_VERSION=V3"
   ];
 
   # sed '/add_custom_command(/,/^ )/d' -i library/src/CMakeLists.txt
