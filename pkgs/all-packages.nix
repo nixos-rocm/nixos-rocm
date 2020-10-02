@@ -149,8 +149,8 @@ with pkgs;
     inherit (self) rocm-cmake rocminfo rocm-runtime;
     comgr = self.rocm-comgr;
     hip = self.hip-clang;
-    defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
+
   rocrand-python-wrappers = callPackage ./development/libraries/rocrand/python.nix {
     inherit (self) rocm-runtime rocrand;
     inherit (python3Packages) buildPythonPackage numpy;
