@@ -40,7 +40,7 @@ in stdenv.mkDerivation rec {
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DBUILD_WITH_TENSILE=${if useTensile then "ON" else "OFF"}"
     "-DTensile_COMPILER=hipcc"
-    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}"
+    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or [ "gfx803" "gfx900" "gfx906" ])}"
   ] ++ stdenv.lib.optionals doCheck [
     "-DBUILD_CLIENTS_SAMPLES=NO"
     "-DBUILD_CLIENTS_TESTS=YES"
