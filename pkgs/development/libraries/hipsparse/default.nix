@@ -1,30 +1,22 @@
-{stdenv, fetchFromGitHub, cmake, gfortran, rocsparse, rocprim, hip, rocm-runtime, rocm-cmake, comgr
+{stdenv, fetchFromGitHub, cmake, rocsparse, hip, rocm-runtime, rocm-cmake, comgr, gtest
 
 # Tests are broken as they require downloading and pre-processing
 # several files
-, doCheck ? false, gtest ? null
+# , doCheck ? true
 }:
-
-assert doCheck -> gtest != null;
-
+let doCheck = false; in
 stdenv.mkDerivation rec {
   pname = "hipsparse";
-  version = "3.8.0";
+  version = "3.5.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "hipSPARSE";
     rev = "rocm-${version}";
-    sha256 = "0h5q6f9f9vhr05aryxx5iapkd2n2zhsv1w09lm3q6pnpy87y6kd3";
+    sha256 = "0zyvvkhyr6cn6dcyi7fh2q5f1w0afcmvzjdalq0bjad77psy0sb2";
   };
 
-  inherit doCheck;
-
-  nativeBuildInputs = [ cmake rocm-cmake ];
-  
-  buildInputs = [ gfortran rocsparse rocprim hip rocm-runtime comgr ];
-
-  checkInputs = [ gtest ];
-  
+  nativeBuildInputs = [ cmake rocm-cmake ] ++ stdenv.lib.optional doCheck gtest;
+  buildInputs = [ rocsparse hip rocm-runtime comgr ];
   cmakeFlags = [
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
