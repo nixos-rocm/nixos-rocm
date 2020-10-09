@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
     "-DHIP_PATH=${hip}"
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
-    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or [ "gfx803" "gfx900" "gfx906" ])}"
+    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}"
   ] ++ (let flag = if doCheck then "ON" else "OFF";
         in [ "-DBUILD_TEST=${flag} -DBUILD_BENCHMARK=${flag}" ]);
         

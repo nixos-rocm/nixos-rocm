@@ -31,7 +31,7 @@ with pkgs;
   rocm-cmake = callPackage ./development/tools/build-managers/rocm-cmake {};
   rocminfo = callPackage ./development/tools/rocminfo.nix {
     inherit (self) rocm-cmake rocm-runtime;
-    defaultTargets = config.rocmTargets or [ "gfx803" "gfx900" "gfx906" ];
+    defaultTargets = config.rocmTargets or ["gfx803" "gfx900" "gfx906"];
   };
 
   rocm-device-libs = callPackage ./development/libraries/rocm-device-libs {
@@ -119,17 +119,17 @@ with pkgs;
     inherit (self.llvmPackages_rocm) clang;
   };
 
-  miopen-hip = callPackage ./development/libraries/miopen {
-    inherit (self) rocm-cmake rocm-runtime miopengemm rocblas clang-ocl;
+  # # Currently broken
+  miopen-cl = callPackage ./development/libraries/miopen {
+    inherit (self) rocm-cmake rocm-opencl-runtime rocm-runtime
+                   clang-ocl miopengemm rocblas;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped;
     hip = self.hip-clang;
     comgr = self.rocm-comgr;
   };
 
-  # Broken
-  miopen-cl = self.miopen-cl.override {
-    use_ocl = true;
-    inherit rocm-opencl-runtime; 
+  miopen-hip = self.miopen-cl.override {
+    useHip = true;
   };
 
   rocfft = callPackage ./development/libraries/rocfft {

@@ -26,8 +26,9 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DCMAKE_CXX_COMPILER=hipcc"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
-    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or [ "gfx803" "gfx900" "gfx906" ])}"
+    "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}"
     "-DBUILD_TEST=${if doCheck then "YES" else "NO"}"
+    "${if doCheck then "-DAMDGPU_TEST_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or ["gfx803" "gfx900" "gfx906"])}" else ""}"
   ];
   
   patchPhase = ''
