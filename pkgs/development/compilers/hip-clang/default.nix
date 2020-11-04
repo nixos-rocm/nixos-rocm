@@ -5,12 +5,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.8.0";
+  version = "3.9.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "058nh1fyhp4qq2l9pzf9b6dblzh408zrs0bw5zbmhkn61kapmiic";
+    sha256 = "04gnw6vpikdms2azgwh0qz7nz05a75jk288jkbyd4xvd82vs4rm1";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
@@ -21,8 +21,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2020-09-14" +%y%U%w
-  workweek = "20371";
+  # day in the week: date -d "2020-10-13" +%y%U%w
+  workweek = "20412";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocm-runtime}"
@@ -43,6 +43,24 @@ stdenv.mkDerivation rec {
   #   url = "https://patch-diff.githubusercontent.com/raw/ROCm-Developer-Tools/HIP/pull/2005.patch";
   #   sha256 = "1w35s2xpxny4j5llpaz912g1br9735vdfdld1nhqdvrdax2vxlc7";
   # })];
+
+  patches = [
+    (fetchpatch {
+      name = "no-git-during-build";
+      url = "https://github.com/acowley/HIP/commit/7775ce62b37e84fabb673cf08669cd04386e47b6.patch";
+      sha256 = "08qd24lnvhjm6z2ws0gk5lzkk5kj53xsh7qvsvvdpxdxlz5l15la";
+    })
+    (fetchpatch {
+      name = "generate-hip-version-before-use";
+      url = "https://github.com/acowley/HIP/commit/207aea2def99ff0710ac2a227017ab124ecb6687.patch";
+      sha256 = "0mfq9yadzk4l88lmmdcdacyv0slzjzp2x059nhi962r8gbjjn9vi";
+    })
+    (fetchpatch {
+      name = "use-PATH-when-compiling-pch";
+      url = "https://github.com/acowley/HIP/commit/70526d65844e1b6b56bec027441c8a2743e6747a.patch";
+      sha256 = "1a945zgx2zpsi707qc4ryv43pkac99cvfah4v6p3fjh5s8n1r3bi";
+    })
+  ];
 
   # - fix bash paths
   # - fix path to rocm_agent_enumerator
@@ -68,7 +86,7 @@ stdenv.mkDerivation rec {
     sed -e 's,$ROCM_AGENT_ENUM = "''${ROCM_PATH}/bin/rocm_agent_enumerator";,$ROCM_AGENT_ENUM = "${rocminfo}/bin/rocm_agent_enumerator";,' \
         -e "s,^\($HIP_LIB_PATH=\).*$,\1\"$out/lib\";," \
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
-        -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${rocm-device-libs}/lib";,' \
+        -e 's,^\($DEVICE_LIB_PATH=\).*$,\1"${rocm-device-libs}/amdgcn/bitcode";,' \
         -e 's,^\($HIP_COMPILER=\).*$,\1"clang";,' \
         -e 's,^\($HIP_RUNTIME=\).*$,\1"ROCclr";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocm-runtime}";,'g \
@@ -76,6 +94,7 @@ stdenv.mkDerivation rec {
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
         -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
         -e 's,^\([[:space:]]*$HIPCXXFLAGS .= " -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocm-runtime}/include";,' \
+        -e 's,\([[:space:]]*$HIPCXXFLAGS .= "-D__HIP_ROCclr__\)";,\1 --rocm-path=${rocclr}";,' \
         -e "s,\$HIP_PATH/\(bin\|lib\),$out/\1,g" \
         -e "s,^\$HIP_LIB_PATH=\$ENV{'HIP_LIB_PATH'};,\$HIP_LIB_PATH=\"$out/lib\";," \
         -e 's,`file,`${file}/bin/file,g' \
@@ -89,11 +108,6 @@ stdenv.mkDerivation rec {
         -e 's,$HIP_CLANG_PATH/llc,${llvm}/bin/llc,' \
         -e 's, abs_path, Cwd::abs_path,' \
         -i bin/hipconfig
-
-    sed -e '/execute_process(COMMAND git show -s --format=@%ct/,/    OUTPUT_STRIP_TRAILING_WHITESPACE)/d' \
-        -e '/string(REGEX REPLACE ".*based on HCC " "" HCC_VERSION ''${HCC_VERSION})/,/string(REGEX REPLACE " .*" "" HCC_VERSION ''${HCC_VERSION})/d' \
-        -e 's/\(message(STATUS "Looking for HCC in: " ''${HCC_HOME} ". Found version: " ''${HCC_VERSION})\)/string(REGEX REPLACE ".*based on HCC[ ]*(LLVM)?[ ]*([^)\\r\\n ]*).*" "\\\\2" HCC_VERSION ''${HCC_VERSION})\n\1/' \
-        -i CMakeLists.txt
 
     sed -e 's|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/src)|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/include)|' \
         -i lpl_ca/CMakeLists.txt
