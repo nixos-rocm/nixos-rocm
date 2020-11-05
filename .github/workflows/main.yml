@@ -87,119 +87,119 @@ jobs:
     - name: hip
       run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip-clang
 
-  build-miopen:
-    runs-on: ubuntu-latest
+  # build-miopen:
+  #   runs-on: ubuntu-latest
 
-    needs: build-compilers
+  #   needs: build-compilers
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Install Nix
-      uses: cachix/install-nix-action@v11
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
+  #   - name: Install Nix
+  #     uses: cachix/install-nix-action@v11
+  #     with:
+  #       nix_path: nixpkgs=channel:nixos-unstable
 
-    - uses: cachix/cachix-action@v6
-      with:
-        name: nixos-rocm
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+  #   - uses: cachix/cachix-action@v6
+  #     with:
+  #       name: nixos-rocm
+  #       signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
-    - name: rocblas
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocblas
+  #   - name: rocblas
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocblas
 
-    - name: miopen-hip
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A miopen-hip
+  #   - name: miopen-hip
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A miopen-hip
 
-  build-rocfft:
-    runs-on: ubuntu-latest
+  # build-rocfft:
+  #   runs-on: ubuntu-latest
 
-    needs: build-compilers
+  #   needs: build-compilers
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Install Nix
-      uses: cachix/install-nix-action@v11
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
+  #   - name: Install Nix
+  #     uses: cachix/install-nix-action@v11
+  #     with:
+  #       nix_path: nixpkgs=channel:nixos-unstable
 
-    - uses: cachix/cachix-action@v6
-      with:
-        name: nixos-rocm
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+  #   - uses: cachix/cachix-action@v6
+  #     with:
+  #       name: nixos-rocm
+  #       signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
-    - name: rocfft
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocfft
+  #   - name: rocfft
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocfft
 
-  build-rccl:
-    runs-on: ubuntu-latest
+  # build-rccl:
+  #   runs-on: ubuntu-latest
 
-    needs: build-compilers
+  #   needs: build-compilers
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Install Nix
-      uses: cachix/install-nix-action@v11
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
+  #   - name: Install Nix
+  #     uses: cachix/install-nix-action@v11
+  #     with:
+  #       nix_path: nixpkgs=channel:nixos-unstable
 
-    - uses: cachix/cachix-action@v6
-      with:
-        name: nixos-rocm
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+  #   - uses: cachix/cachix-action@v6
+  #     with:
+  #       name: nixos-rocm
+  #       signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
-    - name: rccl
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rccl
+  #   - name: rccl
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rccl
 
-  build-rocrand:
-    runs-on: ubuntu-latest
+  # build-rocrand:
+  #   runs-on: ubuntu-latest
 
-    needs: build-compilers
+  #   needs: build-compilers
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Install Nix
-      uses: cachix/install-nix-action@v11
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
+  #   - name: Install Nix
+  #     uses: cachix/install-nix-action@v11
+  #     with:
+  #       nix_path: nixpkgs=channel:nixos-unstable
 
-    - uses: cachix/cachix-action@v6
-      with:
-        name: nixos-rocm
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+  #   - uses: cachix/cachix-action@v6
+  #     with:
+  #       name: nixos-rocm
+  #       signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
-    - name: rocrand
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocrand-python-wrappers
+  #   - name: rocrand
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocrand-python-wrappers
 
-  # This builds rocprim, and hipcub as dependencies. Their builds are
-  # very quick.
-  build-rocsparse:
-    runs-on: ubuntu-latest
+  # # This builds rocprim, and hipcub as dependencies. Their builds are
+  # # very quick.
+  # build-rocsparse:
+  #   runs-on: ubuntu-latest
 
-    needs: build-compilers
+  #   needs: build-compilers
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Install Nix
-      uses: cachix/install-nix-action@v11
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
+  #   - name: Install Nix
+  #     uses: cachix/install-nix-action@v11
+  #     with:
+  #       nix_path: nixpkgs=channel:nixos-unstable
 
-    - uses: cachix/cachix-action@v6
-      with:
-        name: nixos-rocm
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+  #   - uses: cachix/cachix-action@v6
+  #     with:
+  #       name: nixos-rocm
+  #       signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
-    - name: rocsparse
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocsparse
+  #   - name: rocsparse
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocsparse
 
-    - name: hipsparse
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hipsparse
+  #   - name: hipsparse
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hipsparse
 
-    - name: rocthrust
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocthrust
+  #   - name: rocthrust
+  #     run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocthrust
 
