@@ -16,12 +16,12 @@ let pyenv = python.withPackages (ps:
 
 in stdenv.mkDerivation rec {
   name = "rocblas";
-  version = "3.8.0";
+  version = "3.9.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "rocBLAS";
     rev = "rocm-${version}";
-    sha256 = "1h7v509lq3ha2ai2gf2mrsbka4cv3ckd2jbc61b3x3sbv2n4iafa";
+    sha256 = "1qn3jh82z32ab2cmcg7y517sysrd1wa7xc0wq86v9g3lim217n5i";
   };
 
   inherit doCheck;

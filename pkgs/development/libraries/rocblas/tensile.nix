@@ -3,12 +3,12 @@
 , rocminfo, rocm-smi, hip-clang }:
 buildPythonPackage rec {
   pname = "Tensile";
-  version = "3.8.0";
+  version = "3.9.0";
   src = fetchFromGitHub {
     owner = "ROCmSoftwarePlatform";
     repo = "Tensile";
     rev = "rocm-${version}";
-    sha256 = "0biildzqqfvsllr97h4mkf7qwvrjb1ij9rij5syv06ah0rrfm77p";
+    sha256 = "0xrv7fvdj4g14l65rzrfajpx4wg7ldd2jh5rc7bzl22qd217iv9a";
   };
   buildInputs = [ pyyaml pytest ];
   propagatedBuildInputs = [ msgpack ];
