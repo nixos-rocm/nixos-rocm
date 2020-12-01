@@ -5,12 +5,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.9.0";
+  version = "3.10.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "04gnw6vpikdms2azgwh0qz7nz05a75jk288jkbyd4xvd82vs4rm1";
+    sha256 = "0xfg461iz5p8i997pzf4xxnsb5b5lsk8v71mcjif1il4kxnzjw5a";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
@@ -47,18 +47,13 @@ stdenv.mkDerivation rec {
   patches = [
     (fetchpatch {
       name = "no-git-during-build";
-      url = "https://github.com/acowley/HIP/commit/7775ce62b37e84fabb673cf08669cd04386e47b6.patch";
-      sha256 = "08qd24lnvhjm6z2ws0gk5lzkk5kj53xsh7qvsvvdpxdxlz5l15la";
-    })
-    (fetchpatch {
-      name = "generate-hip-version-before-use";
-      url = "https://github.com/acowley/HIP/commit/207aea2def99ff0710ac2a227017ab124ecb6687.patch";
-      sha256 = "0mfq9yadzk4l88lmmdcdacyv0slzjzp2x059nhi962r8gbjjn9vi";
+      url = "https://github.com/acowley/HIP/commit/310b7e972cfb23216250c0240ba6134741679aee.patch";
+      sha256 = "08ky7v1yvajabn9m5x3afzrnz38gnrgc7vgqlbyr7s801c383ha1";
     })
     (fetchpatch {
       name = "use-PATH-when-compiling-pch";
-      url = "https://github.com/acowley/HIP/commit/70526d65844e1b6b56bec027441c8a2743e6747a.patch";
-      sha256 = "1a945zgx2zpsi707qc4ryv43pkac99cvfah4v6p3fjh5s8n1r3bi";
+      url = "https://github.com/acowley/HIP/commit/bfb4dd1eafa9714a2c05a98229cc35ffa3429b37.patch";
+      sha256 = "1wp0m32df7pf4rhx3k5n750fd7kz10zr60z0wllb0mw6h00w6xpz";
     })
   ];
 
