@@ -2,10 +2,10 @@ name: CI
 
 on:
   pull_request:
-    branches: [ master, 3.9.x ]
+    branches: [ master, 3.10.x ]
 
   push:
-    branches: [ master, 3.9.x ]
+    branches: [ master, 3.10.x ]
 
   schedule:
     - cron: "0 23 * * *"
