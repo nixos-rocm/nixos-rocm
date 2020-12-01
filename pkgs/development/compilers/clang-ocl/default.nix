@@ -3,12 +3,12 @@
 , clang, clang-unwrapped }:
 stdenv.mkDerivation rec {
   name = "clang-ocl";
-  version = "3.8.0";
+  version = "3.10.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "clang-ocl";
     rev = "rocm-${version}";
-    sha256 = "0xnl1ks8yc1zbdr824ihb13dqg03w2b7mwdfgqcyspxvcfz8ibjz";
+    sha256 = "1jw6icxhg7wikjh60c715svl8ijzcvvjypbl3jijaykk7y17xfri";
   };
   propagatedBuildInputs = [ lld ];
   nativeBuildInputs = [ cmake rocm-cmake rocm-opencl-runtime ];
