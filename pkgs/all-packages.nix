@@ -101,16 +101,20 @@ with pkgs;
     inherit (python3Packages) python;
   };
 
-  # rocblas-test = callPackage ./development/libraries/rocblas {
-  #   inherit (self) rocm-cmake hcc hcc-unwrapped rocr rocblas-tensile;
-  #   hip = self.hip;
-  #   clang = self.hcc-clang;
-  #   openmp = self.hcc-openmp;
-  #   comgr = self.amd-comgr;
-  #   llvm = pkgs.llvmPackages_7.llvm;
-  #   inherit (python3Packages) python;
-  #   doCheck = true;
-  # };
+  rocblas-test = callPackage ./development/libraries/rocblas {
+    inherit (self) rocm-cmake # hcc hcc-unwrapped
+      rocm-runtime rocblas-tensile;
+    hip = self.hip;
+    inherit (self.llvmPackages_rocm) clang llvm compiler-rt;
+    openmp = self.rocm-openmp;
+    comgr = self.rocm-comgr;
+    # clang = self.hcc-clang;
+    # openmp = self.hcc-openmp;
+    # comgr = self.amd-comgr;
+    # llvm = pkgs.llvmPackages_7.llvm;
+    inherit (python3Packages) python;
+    doCheck = true;
+  };
 
   # MIOpen
 
@@ -127,7 +131,7 @@ with pkgs;
   };
 
   # Broken
-  miopen-cl = self.miopen-cl.override {
+  miopen-cl = self.miopen-hip.override {
     use_ocl = true;
     inherit rocm-opencl-runtime; 
   };
@@ -208,7 +212,7 @@ with pkgs;
     opencl = self.rocm-opencl-runtime;
   };
 
-  tensorflow-rocm-bin = python37Packages.callPackage ./development/libraries/tensorflow/1/bin/bin.nix {
+  tensorflow-rocm-bin = python37Packages.callPackage ./development/libraries/tensorflow/1/bin.nix {
     inherit (self) miopen-hip miopengemm rocrand
                    rocfft rocblas rocm-runtime rccl cxlactivitylogger;
     hip = self.hip-clang;
