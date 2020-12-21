@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub, cmake, rocm-runtime, rocm-thunk }:
 stdenv.mkDerivation rec {
   name = "rocm-bandwidth";
-  version = "3.10.0";
+  version = "4.0.0";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "rocm_bandwidth_test";
