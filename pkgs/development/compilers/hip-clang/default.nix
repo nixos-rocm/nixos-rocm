@@ -5,12 +5,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "3.10.0";
+  version = "4.0.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "0xfg461iz5p8i997pzf4xxnsb5b5lsk8v71mcjif1il4kxnzjw5a";
+    sha256 = "1zqnz44iyz3v0lz25qy8vadyb84zhb3jclc3c3gpb5kyprcjibp3";
   };
   nativeBuildInputs = [ cmake python ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
