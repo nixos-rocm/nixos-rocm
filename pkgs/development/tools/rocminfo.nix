@@ -7,7 +7,7 @@
   # compilers to determine the desired target.
 , defaultTargets ? []}:
 stdenv.mkDerivation rec {
-  version = "3.8.0";
+  version = "4.0.0";
   pname = "rocminfo";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
