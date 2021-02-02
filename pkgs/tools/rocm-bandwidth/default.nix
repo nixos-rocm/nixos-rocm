@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, rocm-runtime, rocm-thunk }:
+{ stdenv, lib, fetchFromGitHub, cmake, rocm-runtime, rocm-thunk }:
 stdenv.mkDerivation rec {
   name = "rocm-bandwidth";
   version = "4.0.0";
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
   meta = {
     description = "Bandwidth test for ROCm";
     homepage = https://github.com/RadeonOpenCompute/rocm_bandwidth_test;
-    license = stdenv.lib.licenses.ncsa;
-    platforms = stdenv.lib.platforms.linux;
+    license = lib.licenses.ncsa;
+    platforms = lib.platforms.linux;
   };
 }

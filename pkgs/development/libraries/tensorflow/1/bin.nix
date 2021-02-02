@@ -138,7 +138,7 @@ in buildPythonPackage {
   # libraries are loaded at runtime. If we run in preFixup then
   # patchelf --shrink-rpath will remove the cuda libraries.
   postFixup = let
-    rpath = stdenv.lib.makeLibraryPath
+    rpath = lib.makeLibraryPath
               [ stdenv.cc.cc.lib zlib rocmtoolkit_joined ];
   in
   lib.optionalString (stdenv.isLinux) ''
@@ -150,7 +150,7 @@ in buildPythonPackage {
     done
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Computation using data flow graphs for scalable machine learning";
     homepage = http://tensorflow.org;
     license = licenses.asl20;

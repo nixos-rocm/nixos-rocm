@@ -1,4 +1,4 @@
-{ stdenv, version, src, cmake, python3, llvm, libcxxabi }:
+{ stdenv, lib, version, src, cmake, python3, llvm, libcxxabi }:
 stdenv.mkDerivation rec {
   pname = "compiler-rt";
   inherit version src;
@@ -31,8 +31,8 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./compiler-rt-codesign.patch # Revert compiler-rt commit that makes codesign mandatory
-  ]# ++ stdenv.lib.optional stdenv.hostPlatform.isMusl ./sanitizers-nongnu.patch
-    ++ stdenv.lib.optional stdenv.hostPlatform.isAarch32 ./compiler-rt-armv7l.patch;
+  ]# ++ lib.optional stdenv.hostPlatform.isMusl ./sanitizers-nongnu.patch
+    ++ lib.optional stdenv.hostPlatform.isAarch32 ./compiler-rt-armv7l.patch;
 
 
   # TSAN requires XPC on Darwin, which we have no public/free source files for. We can depend on the Apple frameworks
@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
   # can build this. If we didn't do it, basically the entire nixpkgs on Darwin would have an unfree dependency and we'd
   # get no binary cache for the entire platform. If you really find yourself wanting the TSAN, make this controllable by
   # a flag and turn the flag off during the stdenv build.
-  postPatch = stdenv.lib.optionalString (!stdenv.isDarwin) ''
+  postPatch = lib.optionalString (!stdenv.isDarwin) ''
     substituteInPlace cmake/builtin-config-ix.cmake \
       --replace 'set(X86 i386)' 'set(X86 i386 i486 i586 i686)'
   '';

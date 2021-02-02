@@ -1,4 +1,4 @@
-{stdenv, fetchFromGitHub, cmake, rocm-thunk, rocm-runtime, hcc-unwrapped, hip
+{stdenv, lib, fetchFromGitHub, cmake, rocm-thunk, rocm-runtime, hcc-unwrapped, hip
 , python, buildPythonPackage, fetchPypi, ply}:
 let
   CppHeaderParser = buildPythonPackage rec {
@@ -13,7 +13,7 @@ let
     doCheck = false;
     propagatedBuildInputs = [ ply ];
 
-    meta = with stdenv.lib; {
+    meta = with lib; {
       homepage = http://senexcanis.com/open-source/cppheaderparser/;
       description = "Parse C++ header files and generate a data structure representing the class";
       license = licenses.bsd3;

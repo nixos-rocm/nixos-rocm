@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
+{ stdenv, lib, fetchFromGitHub, fetchpatch, cmake, perl, python, writeText
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, lld, compiler-rt
 , rocm-device-libs, rocm-thunk, rocm-runtime, rocminfo, comgr, rocclr
@@ -86,7 +86,7 @@ stdenv.mkDerivation rec {
         -e 's,^\($HIP_RUNTIME=\).*$,\1"ROCclr";,' \
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocm-runtime}";,'g \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
-        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
+        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${lib.versions.majorMinor lib.version}";,' \
         -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
         -e 's,^\([[:space:]]*$HIPCXXFLAGS .= " -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocm-runtime}/include";,' \
         -e 's,\([[:space:]]*$HIPCXXFLAGS .= "-D__HIP_ROCclr__\)";,\1 --rocm-path=${rocclr}";,' \

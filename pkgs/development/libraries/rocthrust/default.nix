@@ -1,4 +1,5 @@
-{stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-cmake, hip, rocprim, comgr
+{ stdenv, lib, fetchFromGitHub, fetchpatch, cmake
+, rocm-cmake, hip, rocprim, comgr
 , gtest, doCheck ? false }:
 stdenv.mkDerivation rec {
   name = "rocthrust";
@@ -26,5 +27,5 @@ stdenv.mkDerivation rec {
     "-DBUILD_TEST=${if doCheck then "YES" else "NO"}"
   ];
   nativeBuildInputs = [ cmake rocm-cmake ];
-  buildInputs = [ hip rocprim comgr ] ++ stdenv.lib.optionals doCheck [ gtest ];
+  buildInputs = [ hip rocprim comgr ] ++ lib.optionals doCheck [ gtest ];
 }

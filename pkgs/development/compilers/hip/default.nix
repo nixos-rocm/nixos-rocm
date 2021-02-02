@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake, perl, python, writeText
+{ stdenv, lib, fetchFromGitHub, cmake, perl, python, writeText
 , hcc, hcc-unwrapped, rocm-runtime, rocminfo, comgr
 , file, binutils-unwrapped }:
 stdenv.mkDerivation rec {
@@ -50,7 +50,7 @@ stdenv.mkDerivation rec {
         -e 's,^\([[:space:]]*$HSA_PATH=\).*$,\1"${rocm-runtime}";,' \
         -e 's,^\([[:space:]]*$HCC_HOME=\).*$,\1"${hcc}";,' \
         -e 's,\([[:space:]]*$HOST_OSNAME=\).*,\1"nixos";,' \
-        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${stdenv.lib.versions.majorMinor stdenv.lib.version}";,' \
+        -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${lib.versions.majorMinor lib.version}";,' \
         -e "s,\$HIP_PATH/\(bin\|lib\),$out/\1,g" \
         -e "s,^\$HIP_LIB_PATH=\$ENV{'HIP_LIB_PATH'};,\$HIP_LIB_PATH=\"$out/lib\";," \
         -e 's,`file,`${file}/bin/file,g' \

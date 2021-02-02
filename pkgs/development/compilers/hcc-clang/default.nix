@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, python
+{ stdenv, lib, fetchFromGitHub, fetchpatch, cmake, python
 , rocm-runtime, hcc-llvm, hcc-lld, rocminfo
 , version, src }:
 stdenv.mkDerivation rec {
@@ -12,8 +12,8 @@ stdenv.mkDerivation rec {
   # day in the week: date -d "2019-12-06" +%y%U%w
   cmakeFlags = [
     "-DHCC_VERSION_STRING=${version}"
-    "-DHCC_VERSION_MAJOR=${stdenv.lib.versions.major version}"
-    "-DHCC_VERSION_MINOR=${stdenv.lib.versions.minor version}"
+    "-DHCC_VERSION_MAJOR=${lib.versions.major version}"
+    "-DHCC_VERSION_MINOR=${lib.versions.minor version}"
     "-DHCC_VERSION_PATCH=19485"
     "-DLLVM_ENABLE_RTTI=ON"
   ];

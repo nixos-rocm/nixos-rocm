@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, pkgconfig, numactl
+{ stdenv, lib, fetchFromGitHub, fetchpatch, cmake, pkgconfig, numactl
 , rocm-cmake, hip, comgr
 , doCheck ? false, gtest }:
 stdenv.mkDerivation rec {
@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
   # NIX_CFLAGS_COMPILE="-D__HIP_VDI__";
 
   # NOTE: This works in a nix-shell, but not with nix-build due to user groups
-  checkPhase = stdenv.lib.optionalString doCheck ''
+  checkPhase = lib.optionalString doCheck ''
     ln -s $(dirname `pwd`)/inc $(dirname `pwd`)/include
     export NIX_LDFLAGS="$NIX_LDFLAGS -L$PWD -L${gtest}/lib"
     export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH

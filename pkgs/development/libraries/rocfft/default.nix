@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
     # "-DHSA_LIBRARY=${rocm-runtime}/lib/libhsa-runtime64.so"
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or [ "gfx803" "gfx900" "gfx906" ])}"
-  ] ++ stdenv.lib.optionals doCheck [
+  ] ++ lib.optionals doCheck [
     "-DBUILD_CLIENTS_TESTS=ON"
     "-DBUILD_CLIENTS_BENCHMARKS=ON"
   ];

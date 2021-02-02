@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , fetchFromGitHub
 , cmake
 , clang
@@ -30,7 +31,7 @@ stdenv.mkDerivation rec {
     "-DCLANG=${clang}/bin/clang"
   ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Set of AMD-specific device-side language runtime libraries";
     homepage = "https://github.com/RadeonOpenCompute/ROCm-Device-Libs";
     license = licenses.ncsa;

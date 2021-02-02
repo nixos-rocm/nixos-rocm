@@ -1,4 +1,5 @@
-{stdenv, fetchFromGitHub, cmake, gfortran, rocsparse, rocprim, hip, rocm-runtime, rocm-cmake, comgr
+{ stdenv, lib, fetchFromGitHub, cmake, gfortran
+, rocsparse, rocprim, hip, rocm-runtime, rocm-cmake, comgr
 
 # Tests are broken as they require downloading and pre-processing
 # several files
@@ -28,7 +29,7 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DCMAKE_INSTALL_INCLUDEDIR=include"
     "-DCMAKE_CXX_COMPILER=${hip}/bin/hipcc"
-  ] ++ stdenv.lib.optional doCheck "-DBUILD_CLIENTS_TESTS=YES";
+  ] ++ lib.optional doCheck "-DBUILD_CLIENTS_TESTS=YES";
   patchPhase = ''
     sed -e 's|find_package(Git REQUIRED)||' \
         -i cmake/Dependencies.cmake

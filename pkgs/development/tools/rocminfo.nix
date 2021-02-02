@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fetchpatch, cmake, rocm-runtime, python3, rocm-cmake, busybox, gnugrep
+{ stdenv, lib, fetchFromGitHub, fetchpatch, cmake, rocm-runtime, python3, rocm-cmake, busybox, gnugrep
   # rocminfo requires that the calling user have a password and be in
   # the video group. If we let rocm_agent_enumerator rely upon
   # rocminfo's output, then it, too, has those requirements. Instead,
@@ -32,7 +32,7 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
     cp rocminfo $out/bin
     cp rocm_agent_enumerator $out/bin
-  '' + stdenv.lib.optionalString (defaultTargets != []) ''
-    echo '${stdenv.lib.concatStringsSep "\n" defaultTargets}' > $out/bin/target.lst
+  '' + lib.optionalString (defaultTargets != []) ''
+    echo '${lib.concatStringsSep "\n" defaultTargets}' > $out/bin/target.lst
   '';
 }

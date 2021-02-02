@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
+{ stdenv, lib, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
 , rocm-runtime, hip, rocm-cmake, comgr, clang, compiler-rt
 , llvm, openmp, makeWrapper, msgpack
 , doCheck ? false, gtest ? null
@@ -41,12 +41,12 @@ in stdenv.mkDerivation rec {
     "-DBUILD_WITH_TENSILE=${if useTensile then "ON" else "OFF"}"
     "-DTensile_COMPILER=hipcc"
     "-DAMDGPU_TARGETS=${lib.strings.concatStringsSep ";" (config.rocmTargets or [ "gfx803" "gfx900" "gfx906" ])}"
-  ] ++ stdenv.lib.optionals doCheck [
+  ] ++ lib.optionals doCheck [
     "-DBUILD_CLIENTS_SAMPLES=NO"
     "-DBUILD_CLIENTS_TESTS=YES"
     "-DBUILD_CLIENTS_BENCHMARKS=NO"
     "-DLINK_BLIS=NO"
-  ] ++ stdenv.lib.optionals useTensile [
+  ] ++ lib.optionals useTensile [
     "-DVIRTUALENV_HOME_DIR=${rocblas-tensile}"
     "-DTensile_TEST_LOCAL_PATH=${rocblas-tensile}"
     "-DTensile_ROOT=${rocblas-tensile}"
@@ -73,7 +73,7 @@ in stdenv.mkDerivation rec {
     patchShebangs ./clients/common/rocblas_gentest.py
   '';
 
-  preBuild = stdenv.lib.optional doCheck ''
+  preBuild = lib.optional doCheck ''
     cp -r ../clients/gtest/ clients/
   '';
 
@@ -83,7 +83,7 @@ in stdenv.mkDerivation rec {
   #  clients/staging/rocblas-test
   #'';
 
-  postInstall = stdenv.lib.optional doCheck ''
+  postInstall = lib.optional doCheck ''
     mkdir -p $out/bin/
     mkdir -p $out/test/
     cp clients/staging/rocblas-test $out/bin/

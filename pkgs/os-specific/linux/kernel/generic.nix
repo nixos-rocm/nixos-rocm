@@ -8,6 +8,7 @@
 , libmpc ? null
 , mpfr ? null
 , stdenv
+, lib
 
 , # The kernel source tarball.
   src
@@ -54,8 +55,6 @@ assert stdenv.isLinux;
 
 let
 
-  lib = stdenv.lib;
-
   # Combine the `features' attribute sets of all the kernel patches.
   kernelFeatures = lib.fold (x: y: (x.features or {}) // y) ({
     iwlwifi = true;
@@ -99,7 +98,7 @@ let
 
     depsBuildBuild = [ buildPackages.stdenv.cc ];
     nativeBuildInputs = [ perl gmp libmpc mpfr ]
-      ++ lib.optionals (stdenv.lib.versionAtLeast version "4.16") [ bison flex ];
+      ++ lib.optionals (lib.versionAtLeast version "4.16") [ bison flex ];
 
     platformName = stdenv.hostPlatform.platform.name;
     # e.g. "defconfig"
@@ -162,7 +161,7 @@ let
   }; # end of configfile derivation
 
   kernel = (callPackage (<nixpkgs> + /pkgs/os-specific/linux/kernel/manual-config.nix) {}) {
-    inherit version modDirVersion src kernelPatches stdenv extraMeta configfile;
+    inherit version modDirVersion src kernelPatches stdenv lib extraMeta configfile;
 
     config = { CONFIG_MODULES = "y"; CONFIG_FW_LOADER = "m"; };
   };
