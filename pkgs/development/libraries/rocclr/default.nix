@@ -33,11 +33,10 @@ stdenv.mkDerivation rec {
 
   prePatch = ''
     substituteInPlace CMakeLists.txt \
-      --replace 'set(ROCCLR_EXPORTS_FILE "''${CMAKE_CURRENT_BINARY_DIR}/amdrocclr_staticTargets.cmake")' \
-        'set(ROCCLR_EXPORTS_FILE "''${CMAKE_INSTALL_LIBDIR}/cmake/amdrocclr_staticTargets.cmake")' \
       --replace 'set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ''${CMAKE_CURRENT_BINARY_DIR}/lib)' \
         'set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ''${CMAKE_INSTALL_LIBDIR})' \
-      --replace 'find_library( OpenCL REQUIRED' 'find_library( OpenCL'
+      --replace '"''${CMAKE_CURRENT_BINARY_DIR}/''${ROCCLR_PACKAGE_PREFIX}' \
+        '"''${CMAKE_INSTALL_PREFIX}/''${ROCCLR_PACKAGE_PREFIX}'
     substituteInPlace device/comgrctx.cpp \
       --replace "libamd_comgr.so" "${rocm-comgr}/lib/libamd_comgr.so"
   '';
@@ -51,8 +50,10 @@ stdenv.mkDerivation rec {
     ln -s $out/include/compiler/lib/include/* $out/include
     ln -s $out/include/elf/elfio $out/include/elfio
 
-    substituteInPlace $out/lib/cmake/rocclr/ROCclrConfig.cmake \
-      --replace "/build/source/build" "$out"
+    substituteInPlace $out/lib/cmake/rocclr/rocclr-targets.cmake \
+      --replace "/build/source/build" "$out/lib" \
+      --replace "/build/source/include" "$out/include" \
+      --replace "/build/source" "$out/include"
   '';
 
   meta = with lib; {
