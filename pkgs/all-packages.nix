@@ -261,17 +261,7 @@ with pkgs;
   #   pytorch = self.pytorch-rocm;
   # };
 
-  # The OpenCL compiler (called through clBuildProgram by darktable)
-  # is not properly supporting `-I` flags to add to the include
-  # path. To avoid relying on that mechanism, we edit `#include`
-  # directives in the OpenCL kernels to use absolute paths.
-  darktable-rocm = pkgs.darktable.overrideAttrs (old: {
-    preFixup = (old.preFixup or "") + ''
-      for f in $(find $out/share/darktable/kernels -name '*.cl'); do
-        sed "s|#include \"\(.*\)\"|#include \"$out/share/darktable/kernels/\1\"|g" -i "$f"
-      done
-    '';
-  });
+  darktable-rocm = throw "'darktable-rocm' is no longer needed; please use the 'nixpkgs.darktable' package."; # added 2021-03-09
 
   hashcat-rocm = pkgs.hashcat.overrideAttrs (old: {
     preFixup = (old.preFixup or "") + ''
