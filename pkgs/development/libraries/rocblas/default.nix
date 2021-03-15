@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchFromGitHub, lib, config, cmake, pkgconfig, libunwind, python
+{ stdenv, lib, fetchFromGitHub, config, cmake, pkgconfig, libunwind, python
 , rocm-runtime, hip, rocm-cmake, comgr, clang, compiler-rt
 , llvm, openmp, makeWrapper, msgpack
 , doCheck ? false, gtest ? null
