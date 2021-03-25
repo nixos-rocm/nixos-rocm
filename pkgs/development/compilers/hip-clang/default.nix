@@ -2,17 +2,18 @@
 , file, binutils-unwrapped
 , llvm, clang, clang-unwrapped, lld, compiler-rt
 , rocm-device-libs, rocm-thunk, rocm-runtime, rocminfo, comgr, rocclr
+, makeWrapper
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "4.0.0";
+  version = "4.1.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "1zqnz44iyz3v0lz25qy8vadyb84zhb3jclc3c3gpb5kyprcjibp3";
+    sha256 = "sha256:1j45bn2v627ddsagfrxxdq85sv7kssxxljxzrhvrrwibhg3z94wf";
   };
-  nativeBuildInputs = [ cmake python ];
+  nativeBuildInputs = [ cmake python makeWrapper ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
 
   preConfigure = ''
@@ -21,8 +22,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2020-10-13" +%y%U%w
-  workweek = "20412";
+  # day in the week: date -d "2021-02-16" +%y%U%w
+  workweek = "21072";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocm-runtime}"
@@ -103,6 +104,8 @@ stdenv.mkDerivation rec {
         -e 's,$HIP_CLANG_PATH/llc,${llvm}/bin/llc,' \
         -e 's, abs_path, Cwd::abs_path,' \
         -i bin/hipconfig
+
+    sed -e 's, abs_path, Cwd::abs_path,' -i bin/hipvars.pm
 
     sed -e 's|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/src)|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/include)|' \
         -i lpl_ca/CMakeLists.txt
