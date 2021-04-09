@@ -6,12 +6,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "4.1.0";
+  version = "4.1.1";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "sha256:1j45bn2v627ddsagfrxxdq85sv7kssxxljxzrhvrrwibhg3z94wf";
+    sha256 = "sha256:1dhd82p80c3z775gjsbv31p4z48iqykd34j62x32ic44nvfm1kym";
   };
   nativeBuildInputs = [ cmake python makeWrapper ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
@@ -22,13 +22,13 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2021-02-16" +%y%U%w
-  workweek = "21072";
+  # day in the week: date -d "2021-03-18" +%y%U%w
+  workweek = "21114";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocm-runtime}"
     "-DHIP_COMPILER=clang"
-    "-DHIP_PLATFORM=rocclr"
+    "-DHIP_PLATFORM=amd"
     "-DHIP_VERSION_GITDATE=${workweek}"
     "-DCMAKE_C_COMPILER=${clang}/bin/clang"
     "-DCMAKE_CXX_COMPILER=${clang}/bin/clang++"
@@ -100,7 +100,7 @@ stdenv.mkDerivation rec {
 
     sed -e 's,^\($HSA_PATH=\).*$,\1"${rocm-runtime}";,' \
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
-        -e 's,^\($HIP_PLATFORM=\).*$,\1"hcc";,' \
+        -e 's,^\($HIP_PLATFORM=\).*$,\1"amd";,' \
         -e 's,$HIP_CLANG_PATH/llc,${llvm}/bin/llc,' \
         -e 's, abs_path, Cwd::abs_path,' \
         -i bin/hipconfig
