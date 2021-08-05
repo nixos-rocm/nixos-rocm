@@ -1,4 +1,4 @@
-# Radeon Open Compute (4.1.1) packages for NixOS
+# Radeon Open Compute (4.3.0) packages for NixOS
 
 ## Do I Need This Overlay?
 Parts of this overlay have been upstreamed into `nixpkgs`. If all you need is OpenCL support for AMD GPUs, you can follow the [instructions](https://hydra.nixos.org/build/124333142/download/2/nixos/index.html#sec-gpu-accel) in a new-enough version of the NixOS manual, and do not require this overlay. If you want to use the [HIP](https://github.com/ROCm-Developer-Tools/HIP) compiler for CUDA portability, any middleware libraries built atop that, or any of the broader ROCm ecosystem, you will need this overlay.

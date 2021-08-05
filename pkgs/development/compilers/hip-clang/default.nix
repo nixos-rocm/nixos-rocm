@@ -6,12 +6,12 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "4.1.1";
+  version = "4.3.0";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    sha256 = "sha256:1dhd82p80c3z775gjsbv31p4z48iqykd34j62x32ic44nvfm1kym";
+    sha256 = "sha256-eRbY6WSGXG9H7ey6rv3ZyvEi/5VFHKjSu0ko5Ptp4hE=";
   };
   nativeBuildInputs = [ cmake python makeWrapper ];
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr rocclr ];
@@ -22,8 +22,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2021-03-18" +%y%U%w
-  workweek = "21114";
+  # day in the week: date -d "2021-07-25" +%y%U%w
+  workweek = "21300";
 
   cmakeFlags = [
     "-DHSA_PATH=${rocm-runtime}"
@@ -90,7 +90,7 @@ stdenv.mkDerivation rec {
         -e 's,\([[:space:]]*$HOST_OSVER=\).*,\1"${lib.versions.majorMinor lib.version}";,' \
         -e 's,^\([[:space:]]*\)$HIP_CLANG_INCLUDE_PATH = abs_path("$HIP_CLANG_PATH/../lib/clang/$HIP_CLANG_VERSION/include");,\1$HIP_CLANG_INCLUDE_PATH = "${clang-unwrapped}/lib/clang/$HIP_CLANG_VERSION/include";,' \
         -e 's,^\([[:space:]]*$HIPCXXFLAGS .= " -isystem $HIP_CLANG_INCLUDE_PATH\)";,\1 -isystem ${rocm-runtime}/include";,' \
-        -e 's,\([[:space:]]*$HIPCXXFLAGS .= "-D__HIP_ROCclr__\)";,\1 --rocm-path=${rocclr}";,' \
+        -e 's,\($HIPCXXFLAGS .= " -isystem \\"$HIP_INCLUDE_PATH\\"\)" ;,\1 --rocm-path=${rocclr}";,' \
         -e "s,\$HIP_PATH/\(bin\|lib\),$out/\1,g" \
         -e "s,^\$HIP_LIB_PATH=\$ENV{'HIP_LIB_PATH'};,\$HIP_LIB_PATH=\"$out/lib\";," \
         -e 's,`file,`${file}/bin/file,g' \
@@ -106,9 +106,6 @@ stdenv.mkDerivation rec {
         -i bin/hipconfig
 
     sed -e 's, abs_path, Cwd::abs_path,' -i bin/hipvars.pm
-
-    sed -e 's|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/src)|target_include_directories(lpl PUBLIC ''${PROJECT_SOURCE_DIR}/include)|' \
-        -i lpl_ca/CMakeLists.txt
 
     sed -e 's|_IMPORT_PREFIX}/../include|_IMPORT_PREFIX}/include|g' \
         -e 's|''${HIP_CLANG_ROOT}/lib/clang/\*/include|${clang-unwrapped}/lib/clang/*/include|' \

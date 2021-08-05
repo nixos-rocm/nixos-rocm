@@ -7,25 +7,26 @@
 , xxd
 , elfutils
 , llvm
+, numactl
 , rocm-device-libs
 , rocm-thunk }:
 
 stdenv.mkDerivation rec {
   pname = "rocm-runtime";
-  version = "4.1.0";
+  version = "4.3.0";
 
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCR-Runtime";
     rev = "rocm-${version}";
-    hash = "sha256-Jxg3n203tV0L+UrmeQEuzX0TKpFu5An2cnuEA/F/SNY=";
+    hash = "sha256-R02A3OVo2OqPYvu1Gv2qZ+o364twFQOYuovy6ovDDks=";
   };
 
   sourceRoot = "source/src";
 
   nativeBuildInputs = [ cmake xxd ];
 
-  buildInputs = [ clang-unwrapped elfutils llvm ];
+  buildInputs = [ clang-unwrapped elfutils llvm numactl ];
 
   cmakeFlags = [
    "-DBITCODE_DIR=${rocm-device-libs}/amdgcn/bitcode"
