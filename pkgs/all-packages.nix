@@ -25,6 +25,7 @@ with pkgs;
   llvmPackages_rocm = callPackage ./development/compilers/llvm/rocm {};
   rocm-runtime = callPackage ./development/libraries/rocm-runtime {
     # inherit (self) rocm-thunk;
+    inherit (self) rocm-device-libs rocm-thunk;
     inherit (self.llvmPackages_rocm) clang-unwrapped llvm;
   };
   rocm-thunk = callPackage ./development/libraries/rocm-thunk {};
@@ -40,7 +41,7 @@ with pkgs;
 
   rocm-comgr = callPackage ./development/libraries/rocm-comgr {
     inherit (self.llvmPackages_rocm) clang lld llvm;
-    device-libs = self.rocm-device-libs;
+    inherit (self) rocm-device-libs;
   };
 
   rocclr = callPackage ./development/libraries/rocclr {

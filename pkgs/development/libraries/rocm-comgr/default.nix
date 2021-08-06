@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchFromGitHub, cmake, clang, device-libs, lld, llvm }:
+{ stdenv, lib, fetchFromGitHub, cmake, clang, rocm-device-libs, lld, llvm }:
 
 stdenv.mkDerivation rec {
   pname = "rocm-comgr";
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
 
-  buildInputs = [ clang device-libs lld llvm ];
+  buildInputs = [ clang rocm-device-libs lld llvm ];
 
   cmakeFlags = [
     "-DCLANG=${clang}/bin/clang"
