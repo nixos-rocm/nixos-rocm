@@ -19,25 +19,32 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
     - name: Install Nix
-      uses: cachix/install-nix-action@v12
+      uses: cachix/install-nix-action@v13
+      # with:
+      #   nix_path: nixpkgs=channel:nixos-unstable
       with:
-        nix_path: nixpkgs=channel:nixos-unstable
+        install_url: https://nixos-nix-install-tests.cachix.org/serve/i6laym9jw3wg9mw6ncyrk6gjx4l34vvx/install
+        install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - uses: cachix/cachix-action@v8
       with:
         name: nixos-rocm
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
-    - name: nixpkgs-report
-      run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+    # - name: nixpkgs-report
+    #   run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
 
     - name: rocm-llvm
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.llvm
+      run: nix build .#llvmPackages_rocm.llvm
+      # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.llvm
 
     - name: rocm-clang
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.clang
+      run: nix build .#llvmPackages_rocm.clang
+      # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A llvmPackages_rocm.clang
     
   build-tools:
     runs-on: ubuntu-latest
@@ -48,9 +55,15 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Nix
-      uses: cachix/install-nix-action@v12
+      uses: cachix/install-nix-action@v13
+      # with:
+      #   nix_path: nixpkgs=channel:nixos-unstable
       with:
-        nix_path: nixpkgs=channel:nixos-unstable
+        install_url: https://nixos-nix-install-tests.cachix.org/serve/i6laym9jw3wg9mw6ncyrk6gjx4l34vvx/install
+        install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - uses: cachix/cachix-action@v8
       with:
@@ -58,10 +71,12 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
     - name: rocminfo
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocminfo
+      # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocminfo
+      run: nix build .#rocminfo
 
     - name: rocm-smi
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-smi
+      # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-smi
+      run: nix build .#rocm-smi
 
   build-compilers:
     runs-on: ubuntu-latest
@@ -72,9 +87,15 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Nix
-      uses: cachix/install-nix-action@v12
+      uses: cachix/install-nix-action@v13
+      # with:
+      #   nix_path: nixpkgs=channel:nixos-unstable
       with:
-        nix_path: nixpkgs=channel:nixos-unstable
+        install_url: https://nixos-nix-install-tests.cachix.org/serve/i6laym9jw3wg9mw6ncyrk6gjx4l34vvx/install
+        install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - uses: cachix/cachix-action@v8
       with:
@@ -82,10 +103,12 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
 
     - name: rocm-opencl-runtime
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
+      # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A rocm-opencl-runtime
+      run: nix build .#rocm-opencl-runtime
 
     - name: hip
-      run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip-clang
+      # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip-clang
+      run: nix build .#hip
 
   # build-miopen:
   #   runs-on: ubuntu-latest
