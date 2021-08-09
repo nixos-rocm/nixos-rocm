@@ -5,7 +5,7 @@ on:
     branches: [ master, 4.3.x ]
 
   push:
-    branches: [ master, 4.3.x ]
+    branches: [ master, 4.3.x, automated-bump ]
 
   # schedule:
   #   - cron: "0 23 * * *"
