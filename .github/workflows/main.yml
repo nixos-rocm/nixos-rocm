@@ -110,6 +110,9 @@ jobs:
       # run: nix-build '<nixpkgs>' --arg overlays "[ (import $PWD/pkgs/all-packages.nix) ]" -A hip-clang
       run: nix build .#hip
 
+    - name: clang-ocl
+      run: nix build .#clang-ocl
+
   # build-miopen:
   #   runs-on: ubuntu-latest
 
