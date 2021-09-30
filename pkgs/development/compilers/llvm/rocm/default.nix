@@ -55,7 +55,7 @@ in rec {
     src = "${src}/llvm";
   };
 
-  compiler-rt = callPackage ./compiler-rt.nix {
+  compiler-rt = callPackage ./compiler-rt {
     inherit version llvm;
     src = "${src}/compiler-rt";
     stdenv = overrideCC stdenv clangNoCompilerRt;
