@@ -2,10 +2,10 @@ name: CI
 
 on:
   pull_request:
-    branches: [ master, 4.3.x ]
+    branches: [ master, 4.3.x, 4.5.x ]
 
   push:
-    branches: [ master, 4.3.x, automated-bump ]
+    branches: [ master, 4.3.x, 4.5.x, automated-bump ]
 
   # schedule:
   #   - cron: "0 23 * * *"
