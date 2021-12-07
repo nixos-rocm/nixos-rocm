@@ -72,6 +72,8 @@ with pkgs;
   # `hip` is an alias for `hip-clang`
   hip = self.hip-clang;
 
+  hipify-perl = callPackage ./development/tools/hipify { };
+
   clang-ocl = callPackage ./development/compilers/clang-ocl {
     inherit (self) rocm-cmake rocm-device-libs rocm-opencl-runtime;
     inherit (self.llvmPackages_rocm) clang clang-unwrapped lld llvm;
