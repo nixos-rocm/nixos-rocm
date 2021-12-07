@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation rec {
   pname = "rocclr";
-  version = "4.3.0";
+  version = "4.5.0";
 
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "ROCclr";
     rev = "rocm-${version}";
-    hash = "sha256-3lk7Zucoam+11gFBzg/TWQI1L8uAlxTrPz/mDwTwod4=";
+    hash = "sha256-Ru2A1LR+ATqqz/npj1PpyeYGHCKA3opCgQjzQd8/Aqk=";
   };
 
   nativeBuildInputs = [ cmake rocm-cmake ];
@@ -39,10 +39,14 @@ stdenv.mkDerivation rec {
         '"''${CMAKE_INSTALL_PREFIX}/''${ROCCLR_PACKAGE_PREFIX}'
     substituteInPlace device/comgrctx.cpp \
       --replace "libamd_comgr.so" "${rocm-comgr}/lib/libamd_comgr.so"
+    substituteInPlace utils/flags.hpp \
+      --replace "release(bool, ROC_ENABLE_PRE_VEGA, false" "release(bool, ROC_ENABLE_PRE_VEGA, true"
   '';
 
   cmakeFlags = [
     "-DOPENCL_DIR=${rocm-opencl-runtime.src}"
+    "-DROCclr_DIR=${src}"
+    "-DAMD_OPENCL_PATH=${rocm-opencl-runtime.src}"
   ];
 
   preFixup = ''

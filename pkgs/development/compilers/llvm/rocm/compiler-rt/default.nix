@@ -30,13 +30,14 @@ stdenv.mkDerivation rec {
   outputs = [ "out" "dev" ];
 
   patches = [
-    ./compiler-rt-codesign.patch # Revert compiler-rt commit that makes codesign mandatory
+    # ./codesign.patch # Revert compiler-rt commit that makes codesign mandatory
+    ./normalize-var.patch
     (fetchpatch {
       name = "libsanitizer-no-cyclades-rocm.patch";
-      url = "https://reviews.llvm.org/file/data/nrhbpc5axblqwx2xyyzv/PHID-FILE-wwcpjvquusomoddmqcwo/file";
-      sha256 = "sha256-PMMSLr2zHuNDn1OWqumqHwB74ktJSHxhJWkqEKB7Z64=";
+      url = "https://github.com/llvm/llvm-project/commit/68d5235cb58f988c71b403334cd9482d663841ab.diff";
+      sha256 = "sha256-cr88ONjw28/fo7EFHn15c45FEu/KOUFvE2MlXP77wSc=";
       stripLen = 1;
-     })
+    })
     ];
 
   # TSAN requires XPC on Darwin, which we have no public/free source files for. We can depend on the Apple frameworks
@@ -47,6 +48,12 @@ stdenv.mkDerivation rec {
   postPatch = lib.optionalString (!stdenv.isDarwin) ''
     substituteInPlace cmake/builtin-config-ix.cmake \
       --replace 'set(X86 i386)' 'set(X86 i386 i486 i586 i686)'
+    substituteInPlace lib/builtins/int_util.c \
+      --replace "#include <stdlib.h>" ""
+    substituteInPlace lib/builtins/clear_cache.c \
+      --replace "#include <assert.h>" ""
+    substituteInPlace lib/builtins/cpu_model.c \
+      --replace "#include <assert.h>" ""
   '';
 
   # Hack around weird upsream RPATH bug
