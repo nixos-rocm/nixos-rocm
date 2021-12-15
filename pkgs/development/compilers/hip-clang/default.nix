@@ -8,7 +8,7 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "4.5.0";
+  version = "4.5.2";
   hip = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
     owner = "ROCm-Developer-Tools";
     repo = "hipamd";
     rev = "rocm-${version}";
-    hash = "sha256-p/rvrlX6PuLwhd6Otfz8RpY25Fe/CRwcI0LRHCQwc6c=";
+    hash = "sha256-WvOuQu/EN81Kwcoc3ZtGlhb996edQJ3OWFsmPuqeNXE=";
   };
 
   nativeBuildInputs = [ cmake python makeWrapper ];
@@ -27,14 +27,11 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ llvm clang compiler-rt lld rocm-thunk rocminfo rocm-device-libs rocm-runtime comgr ];
 
   preConfigure = ''
-    echo "pwd = $PWD"
-    echo "sourceRoot = $sourceRoot"
     export HIP_CLANG_PATH=${clang}/bin
     export DEVICE_LIB_PATH=${rocm-device-libs}/lib
     export HIPAMD_DIR="${src}"
     export HIP_DIR="$(readlink -f hip)"
     export ROCclr_DIR="${rocclr.src}"
-    echo "HIP_DIR = ''${HIP_DIR}"
   '';
 
   # The patch version is the last two digits of year + week number +
@@ -75,7 +72,6 @@ stdenv.mkDerivation rec {
     mkdir hip
     cp -R ${hip}/* hip/
     chmod -R u+w hip
-    export ROCM_NIX_BASH=${lib.getBin bash}/bin/bash
     for f in $(find hip/bin -type f); do
       sed -e 's,#!/usr/bin/perl,#!${perl}/bin/perl,' \
           -e 's,#!/usr/bin/env perl,#!${perl}/bin/perl,' \
@@ -137,7 +133,7 @@ set(HIP_COMMON_DIR \$ENV{HIP_DIR})"
     mkdir -p $out/lib
     ln -s ${rocm-device-libs}/lib $out/lib/bitcode
     mkdir -p $out/include
-    ln -s ${clang-unwrapped}/lib/clang/11.0.0/include $out/include/clang
+    ln -s ${clang-unwrapped}/lib/clang/13.0.0/include $out/include/clang
     wrapProgram $out/bin/hipcc --set HIP_PATH $out --set HSA_PATH ${rocm-runtime} --set HIP_CLANG_PATH ${clang}/bin --prefix PATH : ${lld}/bin --set NIX_CC_WRAPPER_TARGET_HOST_${stdenv.cc.suffixSalt} 1 --prefix NIX_LDFLAGS ' ' -L${compiler-rt}/lib --prefix NIX_LDFLAGS_FOR_TARGET ' ' -L${compiler-rt}/lib --add-flags "-nogpuinc"
     wrapProgram $out/bin/hipconfig --set HIP_PATH $out --set HSA_PATH ${rocm-runtime} --set HIP_CLANG_PATH ${clang}/bin
   '';
