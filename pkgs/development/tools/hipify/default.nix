@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, perl, writeText }:
 stdenv.mkDerivation rec {
   pname = "hipify-perl";
-  version = "4.5.0";
+  version = "5.0.2";
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIPIFY";
     rev = "rocm-${version}";
-    hash = "sha256-SBNYHuMvwNwqUNoxjMhq0XPWLC8wn/YZoQuYOW2BJIU=";
+    hash = "sha256-VLvbVwfbTf5fni7K/kvYQ3VE8l0yuo4I/OQRlwW7loY=";
   };
   prePatch = ''
     substituteInPlace bin/hipify-perl \

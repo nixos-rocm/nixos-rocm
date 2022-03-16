@@ -8,18 +8,18 @@
 }:
 stdenv.mkDerivation rec {
   name = "hip";
-  version = "4.5.2";
+  version = "5.0.2";
   hip = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "HIP";
     rev = "rocm-${version}";
-    hash = "sha256-AuA5ubRPywXaBBrjdHg5AT8rrVKULKog6Lh8jPaUcXY=";
+    hash = "sha256-w023vBLJaiFbRdvz9UfZLPasRjk3VqM9zwctCIJ5hGU=";
   };
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "hipamd";
     rev = "rocm-${version}";
-    hash = "sha256-WvOuQu/EN81Kwcoc3ZtGlhb996edQJ3OWFsmPuqeNXE=";
+    hash = "sha256-hhTwKG0wDpbIBI8S61AhdNldX+STO8C66xi2EzmJSBs=";
   };
 
   nativeBuildInputs = [ cmake python makeWrapper ];
@@ -35,8 +35,8 @@ stdenv.mkDerivation rec {
   '';
 
   # The patch version is the last two digits of year + week number +
-  # day in the week: date -d "2021-10-11" +%y%U%w
-  workweek = "21411";
+  # day in the week: date -d "2022-02-17" +%y%U%w
+  workweek = "22074";
 
   opencl-deps = symlinkJoin {
     name = "HIP-OpenCL-Deps";
@@ -66,6 +66,7 @@ stdenv.mkDerivation rec {
     "-DHIP_CLANG_ROOT=${clang-unwrapped}"
     "-DPERL_EXECUTABLE=${perl}/bin/perl"
     "-DAMD_OPENCL_INCLUDE_DIR=${opencl-deps}"
+    "-DHIP_VERSION_BUILD_ID=0"
   ];
 
   prePatch = ''
@@ -87,7 +88,7 @@ set(HIP_COMMON_DIR \$ENV{HIP_DIR})"
 
     substituteInPlace hip/hip_prof_gen.py --replace '#!/usr/bin/python' '#!${python}/bin/python'
 
-    substituteInPlace hip/bin/hipcc \
+    substituteInPlace hip/bin/hipcc.pl \
       --replace '$ROCM_PATH      =   $hipvars::ROCM_PATH;' \
                 "\$ROCM_PATH      =   \"$out\";" \
       --replace '$HIP_CLANG_PATH =   $hipvars::HIP_CLANG_PATH;' \
@@ -105,14 +106,14 @@ set(HIP_COMMON_DIR \$ENV{HIP_DIR})"
         -e 's,`file,`${file}/bin/file,g' \
         -e 's,`readelf,`${binutils-unwrapped}/bin/readelf,' \
         -e 's, ar , ${binutils-unwrapped}/bin/ar ,g' \
-        -i hip/bin/hipcc
+        -i hip/bin/hipcc.pl
 
     sed -e 's,^\($HSA_PATH=\).*$,\1"${rocm-runtime}";,' \
         -e 's,^\($HIP_CLANG_PATH=\).*$,\1"${clang}/bin";,' \
         -e 's,^\($HIP_PLATFORM=\).*$,\1"amd";,' \
         -e 's,$HIP_CLANG_PATH/llc,${llvm}/bin/llc,' \
         -e 's, abs_path, Cwd::abs_path,' \
-        -i hip/bin/hipconfig
+        -i hip/bin/hipconfig.pl
 
     sed -e 's, abs_path, Cwd::abs_path,' -i hip/bin/hipvars.pm
   '';

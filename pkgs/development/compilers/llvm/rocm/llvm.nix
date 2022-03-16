@@ -60,6 +60,7 @@ in stdenv.mkDerivation rec {
   postPatch = ''
     substitute '${./llvm-outputs.patch}' ./llvm-outputs.patch --subst-var lib
     patch -p1 < ./llvm-outputs.patch
+    patchShebangs lib/OffloadArch/make_generated_offload_arch_h.sh
   '';
 
   # hacky fix: created binaries need to be run before installation

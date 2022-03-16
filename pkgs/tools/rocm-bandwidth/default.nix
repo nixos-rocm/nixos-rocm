@@ -1,12 +1,12 @@
 { stdenv, lib, fetchFromGitHub, cmake, rocm-runtime, rocm-thunk }:
 stdenv.mkDerivation rec {
   name = "rocm-bandwidth";
-  version = "4.3.0";
+  version = "5.0.2";
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "rocm_bandwidth_test";
     rev = "rocm-${version}";
-    sha256 = "sha256-tUpJCBOL1xt8+yJUc/t63dgVcRgA0tX/k9THKyefJCg=";
+    sha256 = "sha256-DJEqM4RK4sHzmYisfaIoY1vsNAFjtjAuu39XZHQV1mY=";
   };
   nativeBuildInputs = [ cmake ];
   buildInputs = [ rocm-runtime rocm-thunk ];

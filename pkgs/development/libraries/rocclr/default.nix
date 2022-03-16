@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation rec {
   pname = "rocclr";
-  version = "4.5.0";
+  version = "5.0.2";
 
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "ROCclr";
     rev = "rocm-${version}";
-    hash = "sha256-Ru2A1LR+ATqqz/npj1PpyeYGHCKA3opCgQjzQd8/Aqk=";
+    hash = "sha256-x6XwYxgiCoy6Q7gIevSTEWgUQ0aEjPFhKSqMqQahHig=";
   };
 
   nativeBuildInputs = [ cmake rocm-cmake ];
@@ -47,6 +47,7 @@ stdenv.mkDerivation rec {
     "-DOPENCL_DIR=${rocm-opencl-runtime.src}"
     "-DROCclr_DIR=${src}"
     "-DAMD_OPENCL_PATH=${rocm-opencl-runtime.src}"
+    "-DCMAKE_BUILD_TYPE=Release"
   ];
 
   preFixup = ''
