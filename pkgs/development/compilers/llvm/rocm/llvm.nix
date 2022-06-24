@@ -1,6 +1,5 @@
 { stdenv
 , lib
-, fetchFromGitHub
 , cmake
 , python3
 , libxml2
@@ -56,6 +55,10 @@ in stdenv.mkDerivation rec {
     "-DSPHINX_OUTPUT_HTML=OFF"
     "-DSPHINX_WARNINGS_AS_ERRORS=OFF"
   ];
+
+  prePatch = ''
+    cd llvm
+  '';
 
   postPatch = ''
     substitute '${./llvm-outputs.patch}' ./llvm-outputs.patch --subst-var lib

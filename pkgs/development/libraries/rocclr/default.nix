@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation rec {
   pname = "rocclr";
-  version = "5.0.2";
+  version = "5.1.3";
 
   src = fetchFromGitHub {
     owner = "ROCm-Developer-Tools";
     repo = "ROCclr";
     rev = "rocm-${version}";
-    hash = "sha256-x6XwYxgiCoy6Q7gIevSTEWgUQ0aEjPFhKSqMqQahHig=";
+    hash = "sha256-WWF/IrPPM0n9FLjyw8veOWJWXqptMb1NKDrI9O/PLnQ=";
   };
 
   nativeBuildInputs = [ cmake rocm-cmake ];
