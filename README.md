@@ -47,9 +47,9 @@ Using [cachix](https://cachix.org/) is highly recommended! See [here](https://ap
 
 ### `rocblas`, `rocfft`, and the Sandbox
 
-The `rocblas` and `rocfft` packages (and those that depend upon them) require a bit of additional configuration. The `nix` builder sandbox must be expanded to allow for build-time inspection of the current system for these packages to build. This may be achieved by adding the following lines to your `/etc/nix/configuration.nix` (with the caveat that your AMD GPU may not be at `/dev/dri/renderD128`):
+The `rocblas` and `rocfft` packages (and those that depend upon them) require a bit of additional configuration. The `nix` builder sandbox must be expanded to allow for build-time inspection of the current system for these packages to build. This may be achieved by adding the following lines to your `/etc/nixos/configuration.nix` (with the caveat that your AMD GPU may not be at `/dev/dri/renderD128`):
 ```
-  nix.sandboxPaths = [ 
+  nix.settings.extra-sandbox-paths = [ 
     "/dev/kfd" 
     "/sys/devices/virtual/kfd" 
     "/dev/dri/renderD128"
