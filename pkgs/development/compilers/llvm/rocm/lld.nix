@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" "dev" ];
 
-  cmakeFlags = [ "-DLLVM_MAIN_SRC_DIR=${llvm.src}" ];
+  cmakeFlags = [ "-DLLVM_MAIN_SRC_DIR=${llvm.src}/llvm" ];
 
   postInstall = ''
     moveToOutput include "$dev"

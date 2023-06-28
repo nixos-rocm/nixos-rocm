@@ -1,6 +1,5 @@
 { stdenv
 , lib
-, fetchFromGitHub
 , cmake
 , python3
 , llvm
@@ -24,7 +23,7 @@ stdenv.mkDerivation rec {
 
   cmakeFlags = [
     "-DLLVM_CMAKE_PATH=${llvm}/lib/cmake/llvm"
-    "-DLLVM_MAIN_SRC_DIR=${llvm.src}"
+    "-DLLVM_MAIN_SRC_DIR=${llvm.src}/llvm"
     "-DCLANG_SOURCE_DIR=${src}"
     "-DLLVM_ENABLE_RTTI=ON"
   ];
